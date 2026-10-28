@@ -58,6 +58,8 @@ export class KMeansSim {
         this.isRunning = false;
         this.timer = null;
         this.isConverged = false;
+        this.onChange = options.onChange || null;
+        this.readonly = !!options.readonly;
 
         this.colors = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed', '#0891b2'];
 
@@ -261,6 +263,28 @@ export class KMeansSim {
         const btnReset = this.container.querySelector('#aisim-km-btn-reset');
         const sliderK = this.container.querySelector('#slider-km-k');
         const selDataset = this.container.querySelector('#aisim-km-dataset');
+
+        if (this.readonly) {
+            if (btnRun) {
+                btnRun.disabled = true;
+            }
+            if (btnStep) {
+                btnStep.disabled = true;
+            }
+            if (btnReseed) {
+                btnReseed.disabled = true;
+            }
+            if (btnReset) {
+                btnReset.disabled = true;
+            }
+            if (sliderK) {
+                sliderK.disabled = true;
+            }
+            if (selDataset) {
+                selDataset.disabled = true;
+            }
+            return;
+        }
 
         btnRun.addEventListener('click', () => {
             if (this.isRunning) {
@@ -484,6 +508,21 @@ export class KMeansSim {
 
         this.draw();
         this.drawElbow();
+
+        if (typeof this.onChange === 'function') {
+            this.onChange({
+                simtype: 'kmeans',
+                parameters: {
+                    k: this.k,
+                    dataset: this.datasetKey,
+                    iterations: this.iteration
+                },
+                metrics: {
+                    wcss: Math.round(inertia * 100) / 100,
+                    converged: this.isConverged
+                }
+            });
+        }
     }
 
     draw() {

@@ -47,6 +47,8 @@ export class RegressionSim {
         this.degree = parseInt(options.degree, 10) || 3;
         this.lambda = parseFloat(options.lambda) || 0.0;
         this.datasetKey = options.dataset || 'sine';
+        this.onChange = options.onChange || null;
+        this.readonly = !!options.readonly;
 
         this.initData();
         this.renderLayout();
@@ -325,6 +327,19 @@ export class RegressionSim {
         const sliderLambda = this.container.querySelector('#aisim-reg-lambda');
         const selDataset = this.container.querySelector('#aisim-reg-dataset');
 
+        if (this.readonly) {
+            if (sliderDegree) {
+                sliderDegree.disabled = true;
+            }
+            if (sliderLambda) {
+                sliderLambda.disabled = true;
+            }
+            if (selDataset) {
+                selDataset.disabled = true;
+            }
+            return;
+        }
+
         sliderDegree.addEventListener('input', (e) => {
             this.degree = parseInt(e.target.value, 10);
             this.container.querySelector('#aisim-reg-degree-val').textContent = `d = ${this.degree}`;
@@ -383,6 +398,21 @@ export class RegressionSim {
         this.updateAdvice();
         this.drawRegressionPlot();
         this.drawUCurve();
+
+        if (typeof this.onChange === 'function') {
+            this.onChange({
+                simtype: 'regression',
+                parameters: {
+                    degree: this.degree,
+                    lambda: this.lambda,
+                    dataset: this.datasetKey
+                },
+                metrics: {
+                    trainMse: Math.round(this.trainMSE * 10000) / 10000,
+                    valMse: Math.round(this.testMSE * 10000) / 10000
+                }
+            });
+        }
     }
 
     updateAdvice() {

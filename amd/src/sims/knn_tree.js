@@ -52,6 +52,8 @@ export class KnnTreeSim {
         this.maxDepth = parseInt(options.depth, 10) || 3;
         this.activeClass = 0; // 0 = Blue (Class A), 1 = Red (Class B)
         this.hoverPoint = null;
+        this.onChange = options.onChange || null;
+        this.readonly = !!options.readonly;
 
         this.initData();
         this.renderLayout();
@@ -240,6 +242,34 @@ export class KnnTreeSim {
         const sliderDepth = this.container.querySelector('#slider-depth');
         const selDataset = this.container.querySelector('#aisim-kt-dataset');
         const btnClear = this.container.querySelector('#btn-kt-clear');
+
+        if (this.readonly) {
+            if (btnKnn) {
+                btnKnn.disabled = true;
+            }
+            if (btnTree) {
+                btnTree.disabled = true;
+            }
+            if (btnClsA) {
+                btnClsA.disabled = true;
+            }
+            if (btnClsB) {
+                btnClsB.disabled = true;
+            }
+            if (sliderK) {
+                sliderK.disabled = true;
+            }
+            if (sliderDepth) {
+                sliderDepth.disabled = true;
+            }
+            if (selDataset) {
+                selDataset.disabled = true;
+            }
+            if (btnClear) {
+                btnClear.disabled = true;
+            }
+            return;
+        }
 
         btnKnn.addEventListener('click', () => {
             this.modelType = 'knn';
@@ -462,6 +492,21 @@ export class KnnTreeSim {
         this.container.querySelector('#val-kt-acc').textContent = `${acc}%`;
 
         this.draw();
+
+        if (typeof this.onChange === 'function') {
+            this.onChange({
+                simtype: 'knn_tree',
+                parameters: {
+                    model: this.modelType,
+                    k: this.k,
+                    depth: this.maxDepth,
+                    dataset: this.datasetKey
+                },
+                metrics: {
+                    testAcc: Math.round((correct / (this.points.length || 1)) * 1000) / 1000
+                }
+            });
+        }
     }
 
     draw() {

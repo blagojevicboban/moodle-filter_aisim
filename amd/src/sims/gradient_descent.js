@@ -96,6 +96,8 @@ export class GradientDescentSim {
         this.timer = null;
         this.speed = 100; // Speed in ms per step.
         this.status = 'ready';
+        this.onChange = options.onChange || null;
+        this.readonly = !!options.readonly;
 
         this.renderLayout();
         this.bindEvents();
@@ -214,6 +216,28 @@ export class GradientDescentSim {
         const sliderLr = this.container.querySelector('#aisim-lr');
         const sliderW0 = this.container.querySelector('#aisim-w0');
         const selProf = this.container.querySelector('#aisim-prof');
+
+        if (this.readonly) {
+            if (btnRun) {
+                btnRun.disabled = true;
+            }
+            if (btnStep) {
+                btnStep.disabled = true;
+            }
+            if (btnReset) {
+                btnReset.disabled = true;
+            }
+            if (sliderLr) {
+                sliderLr.disabled = true;
+            }
+            if (sliderW0) {
+                sliderW0.disabled = true;
+            }
+            if (selProf) {
+                selProf.disabled = true;
+            }
+            return;
+        }
 
         btnRun.addEventListener('click', () => {
             if (this.isRunning) {
@@ -382,6 +406,21 @@ export class GradientDescentSim {
         this.container.querySelector('#aisim-stat-w').textContent = isNaN(this.w) ? 'NaN' : this.w.toFixed(4);
         this.container.querySelector('#aisim-stat-cost').textContent = isNaN(cost) ? 'Inf' : cost.toFixed(4);
         this.container.querySelector('#aisim-stat-grad').textContent = isNaN(grad) ? 'NaN' : grad.toFixed(4);
+
+        if (typeof this.onChange === 'function') {
+            this.onChange({
+                simtype: 'gradient_descent',
+                parameters: {
+                    w: Math.round(this.w * 1000) / 1000,
+                    learningRate: this.alpha,
+                    steps: this.epoch
+                },
+                metrics: {
+                    loss: Math.round(cost * 10000) / 10000,
+                    grad: Math.round(grad * 10000) / 10000
+                }
+            });
+        }
     }
 
     draw() {

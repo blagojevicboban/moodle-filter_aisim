@@ -76,6 +76,8 @@ export class ConfusionMatrixSim {
 
         this.scenarioKey = options.scenario || 'quality';
         this.threshold = parseFloat(options.threshold) || 0.50;
+        this.onChange = options.onChange || null;
+        this.readonly = !!options.readonly;
 
         // Generate synthetic distributions for dataset.
         this.initDataset();
@@ -330,6 +332,16 @@ export class ConfusionMatrixSim {
         const sliderTh = this.container.querySelector('#aisim-cm-th');
         const selScenario = this.container.querySelector('#aisim-cm-scenario');
 
+        if (this.readonly) {
+            if (sliderTh) {
+                sliderTh.disabled = true;
+            }
+            if (selScenario) {
+                selScenario.disabled = true;
+            }
+            return;
+        }
+
         sliderTh.addEventListener('input', (e) => {
             this.threshold = parseFloat(e.target.value);
             this.container.querySelector('#aisim-cm-th-val').textContent = this.threshold.toFixed(2);
@@ -384,6 +396,30 @@ export class ConfusionMatrixSim {
         this.updateAdviceUI(m);
         this.drawDistribution();
         this.drawROC(m);
+
+        if (typeof this.onChange === 'function') {
+            const acc = (m.tp + m.tn) / (m.total || 1);
+            const prec = (m.tp + m.fp) > 0 ? (m.tp / (m.tp + m.fp)) : 0;
+            const rec = (m.tp + m.fn) > 0 ? (m.tp / (m.tp + m.fn)) : 0;
+            const f1 = (prec + rec) > 0 ? (2 * prec * rec / (prec + rec)) : 0;
+            this.onChange({
+                simtype: 'confusion_matrix',
+                parameters: {
+                    scenario: this.scenarioKey,
+                    threshold: this.threshold
+                },
+                metrics: {
+                    tp: m.tp,
+                    fp: m.fp,
+                    tn: m.tn,
+                    fn: m.fn,
+                    accuracy: Math.round(acc * 1000) / 1000,
+                    precision: Math.round(prec * 1000) / 1000,
+                    recall: Math.round(rec * 1000) / 1000,
+                    f1: Math.round(f1 * 1000) / 1000
+                }
+            });
+        }
     }
 
     updateMatrixUI(m) {

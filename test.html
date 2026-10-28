@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Simulations Viewer - Test Playground (filter_aisim)</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 2rem 1rem;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+        .intro-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .intro-card h1 {
+            margin: 0 0 0.5rem 0;
+            color: #0f172a;
+            font-size: 1.6rem;
+        }
+        .intro-card p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.6;
+        }
+        .lang-switch {
+            margin-top: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+        .lang-btn {
+            padding: 4px 12px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .lang-btn.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro-card">
+            <h1>🤖 AI Simulations Viewer (Moodle Filter <code>filter_aisim</code>)</h1>
+            <p>
+                Ovo je lokalno testno okruženje za interaktivne AI simulacije razvijene za projekat <strong>AI for VET</strong>
+                (prateći priručnik <em>io1-fundamentals</em>). U Moodle okruženju, ovaj blok se automatski renderuje iz jednostavnog taga:
+                <code>&lt;div data-aisim="gradient-descent"&gt;&lt;/div&gt;</code>.
+            </p>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLang('sr')">🇷🇸 Srpski</button>
+                <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+            </div>
+        </div>
+
+        <!-- Moodle Target Container -->
+        <div id="sim-target" data-aisim="gradient-descent" data-profile="convex" data-lr="0.15"></div>
+    </div>
+
+    <!-- ES Module loader simulating Moodle AMD environment -->
+    <script type="module">
+        import {GradientDescentSim} from './amd/src/sims/gradient_descent.js';
+
+        let currentSim = null;
+
+        function loadSim(lang) {
+            document.documentElement.lang = lang;
+            const target = document.getElementById('sim-target');
+            target.innerHTML = '';
+            currentSim = new GradientDescentSim(target, {
+                lang: lang,
+                profile: 'convex',
+                lr: 0.15
+            });
+        }
+
+        window.setLang = function(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(lang === 'sr' ? 'srp' : 'eng'));
+            });
+            loadSim(lang);
+        };
+
+        // Initial mount.
+        loadSim('sr');
+    </script>
+</body>
+</html>

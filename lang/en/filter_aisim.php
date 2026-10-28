@@ -92,3 +92,10 @@ $string['tree_depth'] = 'Maximum Tree Depth';
 $string['dataset_moons'] = 'Two Moons';
 $string['dataset_circles'] = 'Concentric Circles';
 $string['dataset_blobs'] = 'Two Blobs';
+
+// K-Means clustering strings.
+$string['kmeans'] = 'K-Means Clustering';
+$string['clusters_k'] = 'Clusters (K)';
+$string['inertia'] = 'Inertia (WCSS)';
+$string['elbow_method'] = 'Elbow Method';
+$string['centroids'] = 'Centroids';

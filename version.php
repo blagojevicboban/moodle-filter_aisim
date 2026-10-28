@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'filter_aisim';
-$plugin->version   = 2026102803;
+$plugin->version   = 2026102804;
 $plugin->requires  = 2024100700; // Moodle 4.5.
 $plugin->supported = [405, 503];
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.4.0';
+$plugin->release   = '0.5.0';

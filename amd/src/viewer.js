@@ -12,6 +12,7 @@ import {GradientDescentSim} from 'filter_aisim/sims/gradient_descent';
 import {ConfusionMatrixSim} from 'filter_aisim/sims/confusion_matrix';
 import {RegressionSim} from 'filter_aisim/sims/regression';
 import {KnnTreeSim} from 'filter_aisim/sims/knn_tree';
+import {KMeansSim} from 'filter_aisim/sims/kmeans';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -63,6 +64,12 @@ const mount = (root) => {
                 dataset: el.getAttribute('data-dataset') || 'moons',
                 k: el.getAttribute('data-k') || 3,
                 depth: el.getAttribute('data-depth') || 3
+            });
+        } else if (simType === 'kmeans' || simType === 'k-means') {
+            new KMeansSim(el, {
+                lang: lang,
+                dataset: el.getAttribute('data-dataset') || 'blobs3',
+                k: el.getAttribute('data-k') || 3
             });
         }
     });

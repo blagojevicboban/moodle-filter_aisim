@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.4.0).
+> Status: **alpha** (v0.5.0).
 
 ---
 
@@ -18,10 +18,11 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 | Feature | Description |
 |---|---|
 | 📉 **Interactive Simulations** | 100% client-side (Canvas/SVG/JS) — no server load, zero latency, no API keys needed. |
-| 🎛️ **Live Hyperparameters & Thresholds** | Students adjust Learning Rate ($\alpha$), weights, classification thresholds ($\theta$), polynomial degrees, and $k$ neighbors. |
+| 🎛️ **Live Hyperparameters & Thresholds** | Students adjust Learning Rate ($\alpha$), weights, classification thresholds ($\theta$), polynomial degrees, and $k$ clusters. |
 | 📊 **Dynamic Metrics & ROC Curves** | Confusion Matrix (TP, FP, TN, FN), Accuracy, Precision, Recall, F1-score, and ROC/AUC curves. |
 | 🌲 **Decision Boundaries** | Real-time comparison between k-NN (distance-based smooth/Voronoi boundaries) and Decision Trees (orthogonal splits). |
-| 🏭 **Real VET Scenarios** | Scenarios include Industrial Quality Control (Defect Detection), Medical Screening, and Fuel Consumption. |
+| 🫧 **Unsupervised Clustering** | Step-by-step K-Means algorithm (alternating assignment & centroid update) and live Elbow plot (WCSS). |
+| 🏭 **Real VET Scenarios** | Scenarios include Industrial Quality Control (Defect Detection), Medical Screening, Fuel Consumption, and Sensor Regimes. |
 | 🌍 **Multilingual** | English, Serbian Latin (`sr_lt`), and Serbian Cyrillic (`sr_cr`). |
 | 🔒 **GDPR Compliant** | Implements Moodle's Null Privacy Provider — no personal data is collected or transmitted. |
 
@@ -50,7 +51,12 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Smooth vs axis-aligned orthogonal 2D classification boundaries.
 - Slider for $k$ neighbors ($1\dots 15$) and max tree depth ($1\dots 5$).
 - Mouse hover distance vectors connecting query points to $k$ nearest neighbors.
-- Add Class A / Class B points by clicking directly on the canvas.
+
+### 5. K-Means Clustering Lab (`data-aisim="kmeans"`)
+- Step-by-step alternating phases: 1. Assignment (points to nearest centroid); 2. Centroid update (moving to cluster mean).
+- Live Within-Cluster Sum of Squares (Inertia / WCSS).
+- Dynamic Elbow plot ($K=1\dots 6$) with current operating point.
+- Centroid re-seeding to explore local minima sensitivity.
 
 ---
 
@@ -68,6 +74,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Decision Boundaries -->
 <div data-aisim="knn-tree" data-dataset="moons" data-k="3" data-depth="3"></div>
+
+<!-- K-Means Clustering -->
+<div data-aisim="kmeans" data-dataset="blobs3" data-k="3"></div>
 ```
 
 ---

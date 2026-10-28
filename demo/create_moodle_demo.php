@@ -116,11 +116,16 @@ $p4 = file_get_contents($dir . '/04_granice_odlucivanja.html');
 preg_match('/<div class="page-wrap">(.*?)<div class="nav-links">/s', $p4, $m4);
 $content4 = $m4 ? $m4[1] : '<div data-aisim="knn-tree"></div>';
 
-// 5. Add all 4 Pages to course.
+$p5 = file_get_contents($dir . '/05_kmeans_klasterovanje.html');
+preg_match('/<div class="page-wrap">(.*?)<div class="nav-links">/s', $p5, $m5);
+$content5 = $m5 ? $m5[1] : '<div data-aisim="kmeans"></div>';
+
+// 5. Add all 5 Pages to course.
 add_demo_page($course, 1, '1. Optimizacija: Gradijentni spust (Gradient Descent)', $content1);
 add_demo_page($course, 2, '2. Evaluacija: Matrica konfuzije i prag odlučivanja', $content2);
 add_demo_page($course, 3, '3. Generalizacija: Polinomska regresija i preprilagođavanje', $content3);
 add_demo_page($course, 4, '4. Klasifikacija: Granice odlučivanja (k-NN i Stablo)', $content4);
+add_demo_page($course, 5, '5. Nenadgledano učenje: K-sredine (K-Means klasterovanje)', $content5);
 
 rebuild_course_cache($course->id, true);
 

@@ -92,3 +92,10 @@ $string['tree_depth'] = 'Максимална дубина стабла';
 $string['dataset_moons'] = 'Два полумесеца';
 $string['dataset_circles'] = 'Концентрични кругови';
 $string['dataset_blobs'] = 'Два кластера';
+
+// К-средине (K-Means).
+$string['kmeans'] = 'К-средине (K-Means кластеровање)';
+$string['clusters_k'] = 'Број кластера (K)';
+$string['inertia'] = 'Инерција (WCSS)';
+$string['elbow_method'] = 'Метода лакта';
+$string['centroids'] = 'Центроиди';

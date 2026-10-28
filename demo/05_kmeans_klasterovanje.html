@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lekcija 5: K-sredine (K-Means klasterovanje) | AI for VET</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.65;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+        .page-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .badge {
+            background: #d97706;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .info-box h3 {
+            margin: 0 0 0.5rem 0;
+            color: #15803d;
+            font-size: 1rem;
+        }
+        .task-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 2rem 0 1rem;
+        }
+        .task-card h3 {
+            margin: 0 0 0.5rem;
+            color: #1d4ed8;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .nav-btn {
+            text-decoration: none;
+            padding: 8px 16px;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: #334155; }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <span class="badge">AI FOR VET • POGLAVLJE 4.5</span>
+        <h1>Nenadgledano učenje: K-sredine (K-Means klasterovanje)</h1>
+        <div class="subtitle">Kako mašina samostalno otkriva skrivene obrasce i grupe u podacima bez pomoći nastavnika ili oznaka?</div>
+
+        <div class="info-box">
+            <h3>🎯 Ishodi učenja (Šta ćete savladati):</h3>
+            <ul>
+                <li>Razumećete koncept <strong>nenadgledanog učenja (Unsupervised Learning)</strong>.</li>
+                <li>Istražićete dva naizmenična koraka K-Means algoritma: <em>dodeljivanje tačaka</em> i <em>ažuriranje centroida</em>.</li>
+                <li>Naučićete šta meri <strong>Inercija (WCSS - Within-Cluster Sum of Squares)</strong>.</li>
+                <li>Savladati <strong>metodu lakta (Elbow Method)</strong> za pronalaženje optimalnog broja klastera $K$.</li>
+                <li>Uočiti osetljivost algoritma na početni položaj centroida (lokalni minimumi).</li>
+            </ul>
+        </div>
+
+        <h2>1. Učenje bez unapred poznatih odgovora</h2>
+        <p>
+            Za razliku od nadgledanog učenja gde imamo tačne labele (npr. "ispravan" ili "defektan"), kod nenadgledanog učenja
+            imamo samo sirove podatke (npr. senzorska očitavanja potrošnje struje i temperature mašina).
+            Cilj algoritma <strong>K-sredina (K-Means)</strong> jeste da samostalno grupiše podatke u $K$ kompaktnih celina.
+        </p>
+
+        <h2>2. Dva koraka koji se ponavljaju</h2>
+        <ol>
+            <li><strong>Korak dodele:</strong> Svaka tačka se povezuje sa njoj najbližim centroidom (centrom grupe).</li>
+            <li><strong>Korak ažuriranja:</strong> Svaki centroid se pomera tačno u težište (prosek koordinata) tačaka koje su mu dodeljene.</li>
+        </ol>
+        <p>Ova dva koraka se ponavljaju sve dok se centroidi više ne pomeraju — tada je algoritam <strong>konvergirao</strong>!</p>
+
+        <h2>3. Interaktivna laboratorija</h2>
+        <p>
+            Kliknite na <strong>Sledeći korak</strong> da biste pratili fazu po fazu, ili na <strong>Pokreni</strong> za automatsko obučavanje.
+            Isprobajte dugme <em>Novi početni centroidi</em> da vidite kako slučajni start menja konvergenciju.
+        </p>
+
+        <!-- MOODLE FILTER TARGET -->
+        <div data-aisim="kmeans" data-dataset="blobs3" data-k="3"></div>
+
+        <div class="task-card">
+            <h3>🔬 Istraživački zadatak za učenike:</h3>
+            <ol>
+                <li><strong>Korak po korak:</strong> Postavite $K=3$ na skupu "3 prirodna klastera". Kliknite nekoliko puta na <strong>Sledeći korak</strong>. Primetite kako se linije prvo vezuju za najbliži centar, a zatim se u sledećem koraku centri pomeraju u središte. Koliko koraka je trebalo do stabilizacije?</li>
+                <li><strong>Metoda lakta:</strong> Pogledajte desni mini-grafik "Metoda lakta". Zašto kriva naglo pada od $K=1$ do $K=3$, a zatim od $K=3$ do $K=6$ pad postaje znatno blaži? Koji broj klastera predstavlja "prelom lakta"?</li>
+                <li><strong>Preveliko K:</strong> Povećajte $K$ na 5 ili 6. Šta se desilo sa prirodnim grupama?</li>
+                <li><strong>Dodavanje anomalija:</strong> Kliknite na platno daleko od postojećih klastera i dodajte nekoliko novih tačaka. Pokrenite algoritam ponovo — šta se dešava sa najbližim centroidom?</li>
+            </ol>
+        </div>
+
+        <div class="nav-links">
+            <a href="04_granice_odlucivanja.html" class="nav-btn">← Prethodna lekcija: Granice odlučivanja</a>
+            <a href="index.html" class="nav-btn">Pregled svih lekcija kursa →</a>
+        </div>
+    </div>
+
+    <!-- Standalone loader simulating Moodle AMD filter execution -->
+    <script type="module">
+        import {KMeansSim} from '../amd/src/sims/kmeans.js';
+        document.querySelectorAll('[data-aisim="kmeans"]').forEach(el => {
+            new KMeansSim(el, {
+                lang: 'sr',
+                dataset: el.getAttribute('data-dataset') || 'blobs3',
+                k: 3
+            });
+        });
+    </script>
+</body>
+</html>

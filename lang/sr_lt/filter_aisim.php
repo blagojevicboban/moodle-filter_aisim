@@ -72,3 +72,13 @@ $string['roc_curve'] = 'ROC kriva (AUC)';
 $string['scenario_quality'] = 'Industrijska kontrola kvaliteta (Škart)';
 $string['scenario_medical'] = 'Medicinska dijagnostika (Skrining)';
 $string['scenario_spam'] = 'Klasifikacija neželjene pošte (Spam)';
+
+// Regresija i generalizacija.
+$string['regression'] = 'Polinomska regresija i preprilagođavanje';
+$string['degree'] = 'Stepen polinoma (d)';
+$string['regularization'] = 'Regularizacija (λ)';
+$string['train_mse'] = 'Trening MSE greška';
+$string['val_mse'] = 'Validacioni MSE';
+$string['underfitting'] = 'Potprilagođavanje (Underfitting)';
+$string['overfitting'] = 'Preprilagođavanje (Overfitting)';
+$string['good_fit'] = 'Optimalno uklapanje (Dobra generalizacija)';

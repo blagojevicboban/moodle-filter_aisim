@@ -72,3 +72,13 @@ $string['roc_curve'] = 'ROC Curve (AUC)';
 $string['scenario_quality'] = 'Industrial Quality Control (Defects)';
 $string['scenario_medical'] = 'Medical Diagnostics (Screening)';
 $string['scenario_spam'] = 'Spam / Security Filter';
+
+// Regression & Overfitting strings.
+$string['regression'] = 'Polynomial Regression & Overfitting';
+$string['degree'] = 'Polynomial Degree (d)';
+$string['regularization'] = 'Regularization (λ)';
+$string['train_mse'] = 'Training MSE';
+$string['val_mse'] = 'Validation MSE';
+$string['underfitting'] = 'Underfitting (High Bias)';
+$string['overfitting'] = 'Overfitting (High Variance)';
+$string['good_fit'] = 'Good Fit (Optimal Generalization)';

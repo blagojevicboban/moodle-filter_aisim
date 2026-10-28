@@ -10,6 +10,7 @@
 
 import {GradientDescentSim} from 'filter_aisim/sims/gradient_descent';
 import {ConfusionMatrixSim} from 'filter_aisim/sims/confusion_matrix';
+import {RegressionSim} from 'filter_aisim/sims/regression';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -46,6 +47,13 @@ const mount = (root) => {
                 lang: lang,
                 scenario: el.getAttribute('data-scenario') || 'quality',
                 threshold: el.getAttribute('data-threshold') || 0.50
+            });
+        } else if (simType === 'regression' || simType === 'polynomial-regression') {
+            new RegressionSim(el, {
+                lang: lang,
+                dataset: el.getAttribute('data-dataset') || 'sine',
+                degree: el.getAttribute('data-degree') || 3,
+                lambda: el.getAttribute('data-lambda') || 0.0
             });
         }
     });

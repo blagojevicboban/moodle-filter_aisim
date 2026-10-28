@@ -533,3 +533,4 @@ export class ConfusionMatrixSim {
         ctx.fillText('TPR (Recall)', pad, pad - 6);
     }
 }
+

@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.2.0).
+> Status: **alpha** (v0.4.0).
 
 ---
 
@@ -18,9 +18,10 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 | Feature | Description |
 |---|---|
 | 📉 **Interactive Simulations** | 100% client-side (Canvas/SVG/JS) — no server load, zero latency, no API keys needed. |
-| 🎛️ **Live Hyperparameters & Thresholds** | Students adjust Learning Rate ($\alpha$), initial weights, decision thresholds ($\theta$), and observe metrics in real time. |
+| 🎛️ **Live Hyperparameters & Thresholds** | Students adjust Learning Rate ($\alpha$), weights, classification thresholds ($\theta$), polynomial degrees, and $k$ neighbors. |
 | 📊 **Dynamic Metrics & ROC Curves** | Confusion Matrix (TP, FP, TN, FN), Accuracy, Precision, Recall, F1-score, and ROC/AUC curves. |
-| 🏭 **Real VET Scenarios** | Scenarios include Industrial Quality Control (Defect Detection), Medical Screening, and Spam Filtering. |
+| 🌲 **Decision Boundaries** | Real-time comparison between k-NN (distance-based smooth/Voronoi boundaries) and Decision Trees (orthogonal splits). |
+| 🏭 **Real VET Scenarios** | Scenarios include Industrial Quality Control (Defect Detection), Medical Screening, and Fuel Consumption. |
 | 🌍 **Multilingual** | English, Serbian Latin (`sr_lt`), and Serbian Cyrillic (`sr_cr`). |
 | 🔒 **GDPR Compliant** | Implements Moodle's Null Privacy Provider — no personal data is collected or transmitted. |
 
@@ -38,27 +39,35 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Dynamic 2x2 confusion matrix (TP, FP, TN, FN).
 - Real-time metric bars: Accuracy, Precision, Recall, and F1-score.
 - Live ROC curve with animated operating point and AUC calculation.
-- Pedagogical guidance tailored to VET scenarios (impact of Type I vs Type II errors).
 
-*(Upcoming: Polynomial Regression Overfitting, Decision Trees / k-NN Decision Boundaries, K-Means Clustering, CNN Kernel Visualizer)*
+### 3. Polynomial Regression & Overfitting (`data-aisim="regression"`)
+- Degree tuning from $d=1$ (Underfitting / High Bias) up to $d=9$ (Overfitting / High Variance).
+- L2 Ridge regularization ($\lambda$) slider.
+- Live U-Curve comparing Train MSE vs Validation MSE.
+- Interactive custom data point insertion on click.
+
+### 4. Decision Boundaries: k-NN vs Decision Tree (`data-aisim="knn-tree"`)
+- Smooth vs axis-aligned orthogonal 2D classification boundaries.
+- Slider for $k$ neighbors ($1\dots 15$) and max tree depth ($1\dots 5$).
+- Mouse hover distance vectors connecting query points to $k$ nearest neighbors.
+- Add Class A / Class B points by clicking directly on the canvas.
 
 ---
 
 ## 💻 Usage in Moodle
 
-### Gradient Descent
 ```html
-<div data-aisim="gradient-descent"
-     data-profile="convex"
-     data-lr="0.15"
-     data-w0="-1.0"></div>
-```
+<!-- Gradient Descent -->
+<div data-aisim="gradient-descent" data-profile="convex" data-lr="0.15"></div>
 
-### Confusion Matrix
-```html
-<div data-aisim="confusion-matrix"
-     data-scenario="quality"
-     data-threshold="0.50"></div>
+<!-- Confusion Matrix -->
+<div data-aisim="confusion-matrix" data-scenario="quality" data-threshold="0.50"></div>
+
+<!-- Regression Overfitting -->
+<div data-aisim="regression" data-dataset="sine" data-degree="3"></div>
+
+<!-- Decision Boundaries -->
+<div data-aisim="knn-tree" data-dataset="moons" data-k="3" data-depth="3"></div>
 ```
 
 ---

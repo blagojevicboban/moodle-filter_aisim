@@ -97,6 +97,7 @@
                     <button class="tab-btn active" onclick="switchSim('gd')">📉 1. Gradijentni spust</button>
                     <button class="tab-btn" onclick="switchSim('cm')">🎯 2. Matrica konfuzije & Prag</button>
                     <button class="tab-btn" onclick="switchSim('reg')">📈 3. Regresija & Overfitting</button>
+                    <button class="tab-btn" onclick="switchSim('kt')">🌳 4. k-NN i Stablo odlučivanja</button>
                 </div>
                 <div class="lang-switch">
                     <button class="lang-btn active" id="btn-lang-sr" onclick="setLang('sr')">🇷🇸 Srpski</button>
@@ -114,6 +115,7 @@
         import {GradientDescentSim} from './amd/src/sims/gradient_descent.js';
         import {ConfusionMatrixSim} from './amd/src/sims/confusion_matrix.js';
         import {RegressionSim} from './amd/src/sims/regression.js';
+        import {KnnTreeSim} from './amd/src/sims/knn_tree.js';
 
         let currentSimType = 'gd';
         let currentLang = 'sr';
@@ -145,6 +147,15 @@
                     degree: 3,
                     lambda: 0.0
                 });
+            } else if (currentSimType === 'kt') {
+                target.setAttribute('data-aisim', 'knn-tree');
+                new KnnTreeSim(target, {
+                    lang: currentLang,
+                    model: 'knn',
+                    dataset: 'moons',
+                    k: 3,
+                    depth: 3
+                });
             }
         }
 
@@ -154,7 +165,8 @@
                 btn.classList.toggle('active',
                     (type === 'gd' && idx === 0) ||
                     (type === 'cm' && idx === 1) ||
-                    (type === 'reg' && idx === 2)
+                    (type === 'reg' && idx === 2) ||
+                    (type === 'kt' && idx === 3)
                 );
             });
             renderCurrent();

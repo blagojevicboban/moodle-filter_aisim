@@ -82,3 +82,13 @@ $string['val_mse'] = 'Валидациони MSE';
 $string['underfitting'] = 'Потприлагођавање (Underfitting)';
 $string['overfitting'] = 'Преприлагођавање (Overfitting)';
 $string['good_fit'] = 'Оптимално уклапање (Добра генерализација)';
+
+// k-NN и Стабло одлучивања.
+$string['knn_tree'] = 'Границе одлучивања (k-NN и Стабло)';
+$string['knn'] = 'k-Најближих суседа (k-NN)';
+$string['decision_tree'] = 'Стабло одлучивања';
+$string['k_neighbors'] = 'Број суседа (k)';
+$string['tree_depth'] = 'Максимална дубина стабла';
+$string['dataset_moons'] = 'Два полумесеца';
+$string['dataset_circles'] = 'Концентрични кругови';
+$string['dataset_blobs'] = 'Два кластера';

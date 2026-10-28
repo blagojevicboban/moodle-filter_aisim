@@ -11,6 +11,7 @@
 import {GradientDescentSim} from 'filter_aisim/sims/gradient_descent';
 import {ConfusionMatrixSim} from 'filter_aisim/sims/confusion_matrix';
 import {RegressionSim} from 'filter_aisim/sims/regression';
+import {KnnTreeSim} from 'filter_aisim/sims/knn_tree';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -54,6 +55,14 @@ const mount = (root) => {
                 dataset: el.getAttribute('data-dataset') || 'sine',
                 degree: el.getAttribute('data-degree') || 3,
                 lambda: el.getAttribute('data-lambda') || 0.0
+            });
+        } else if (simType === 'knn-tree' || simType === 'knn' || simType === 'decision-tree') {
+            new KnnTreeSim(el, {
+                lang: lang,
+                model: simType === 'decision-tree' ? 'tree' : 'knn',
+                dataset: el.getAttribute('data-dataset') || 'moons',
+                k: el.getAttribute('data-k') || 3,
+                depth: el.getAttribute('data-depth') || 3
             });
         }
     });

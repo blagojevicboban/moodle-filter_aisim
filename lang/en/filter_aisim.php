@@ -82,3 +82,13 @@ $string['val_mse'] = 'Validation MSE';
 $string['underfitting'] = 'Underfitting (High Bias)';
 $string['overfitting'] = 'Overfitting (High Variance)';
 $string['good_fit'] = 'Good Fit (Optimal Generalization)';
+
+// k-NN & Decision Tree strings.
+$string['knn_tree'] = 'Decision Boundaries (k-NN & Decision Tree)';
+$string['knn'] = 'k-Nearest Neighbors (k-NN)';
+$string['decision_tree'] = 'Decision Tree';
+$string['k_neighbors'] = 'Number of Neighbors (k)';
+$string['tree_depth'] = 'Maximum Tree Depth';
+$string['dataset_moons'] = 'Two Moons';
+$string['dataset_circles'] = 'Concentric Circles';
+$string['dataset_blobs'] = 'Two Blobs';

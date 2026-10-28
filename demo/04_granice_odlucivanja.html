@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lekcija 4: Granice odlučivanja (k-NN i Stablo) | AI for VET</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.65;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+        .page-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .badge {
+            background: #16a34a;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .info-box h3 {
+            margin: 0 0 0.5rem 0;
+            color: #15803d;
+            font-size: 1rem;
+        }
+        .task-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 2rem 0 1rem;
+        }
+        .task-card h3 {
+            margin: 0 0 0.5rem;
+            color: #1d4ed8;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .nav-btn {
+            text-decoration: none;
+            padding: 8px 16px;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: #334155; }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <span class="badge">AI FOR VET • POGLAVLJA 3.7 & 3.8</span>
+        <h1>Klasifikacija: Granice odlučivanja (k-NN i Stablo)</h1>
+        <div class="subtitle">Kako različiti algoritmi dele prostor podataka i donose odluke? Geometrijsko poređenje algoritama najbližih suseda i stabala.</div>
+
+        <div class="info-box">
+            <h3>🎯 Ishodi učenja (Šta ćete savladati):</h3>
+            <ul>
+                <li>Razumećete geometrijsku prirodu klasifikacije u 2D prostoru.</li>
+                <li>Istražićete rad <strong>k-NN algoritma</strong> i uticaj parametra $k$ (Voronoi ćelije vs glatka granica).</li>
+                <li>Naučićete kako <strong>Stablo odlučivanja (Decision Tree)</strong> formira pravougaone ortogonalne rezove pomoću Gini nečistoće.</li>
+                <li>Uočićete kako dubina stabla utiče na overfit u klasifikaciji.</li>
+            </ul>
+        </div>
+
+        <h2>1. Kako mašina „vidi” granicu između klasa?</h2>
+        <p>
+            Svaka tačka u prostoru predstavlja objekat sa dva atributa (npr. senzorska merenja temperature i pritiska).
+            <strong>k-NN algoritam</strong> je intuitivan: nova tačka dobija klasu većine svojih najbližih komšija.
+            <strong>Stablo odlučivanja</strong>, s druge strane, postavlja niz sukcesivnih binarnih pitanja (npr. <em>"Da li je temperatura > 45°C? Ako jeste, da li je pritisak < 2.5 bara?"</em>).
+            Zato stablo deli prostor isključivo linijama paralelnim sa koordinatnim osama!
+        </p>
+
+        <h2>2. Interaktivna laboratorija</h2>
+        <p>
+            Prebacujte se između modela (k-NN i Stablo). Pomerajte miš preko prostora kod k-NN-a da vidite vektore ka najbližim susedima.
+            Kliknite na površinu da dodate sopstvene tačke za Klasu A ili Klasu B!
+        </p>
+
+        <!-- MOODLE FILTER TARGET -->
+        <div data-aisim="knn-tree" data-dataset="moons" data-k="3" data-depth="3"></div>
+
+        <div class="task-card">
+            <h3>🔬 Istraživački zadatak za učenike:</h3>
+            <ol>
+                <li><strong>k-NN na k=1:</strong> Postavite $k=1$. Zbog čega je granica izlomljena i oštra? Dodajte jednu crvenu tačku unutar mase plavih tačaka — šta se dogodilo sa prostorom oko nje?</li>
+                <li><strong>Veći k (k=7 ili 9):</strong> Povećajte $k$. Kako se granica promenila i zašto je sada otpornija na pojedinačne greške u merenju?</li>
+                <li><strong>Stablo odlučivanja:</strong> Prebacite na <em>Stablo</em> sa dubinom 1 (tzv. panj / Decision Stump). Koliko rezova pravi stablo? Zatim povećajte dubinu na 4 ili 5 — primetite pravougaone kutije koje stablo gradi.</li>
+                <li><strong>Nelinearni skup "Dva polumeseca":</strong> Koji algoritam se prirodnije prilagođava krivolinijskom obliku polumeseca — k-NN ili Stablo?</li>
+            </ol>
+        </div>
+
+        <div class="nav-links">
+            <a href="03_polinomska_regresija.html" class="nav-btn">← Prethodna lekcija: Regresija i preprilagođavanje</a>
+            <a href="index.html" class="nav-btn">Pregled svih lekcija kursa →</a>
+        </div>
+    </div>
+
+    <!-- Standalone loader simulating Moodle AMD filter execution -->
+    <script type="module">
+        import {KnnTreeSim} from '../amd/src/sims/knn_tree.js';
+        document.querySelectorAll('[data-aisim="knn-tree"]').forEach(el => {
+            new KnnTreeSim(el, {
+                lang: 'sr',
+                model: 'knn',
+                dataset: el.getAttribute('data-dataset') || 'moons',
+                k: 3,
+                depth: 3
+            });
+        });
+    </script>
+</body>
+</html>

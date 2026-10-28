@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI for VET: Interaktivne simulacije (Moodle Demo portal)</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 2.5rem 1rem;
+        }
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+        .hero {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+        }
+        .hero h1 {
+            margin: 0 0 0.75rem 0;
+            font-size: 2.2rem;
+            color: #0f172a;
+        }
+        .hero p {
+            color: #475569;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0 0 1.25rem 0;
+        }
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+            gap: 1.5rem;
+        }
+        .lesson-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            border-color: #cbd5e1;
+        }
+        .lesson-meta {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .lesson-card h2 {
+            font-size: 1.35rem;
+            margin: 0 0 0.5rem 0;
+            color: #0f172a;
+        }
+        .lesson-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tag {
+            font-family: monospace;
+            font-size: 0.78rem;
+            background: #f1f5f9;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #334155;
+        }
+        .btn-open {
+            text-decoration: none;
+            background: #2563eb;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.15s;
+        }
+        .btn-open:hover { background: #1d4ed8; }
+        .moodle-callout {
+            margin-top: 2rem;
+            background: #0f172a;
+            color: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+        }
+        .moodle-callout h3 {
+            margin: 0 0 0.5rem 0;
+            color: #38bdf8;
+        }
+        .moodle-callout code {
+            color: #fde047;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <span style="background:#2563eb; color:#fff; font-size:0.8rem; font-weight:700; padding:3px 10px; border-radius:6px;">
+                AI FOR VET • DEMO PORTAL
+            </span>
+            <h1 style="margin-top:0.75rem;">🤖 Interaktivne AI lekcije i simulacije</h1>
+            <p>
+                Ovaj portal sadrži kompletne demo stranice razvijene u sklopu projekta <strong>AI for VET</strong>
+                (prema kurikulumu <em>IO1: Fundamentals of AI</em>). Svaka lekcija sadrži teorijski uvod,
+                vođene istraživačke zadatke i interaktivni simulator iz paketa <code>filter_aisim</code>.
+            </p>
+            <div style="display:flex; gap:10px;">
+                <a href="../test.html" class="btn-open" style="background:#0f172a;">🛠 Otvori Testno igralište (Svi simulatori)</a>
+            </div>
+        </div>
+
+        <div class="lessons-grid">
+            <!-- Lesson 1 -->
+            <div class="lesson-card">
+                <div>
+                    <div class="lesson-meta" style="color:#2563eb;">Lekcija 1 • Poglavlje 3.2</div>
+                    <h2>Optimizacija: Gradijentni spust</h2>
+                    <p>
+                        Istražite kako neuronske mreže i modeli mašinskog učenja pronalaze minimum greške.
+                        Utičite na stopu učenja (&alpha;), posmatrajte divergenciju i lokalne minimume.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="tag">&lt;div data-aisim="gradient-descent"&gt;</span>
+                    <a href="01_gradijentni_spust.html" class="btn-open">Otvori lekciju →</a>
+                </div>
+            </div>
+
+            <!-- Lesson 2 -->
+            <div class="lesson-card">
+                <div>
+                    <div class="lesson-meta" style="color:#7c3aed;">Lekcija 2 • Poglavlje 3.5</div>
+                    <h2>Matrica konfuzije i prag odlučivanja</h2>
+                    <p>
+                        Zašto tačnost nije dovoljna? Ispitajte TP, FP, TN, FN u realnim VET scenarijima
+                        (industrijski škart i medicina) i posmatrajte kretanje tačke po ROC krivoj.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="tag">&lt;div data-aisim="confusion-matrix"&gt;</span>
+                    <a href="02_matrica_konfuzije.html" class="btn-open">Otvori lekciju →</a>
+                </div>
+            </div>
+
+            <!-- Lesson 3 -->
+            <div class="lesson-card">
+                <div>
+                    <div class="lesson-meta" style="color:#0284c7;">Lekcija 3 • Poglavlja 3.3 & 3.10</div>
+                    <h2>Regresija i preprilagođavanje (Overfitting)</h2>
+                    <p>
+                        Uskladite stepen polinoma ($d=1\dots 9$) i otkrijte U-krivu greške.
+                        Naučite kako L2 regularizacija (&lambda;) sprečava model da pamti šum.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="tag">&lt;div data-aisim="regression"&gt;</span>
+                    <a href="03_polinomska_regresija.html" class="btn-open">Otvori lekciju →</a>
+                </div>
+            </div>
+
+            <!-- Lesson 4 -->
+            <div class="lesson-card">
+                <div>
+                    <div class="lesson-meta" style="color:#16a34a;">Lekcija 4 • Poglavlja 3.7 & 3.8</div>
+                    <h2>Granice odlučivanja (k-NN i Stablo)</h2>
+                    <p>
+                        Vizuelno poređenje dva fundamentalna klasifikatora.
+                        Glatke Voronoi granice na osnovu rastojanja naspram pravougaonih rezova stabla odlučivanja.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="tag">&lt;div data-aisim="knn-tree"&gt;</span>
+                    <a href="04_granice_odlucivanja.html" class="btn-open">Otvori lekciju →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="moodle-callout">
+            <h3>🏫 Kako ubaciti ove lekcije u vaš Moodle LMS?</h3>
+            <p>
+                U bilo kom Moodle kursu, kreirajte standardnu aktivnost <strong>Stranica (Page)</strong>
+                i u HTML kôd samo ubacite željeni tag, na primer:
+                <br><code>&lt;div data-aisim="gradient-descent"&gt;&lt;/div&gt;</code>
+                <br>Plugin <code>filter_aisim</code> će automatski pretvoriti taj tag u punu interaktivnu laboratoriju!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

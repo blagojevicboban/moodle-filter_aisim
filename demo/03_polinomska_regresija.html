@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lekcija 3: Regresija i preprilagođavanje | AI for VET</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.65;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+        .page-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .badge {
+            background: #0284c7;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .info-box h3 {
+            margin: 0 0 0.5rem 0;
+            color: #15803d;
+            font-size: 1rem;
+        }
+        .task-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 2rem 0 1rem;
+        }
+        .task-card h3 {
+            margin: 0 0 0.5rem;
+            color: #1d4ed8;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .nav-btn {
+            text-decoration: none;
+            padding: 8px 16px;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: #334155; }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <span class="badge">AI FOR VET • POGLAVLJA 3.3 & 3.10</span>
+        <h1>Generalizacija: Polinomska regresija i preprilagođavanje</h1>
+        <div class="subtitle">Zlatna sredina mašinskog učenja — kako izbeći da model "buba napamet" (Overfitting) ili bude previše prost (Underfitting)?</div>
+
+        <div class="info-box">
+            <h3>🎯 Ishodi učenja (Šta ćete savladati):</h3>
+            <ul>
+                <li>Uočićete suštinsku razliku između performansi na trening skupu i novim (validacionim) podacima.</li>
+                <li>Istražićete uticaj <strong>stepena polinoma ($d$)</strong> na fleksibilnost modela.</li>
+                <li>Prepoznaćete karakterističnu <strong>U-krivu greške</strong> u zavisnosti od složenosti modela.</li>
+                <li>Isprobati ulogu <strong>L2 (Ridge) regularizacije (&lambda;)</strong> u zauzdavanju prekomerne varijanse.</li>
+            </ul>
+        </div>
+
+        <h2>1. Balans između pristrasnosti i varijanse (Bias-Variance Tradeoff)</h2>
+        <p>
+            Kada model mašinskog učenja obučavamo, želimo da on nauči opšte pravilo, a ne slučajni šum iz merenja.
+            Ako je model previše jednostavan (npr. prava linija za podatke koji prate krivu), on pati od <strong>potprilagođavanja (Underfitting)</strong>.
+            S druge strane, ako model ima previše slobodnih parametara (npr. polinom 9. stepena), on će proći savršeno kroz sve trening tačke,
+            ali će na novim podacima dati katastrofalne greške — to je <strong>preprilagođavanje (Overfitting)</strong>.
+        </p>
+
+        <h2>2. Interaktivna laboratorija</h2>
+        <p>
+            Pomerajte slajder za stepen polinoma od 1 do 9. Posmatrajte plavu liniju (krivu modela),
+            kao i desni grafik koji uporedo prikazuje <strong>Train MSE</strong> (plavo) i <strong>Validation MSE</strong> (crveno).
+            Možete kliknuti na grafik i dodati svoje tačke!
+        </p>
+
+        <!-- MOODLE FILTER TARGET -->
+        <div data-aisim="regression" data-dataset="sine" data-degree="3"></div>
+
+        <div class="task-card">
+            <h3>🔬 Istraživački zadatak za učenike:</h3>
+            <ol>
+                <li><strong>Stepen d = 1:</strong> Zašto je linija ravna i kolika je greška i na trening i na validacionom skupu?</li>
+                <li><strong>Optimalan stepen:</strong> Koji stepen polinoma daje <em>minimalnu crvenu grešku (Validation MSE)</em> na skupu "Sinusni talas"?</li>
+                <li><strong>Overfitting na d = 8 ili 9:</strong> Obratite pažnju na krajeve grafika! Zašto kriva naglo beži u visinu ili dubinu iako je trening greška skoro 0?</li>
+                <li><strong>Spasavanje regularizacijom:</strong> Ostavite stepen na $d=8$, a zatim lagano povećajte regularizaciju $\lambda$ na oko $0.05 - 0.10$. Šta se dogodilo sa divljim oscilacijama?</li>
+            </ol>
+        </div>
+
+        <div class="nav-links">
+            <a href="02_matrica_konfuzije.html" class="nav-btn">← Prethodna lekcija: Matrica konfuzije</a>
+            <a href="04_granice_odlucivanja.html" class="nav-btn">Sledeća lekcija: Granice odlučivanja (k-NN i Stablo) →</a>
+        </div>
+    </div>
+
+    <!-- Standalone loader simulating Moodle AMD filter execution -->
+    <script type="module">
+        import {RegressionSim} from '../amd/src/sims/regression.js';
+        document.querySelectorAll('[data-aisim="regression"]').forEach(el => {
+            new RegressionSim(el, {
+                lang: 'sr',
+                dataset: el.getAttribute('data-dataset') || 'sine',
+                degree: el.getAttribute('data-degree') || 3,
+                lambda: el.getAttribute('data-lambda') || 0.0
+            });
+        });
+    </script>
+</body>
+</html>

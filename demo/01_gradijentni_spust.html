@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lekcija 1: Gradijentni spust | AI for VET</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.65;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+        .page-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .badge {
+            background: #2563eb;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .info-box h3 {
+            margin: 0 0 0.5rem 0;
+            color: #15803d;
+            font-size: 1rem;
+        }
+        .formula-box {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            font-family: ui-monospace, Menlo, Monaco, monospace;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 1.25rem 0;
+            border: 1px solid #cbd5e1;
+        }
+        .task-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 2rem 0 1rem;
+        }
+        .task-card h3 {
+            margin: 0 0 0.5rem;
+            color: #1d4ed8;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .nav-btn {
+            text-decoration: none;
+            padding: 8px 16px;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: #334155; }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <span class="badge">AI FOR VET • POGLAVLJE 3.2</span>
+        <h1>Optimizacija modela: Gradijentni spust</h1>
+        <div class="subtitle">Kako modeli mašinskog učenja pronalaze optimalne težine i minimizuju grešku?</div>
+
+        <div class="info-box">
+            <h3>🎯 Ishodi učenja (Šta ćete savladati):</h3>
+            <ul>
+                <li>Razumećete ulogu funkcije troška $J(w)$ kao mere greške modela.</li>
+                <li>Naučićete kako gradijent određuje smer i nagib korekcije težina.</li>
+                <li>Istražićete uticaj <strong>stope učenja (&alpha;)</strong>: premala vs. optimalna vs. prevelika stopa (divergencija).</li>
+                <li>Uočićete izazov <strong>lokalnih minimuma</strong> kod nekonveksnih problema.</li>
+            </ul>
+        </div>
+
+        <h2>1. Osnovni princip algoritma</h2>
+        <p>
+            Cilj mašinskog učenja jeste da pronađe takve parametre (težine $w$) koji daju najmanju moguću grešku (funkciju troška $J(w)$).
+            Zamislite da se nalazite na planini po gustoj magli i želite da se spustite u dolinu.
+            Najlogičnija strategija jeste da opipate tlo oko sebe i zakoračite u smeru najvećeg nagiba nadole.
+            Upravo to radi <strong>gradijentni spust (Gradient Descent)</strong>!
+        </p>
+
+        <div class="formula-box">
+            w &larr; w - &alpha; &middot; (dJ / dw)
+        </div>
+
+        <p>
+            Gde je:
+            <strong>$w$</strong> trenutna težina modela,
+            <strong>$\alpha$ (alpha)</strong> stopa učenja (veličina koraka), a
+            <strong>$dJ/dw$</strong> izvod (gradijent) koji pokazuje nagib krive.
+        </p>
+
+        <h2>2. Interaktivna laboratorija</h2>
+        <p>
+            Isprobajte algoritam u realnom vremenu. Pomerajte parametre, kliknite na krivu da postavite početnu tačku,
+            ili pokrenite kontinualno obučavanje pomoću dugmeta <em>Pokreni</em>.
+        </p>
+
+        <!-- MOODLE FILTER TARGET -->
+        <div data-aisim="gradient-descent" data-profile="convex" data-lr="0.15"></div>
+
+        <div class="task-card">
+            <h3>🔬 Istraživački zadatak za učenike:</h3>
+            <ol>
+                <li><strong>Normalna konvergencija:</strong> Ostavite profil na <em>Konveksna</em> sa $\alpha = 0.15$. Kliknite na <strong>Pokreni</strong>. Koliko epoha je potrebno modelu da stigne do minimuma ($w = 2.0$)?</li>
+                <li><strong>Premala stopa učenja:</strong> Postavite $\alpha = 0.01$. Pokrenite model. Zašto se tačka kreće izuzetno sporo?</li>
+                <li><strong>Divergencija:</strong> Povećajte $\alpha$ na preko $0.85$. Šta se dešava sa koracima? Zbog čega tačka "preskače" minimum i počinje da beži u beskonačnost?</li>
+                <li><strong>Zamka lokalnog minimuma:</strong> Izaberite profil <em>Nekonveksna</em>. Postavite početnu tačku na $w_0 = -2.2$. Da li model završava u lokalnom ili globalnom minimumu?</li>
+            </ol>
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn">← Sadržaj lekcija</a>
+            <a href="02_matrica_konfuzije.html" class="nav-btn">Sledeća lekcija: Matrica konfuzije →</a>
+        </div>
+    </div>
+
+    <!-- Standalone loader simulating Moodle AMD filter execution -->
+    <script type="module">
+        import {GradientDescentSim} from '../amd/src/sims/gradient_descent.js';
+        document.querySelectorAll('[data-aisim="gradient-descent"]').forEach(el => {
+            new GradientDescentSim(el, {
+                lang: 'sr',
+                profile: el.getAttribute('data-profile') || 'convex',
+                lr: el.getAttribute('data-lr') || 0.15
+            });
+        });
+    </script>
+</body>
+</html>

@@ -24,78 +24,66 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['filtername'] = 'AI Simulations Viewer';
-$string['pluginname'] = 'AI Simulations Viewer';
-$string['privacy:metadata'] = 'The AI Simulations Viewer filter does not store any personal data.';
-
-// General simulation strings.
-$string['run'] = 'Run';
-$string['pause'] = 'Pause';
-$string['step'] = 'Step';
-$string['reset'] = 'Reset';
-$string['speed'] = 'Speed';
-$string['status_ready'] = 'Ready. Click Run or Step.';
-$string['status_running'] = 'Training in progress...';
-
-// Gradient descent strings.
-$string['gradient_descent'] = 'Gradient Descent';
-$string['learning_rate'] = 'Learning Rate (α)';
-$string['initial_weight'] = 'Initial weight (w₀)';
-$string['current_weight'] = 'Weight (w)';
+$string['accuracy'] = 'Accuracy';
+$string['actual_neg'] = 'Actual Negative (0)';
+$string['actual_pos'] = 'Actual Positive (1)';
+$string['centroids'] = 'Centroids';
+$string['clusters_k'] = 'Clusters (K)';
+$string['confusion_matrix'] = 'Confusion Matrix & Classification Threshold';
+$string['cost_history'] = 'Cost History J(w)';
 $string['current_cost'] = 'Cost J(w)';
 $string['current_gradient'] = 'Gradient dJ/dw';
+$string['current_weight'] = 'Weight (w)';
+$string['dataset_blobs'] = 'Two Blobs';
+$string['dataset_circles'] = 'Concentric Circles';
+$string['dataset_moons'] = 'Two Moons';
+$string['decision_tree'] = 'Decision Tree';
+$string['degree'] = 'Polynomial Degree (d)';
+$string['elbow_method'] = 'Elbow Method';
 $string['epoch'] = 'Epoch';
-$string['cost_history'] = 'Cost History J(w)';
+$string['f1_score'] = 'F1-Score';
+$string['filtername'] = 'AI Simulations Viewer';
+$string['fn'] = 'False Negative (FN - Type II Error)';
+$string['fp'] = 'False Positive (FP - Type I Error)';
+$string['good_fit'] = 'Good Fit (Optimal Generalization)';
+$string['gradient_descent'] = 'Gradient Descent';
+$string['inertia'] = 'Inertia (WCSS)';
+$string['initial_weight'] = 'Initial weight (w₀)';
+$string['k_neighbors'] = 'Number of Neighbors (k)';
+$string['kmeans'] = 'K-Means Clustering';
+$string['knn'] = 'k-Nearest Neighbors (k-NN)';
+$string['knn_tree'] = 'Decision Boundaries (k-NN & Decision Tree)';
+$string['learning_rate'] = 'Learning Rate (α)';
+$string['overfitting'] = 'Overfitting (High Variance)';
+$string['pause'] = 'Pause';
+$string['pluginname'] = 'AI Simulations Viewer';
+$string['precision'] = 'Precision';
+$string['pred_neg'] = 'Predicted (0)';
+$string['pred_pos'] = 'Predicted (1)';
+$string['privacy:metadata'] = 'The AI Simulations Viewer filter does not store any personal data.';
 $string['profile_convex'] = 'Convex (Single Minimum)';
 $string['profile_nonconvex'] = 'Non-convex (Local Minima)';
 $string['profile_plateau'] = 'Saddle / Plateau';
+$string['recall'] = 'Recall (Sensitivity)';
+$string['regression'] = 'Polynomial Regression & Overfitting';
+$string['regularization'] = 'Regularization (λ)';
+$string['reset'] = 'Reset';
+$string['roc_curve'] = 'ROC Curve (AUC)';
+$string['run'] = 'Run';
+$string['scenario_medical'] = 'Medical Diagnostics (Screening)';
+$string['scenario_quality'] = 'Industrial Quality Control (Defects)';
+$string['scenario_spam'] = 'Spam / Security Filter';
+$string['speed'] = 'Speed';
 $string['status_converged'] = 'Converged to minimum!';
 $string['status_diverging'] = 'Warning: Diverging! Learning rate is too high.';
 $string['status_oscillating'] = 'Oscillating around minimum.';
-
-// Confusion matrix strings.
-$string['confusion_matrix'] = 'Confusion Matrix & Classification Threshold';
+$string['status_ready'] = 'Ready. Click Run or Step.';
+$string['status_running'] = 'Training in progress...';
+$string['step'] = 'Step';
 $string['threshold'] = 'Decision Threshold (θ)';
-$string['actual_pos'] = 'Actual Positive (1)';
-$string['actual_neg'] = 'Actual Negative (0)';
-$string['pred_pos'] = 'Predicted (1)';
-$string['pred_neg'] = 'Predicted (0)';
-$string['tp'] = 'True Positive (TP)';
 $string['tn'] = 'True Negative (TN)';
-$string['fp'] = 'False Positive (FP - Type I Error)';
-$string['fn'] = 'False Negative (FN - Type II Error)';
-$string['accuracy'] = 'Accuracy';
-$string['precision'] = 'Precision';
-$string['recall'] = 'Recall (Sensitivity)';
-$string['f1_score'] = 'F1-Score';
-$string['roc_curve'] = 'ROC Curve (AUC)';
-$string['scenario_quality'] = 'Industrial Quality Control (Defects)';
-$string['scenario_medical'] = 'Medical Diagnostics (Screening)';
-$string['scenario_spam'] = 'Spam / Security Filter';
-
-// Regression & Overfitting strings.
-$string['regression'] = 'Polynomial Regression & Overfitting';
-$string['degree'] = 'Polynomial Degree (d)';
-$string['regularization'] = 'Regularization (λ)';
+$string['tp'] = 'True Positive (TP)';
 $string['train_mse'] = 'Training MSE';
-$string['val_mse'] = 'Validation MSE';
-$string['underfitting'] = 'Underfitting (High Bias)';
-$string['overfitting'] = 'Overfitting (High Variance)';
-$string['good_fit'] = 'Good Fit (Optimal Generalization)';
-
-// k-NN & Decision Tree strings.
-$string['knn_tree'] = 'Decision Boundaries (k-NN & Decision Tree)';
-$string['knn'] = 'k-Nearest Neighbors (k-NN)';
-$string['decision_tree'] = 'Decision Tree';
-$string['k_neighbors'] = 'Number of Neighbors (k)';
 $string['tree_depth'] = 'Maximum Tree Depth';
-$string['dataset_moons'] = 'Two Moons';
-$string['dataset_circles'] = 'Concentric Circles';
-$string['dataset_blobs'] = 'Two Blobs';
-
-// K-Means clustering strings.
-$string['kmeans'] = 'K-Means Clustering';
-$string['clusters_k'] = 'Clusters (K)';
-$string['inertia'] = 'Inertia (WCSS)';
-$string['elbow_method'] = 'Elbow Method';
-$string['centroids'] = 'Centroids';
+$string['underfitting'] = 'Underfitting (High Bias)';
+$string['val_mse'] = 'Validation MSE';

@@ -24,78 +24,66 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['filtername'] = 'Pregledač AI simulacija';
-$string['pluginname'] = 'Pregledač AI simulacija';
-$string['privacy:metadata'] = 'Filter za pregled AI simulacija ne čuva nikakve lične podatke.';
-
-// Opšte komande.
-$string['run'] = 'Pokreni';
-$string['pause'] = 'Pauza';
-$string['step'] = 'Korak';
-$string['reset'] = 'Resetuj';
-$string['speed'] = 'Brzina';
-$string['status_ready'] = 'Spremno. Kliknite na Pokreni ili Korak.';
-$string['status_running'] = 'Obučavanje u toku...';
-
-// Gradijentni spust.
-$string['gradient_descent'] = 'Gradijentni spust';
-$string['learning_rate'] = 'Stopa učenja (α)';
-$string['initial_weight'] = 'Početna težina (w₀)';
-$string['current_weight'] = 'Težina (w)';
+$string['accuracy'] = 'Tačnost (Accuracy)';
+$string['actual_neg'] = 'Stvarno negativno (0)';
+$string['actual_pos'] = 'Stvarno pozitivno (1)';
+$string['centroids'] = 'Centroidi';
+$string['clusters_k'] = 'Broj klastera (K)';
+$string['confusion_matrix'] = 'Matrica konfuzije i prag odlučivanja';
+$string['cost_history'] = 'Istorija troška J(w)';
 $string['current_cost'] = 'Trošak J(w)';
 $string['current_gradient'] = 'Gradijent dJ/dw';
+$string['current_weight'] = 'Težina (w)';
+$string['dataset_blobs'] = 'Dva klastera';
+$string['dataset_circles'] = 'Koncentrični krugovi';
+$string['dataset_moons'] = 'Dva polumeseca';
+$string['decision_tree'] = 'Stablo odlučivanja';
+$string['degree'] = 'Stepen polinoma (d)';
+$string['elbow_method'] = 'Metoda lakta';
 $string['epoch'] = 'Epoha';
-$string['cost_history'] = 'Istorija troška J(w)';
+$string['f1_score'] = 'F1-skor';
+$string['filtername'] = 'Pregledač AI simulacija';
+$string['fn'] = 'Lažno negativno (FN - Greška tipa II)';
+$string['fp'] = 'Lažno pozitivno (FP - Greška tipa I)';
+$string['good_fit'] = 'Optimalno uklapanje (Dobra generalizacija)';
+$string['gradient_descent'] = 'Gradijentni spust';
+$string['inertia'] = 'Inercija (WCSS)';
+$string['initial_weight'] = 'Početna težina (w₀)';
+$string['k_neighbors'] = 'Broj suseda (k)';
+$string['kmeans'] = 'K-sredine (K-Means klasterovanje)';
+$string['knn'] = 'k-Najbližih suseda (k-NN)';
+$string['knn_tree'] = 'Granice odlučivanja (k-NN i Stablo)';
+$string['learning_rate'] = 'Stopa učenja (α)';
+$string['overfitting'] = 'Preprilagođavanje (Overfitting)';
+$string['pause'] = 'Pauza';
+$string['pluginname'] = 'Pregledač AI simulacija';
+$string['precision'] = 'Preciznost (Precision)';
+$string['pred_neg'] = 'Predviđeno (0)';
+$string['pred_pos'] = 'Predviđeno (1)';
+$string['privacy:metadata'] = 'Filter za pregled AI simulacija ne čuva nikakve lične podatke.';
 $string['profile_convex'] = 'Konveksna (jedan minimum)';
 $string['profile_nonconvex'] = 'Nekonveksna (lokalni minimumi)';
 $string['profile_plateau'] = 'Plato / sedlasta tačka';
+$string['recall'] = 'Opoziv (Recall / Osetljivost)';
+$string['regression'] = 'Polinomska regresija i preprilagođavanje';
+$string['regularization'] = 'Regularizacija (λ)';
+$string['reset'] = 'Resetuj';
+$string['roc_curve'] = 'ROC kriva (AUC)';
+$string['run'] = 'Pokreni';
+$string['scenario_medical'] = 'Medicinska dijagnostika (Skrining)';
+$string['scenario_quality'] = 'Industrijska kontrola kvaliteta (Škart)';
+$string['scenario_spam'] = 'Klasifikacija neželjene pošte (Spam)';
+$string['speed'] = 'Brzina';
 $string['status_converged'] = 'Konvergiralo ka minimumu!';
 $string['status_diverging'] = 'Upozorenje: Divergencija! Stopa učenja je prevelika.';
 $string['status_oscillating'] = 'Osciluje oko minimuma.';
-
-// Matrica konfuzije.
-$string['confusion_matrix'] = 'Matrica konfuzije i prag odlučivanja';
+$string['status_ready'] = 'Spremno. Kliknite na Pokreni ili Korak.';
+$string['status_running'] = 'Obučavanje u toku...';
+$string['step'] = 'Korak';
 $string['threshold'] = 'Prag odlučivanja (θ)';
-$string['actual_pos'] = 'Stvarno pozitivno (1)';
-$string['actual_neg'] = 'Stvarno negativno (0)';
-$string['pred_pos'] = 'Predviđeno (1)';
-$string['pred_neg'] = 'Predviđeno (0)';
-$string['tp'] = 'Pravo pozitivno (TP)';
 $string['tn'] = 'Pravo negativno (TN)';
-$string['fp'] = 'Lažno pozitivno (FP - Greška tipa I)';
-$string['fn'] = 'Lažno negativno (FN - Greška tipa II)';
-$string['accuracy'] = 'Tačnost (Accuracy)';
-$string['precision'] = 'Preciznost (Precision)';
-$string['recall'] = 'Opoziv (Recall / Osetljivost)';
-$string['f1_score'] = 'F1-skor';
-$string['roc_curve'] = 'ROC kriva (AUC)';
-$string['scenario_quality'] = 'Industrijska kontrola kvaliteta (Škart)';
-$string['scenario_medical'] = 'Medicinska dijagnostika (Skrining)';
-$string['scenario_spam'] = 'Klasifikacija neželjene pošte (Spam)';
-
-// Regresija i generalizacija.
-$string['regression'] = 'Polinomska regresija i preprilagođavanje';
-$string['degree'] = 'Stepen polinoma (d)';
-$string['regularization'] = 'Regularizacija (λ)';
+$string['tp'] = 'Pravo pozitivno (TP)';
 $string['train_mse'] = 'Trening MSE greška';
-$string['val_mse'] = 'Validacioni MSE';
-$string['underfitting'] = 'Potprilagođavanje (Underfitting)';
-$string['overfitting'] = 'Preprilagođavanje (Overfitting)';
-$string['good_fit'] = 'Optimalno uklapanje (Dobra generalizacija)';
-
-// k-NN i Stablo odlučivanja.
-$string['knn_tree'] = 'Granice odlučivanja (k-NN i Stablo)';
-$string['knn'] = 'k-Najbližih suseda (k-NN)';
-$string['decision_tree'] = 'Stablo odlučivanja';
-$string['k_neighbors'] = 'Broj suseda (k)';
 $string['tree_depth'] = 'Maksimalna dubina stabla';
-$string['dataset_moons'] = 'Dva polumeseca';
-$string['dataset_circles'] = 'Koncentrični krugovi';
-$string['dataset_blobs'] = 'Dva klastera';
-
-// K-sredine (K-Means).
-$string['kmeans'] = 'K-sredine (K-Means klasterovanje)';
-$string['clusters_k'] = 'Broj klastera (K)';
-$string['inertia'] = 'Inercija (WCSS)';
-$string['elbow_method'] = 'Metoda lakta';
-$string['centroids'] = 'Centroidi';
+$string['underfitting'] = 'Potprilagođavanje (Underfitting)';
+$string['val_mse'] = 'Validacioni MSE';

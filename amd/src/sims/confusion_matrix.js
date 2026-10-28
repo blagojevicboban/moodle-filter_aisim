@@ -17,59 +17,65 @@ export class ConfusionMatrixSim {
         this.isSr = this.lang.startsWith('sr');
 
         this.t = {
-            title: this.isSr ? 'Matrica konfuzije i prag odlučivanja' : 'Confusion Matrix & Classification Threshold',
-            badge: this.isSr ? 'Poglavlje 3.5' : 'Chapter 3.5',
-            scenario: this.isSr ? 'Scenario iz struke:' : 'VET Scenario:',
-            thresholdLabel: this.isSr ? 'Prag odlučivanja (θ):' : 'Decision Threshold (θ):',
-            probDistTitle: this.isSr ? 'Distribucija verovatnoća modela P(y=1|x)' : 'Model Probability Distribution P(y=1|x)',
-            matrixTitle: this.isSr ? 'Matrica konfuzije (2 × 2)' : 'Confusion Matrix (2 × 2)',
-            metricsTitle: this.isSr ? 'Metrike performansi' : 'Performance Metrics',
-            rocTitle: this.isSr ? 'ROC kriva (AUC)' : 'ROC Curve (AUC)',
-            actualPos: this.isSr ? 'Stvarno POZITIVNO (1)' : 'Actual POSITIVE (1)',
-            actualNeg: this.isSr ? 'Stvarno NEGATIVNO (0)' : 'Actual NEGATIVE (0)',
-            predPos: this.isSr ? 'Predviđeno (1)' : 'Predicted (1)',
-            predNeg: this.isSr ? 'Predviđeno (0)' : 'Predicted (0)',
-            tp: this.isSr ? 'TP (Pravo poz.)' : 'TP (True Pos.)',
-            fn: this.isSr ? 'FN (Lažno neg.)' : 'FN (False Neg.)',
-            fp: this.isSr ? 'FP (Lažno poz.)' : 'FP (False Pos.)',
-            tn: this.isSr ? 'TN (Pravo neg.)' : 'TN (True Neg.)',
-            accuracy: this.isSr ? 'Tačnost (Accuracy):' : 'Accuracy:',
-            precision: this.isSr ? 'Preciznost (Precision):' : 'Precision:',
-            recall: this.isSr ? 'Opoziv (Recall / Osetljivost):' : 'Recall (Sensitivity):',
-            f1: this.isSr ? 'F1-skor:' : 'F1-Score:',
+            title: this.tr('Matrica konfuzije i prag odlučivanja', 'Confusion Matrix & Classification Threshold'),
+            badge: this.tr('Poglavlje 3.5', 'Chapter 3.5'),
+            scenario: this.tr('Scenario iz struke:', 'VET Scenario:'),
+            thresholdLabel: this.tr('Prag odlučivanja (θ):', 'Decision Threshold (θ):'),
+            probDistTitle: this.tr('Distribucija verovatnoća modela P(y=1|x)', 'Model Probability Distribution P(y=1|x)'),
+            matrixTitle: this.tr('Matrica konfuzije (2 × 2)', 'Confusion Matrix (2 × 2)'),
+            metricsTitle: this.tr('Metrike performansi', 'Performance Metrics'),
+            rocTitle: this.tr('ROC kriva (AUC)', 'ROC Curve (AUC)'),
+            actualPos: this.tr('Stvarno POZITIVNO (1)', 'Actual POSITIVE (1)'),
+            actualNeg: this.tr('Stvarno NEGATIVNO (0)', 'Actual NEGATIVE (0)'),
+            predPos: this.tr('Predviđeno (1)', 'Predicted (1)'),
+            predNeg: this.tr('Predviđeno (0)', 'Predicted (0)'),
+            tp: this.tr('TP (Pravo poz.)', 'TP (True Pos.)'),
+            fn: this.tr('FN (Lažno neg.)', 'FN (False Neg.)'),
+            fp: this.tr('FP (Lažno poz.)', 'FP (False Pos.)'),
+            tn: this.tr('TN (Pravo neg.)', 'TN (True Neg.)'),
+            accuracy: this.tr('Tačnost (Accuracy):', 'Accuracy:'),
+            precision: this.tr('Preciznost (Precision):', 'Precision:'),
+            recall: this.tr('Opoziv (Recall / Osetljivost):', 'Recall (Sensitivity):'),
+            f1: this.tr('F1-skor:', 'F1-Score:'),
             scenarios: {
                 quality: {
-                    name: this.isSr ? '🏭 Industrijska kontrola kvaliteta' : '🏭 Industrial Quality Control',
-                    posLabel: this.isSr ? 'Defektan deo' : 'Defective Part',
-                    negLabel: this.isSr ? 'Ispravan deo' : 'Good Part',
-                    hintLow: this.isSr
-                        ? 'Nizak prag: Skoro svi defekti su uhvaćeni (visok Recall), ali ima više lažnih uzbuna (veći FP).'
-                        : 'Low threshold: High recall on defects, but more false alarms on good parts.',
-                    hintHigh: this.isSr
-                        ? 'Visok prag: Visok Precision, ali opasni neispravni delovi prolaze do kupaca (opasan FN)!'
-                        : 'High threshold: High precision, but dangerous defective parts leak to customers (FN)!'
+                    name: this.tr('🏭 Industrijska kontrola kvaliteta', '🏭 Industrial Quality Control'),
+                    posLabel: this.tr('Defektan deo', 'Defective Part'),
+                    negLabel: this.tr('Ispravan deo', 'Good Part'),
+                    hintLow: this.tr(
+                        'Nizak prag: Skoro svi defekti su uhvaćeni (visok Recall), ali ima više lažnih uzbuna (veći FP).',
+                        'Low threshold: High recall on defects, but more false alarms on good parts.'
+                    ),
+                    hintHigh: this.tr(
+                        'Visok prag: Visok Precision, ali opasni neispravni delovi prolaze do kupaca (opasan FN)!',
+                        'High threshold: High precision, but dangerous defective parts leak to customers (FN)!'
+                    )
                 },
                 medical: {
-                    name: this.isSr ? '🏥 Medicinska dijagnostika (Skrining)' : '🏥 Medical Diagnostics (Screening)',
-                    posLabel: this.isSr ? 'Pozitivan nalaz' : 'Positive Disease',
-                    negLabel: this.isSr ? 'Zdrav' : 'Healthy',
-                    hintLow: this.isSr
-                        ? 'U medicini se bira niži prag: bolje poslati zdravog na test (FP) nego propustiti bolesnog (FN)!'
-                        : 'In medical screening, lower threshold is preferred to minimize deadly False Negatives (FN).',
-                    hintHigh: this.isSr
-                        ? 'Previsok prag: Propuštaju se bolesni pacijenti (nedopustivo visok FN)!'
-                        : 'Too high threshold: Sick patients are missed (unacceptable False Negatives)!'
+                    name: this.tr('🏥 Medicinska dijagnostika (Skrining)', '🏥 Medical Diagnostics (Screening)'),
+                    posLabel: this.tr('Pozitivan nalaz', 'Positive Disease'),
+                    negLabel: this.tr('Zdrav', 'Healthy'),
+                    hintLow: this.tr(
+                        'U medicini se bira niži prag: bolje poslati zdravog na test (FP) nego propustiti bolesnog (FN)!',
+                        'In medical screening, lower threshold is preferred to minimize deadly False Negatives (FN).'
+                    ),
+                    hintHigh: this.tr(
+                        'Previsok prag: Propuštaju se bolesni pacijenti (nedopustivo visok FN)!',
+                        'Too high threshold: Sick patients are missed (unacceptable False Negatives)!'
+                    )
                 },
                 spam: {
-                    name: this.isSr ? '✉️ Klasifikacija neželjene pošte (Spam)' : '✉️ Spam / Security Filter',
-                    posLabel: this.isSr ? 'Spam poruka' : 'Spam Message',
-                    negLabel: this.isSr ? 'Legitimna pošta' : 'Legitimate Email',
-                    hintLow: this.isSr
-                        ? 'Previše agresivan filter: Važne poruke od klijenata završavaju u spam folderu (nizak Precision).'
-                        : 'Too aggressive: Important legitimate emails end up in spam.',
-                    hintHigh: this.isSr
-                        ? 'Konzervativan filter: U inbox stiže malo spama, ali nijedna bitna poruka nije greškom blokirana.'
-                        : 'Conservative filter: Very few false positives, legitimate emails are safe.'
+                    name: this.tr('✉️ Klasifikacija neželjene pošte (Spam)', '✉️ Spam / Security Filter'),
+                    posLabel: this.tr('Spam poruka', 'Spam Message'),
+                    negLabel: this.tr('Legitimna pošta', 'Legitimate Email'),
+                    hintLow: this.tr(
+                        'Previše agresivan filter: Važne poruke od klijenata završavaju u spam folderu (nizak Precision).',
+                        'Too aggressive: Important legitimate emails end up in spam.'
+                    ),
+                    hintHigh: this.tr(
+                        'Konzervativan filter: U inbox stiže malo spama, ali nijedna bitna poruka nije greškom blokirana.',
+                        'Conservative filter: Very few false positives, legitimate emails are safe.'
+                    )
                 }
             }
         };
@@ -85,6 +91,17 @@ export class ConfusionMatrixSim {
         this.renderLayout();
         this.bindEvents();
         this.update();
+    }
+
+    /**
+     * Pick the Serbian or English variant of a UI text.
+     *
+     * @param {String} sr Serbian text
+     * @param {String} en English text
+     * @returns {String}
+     */
+    tr(sr, en) {
+        return this.isSr ? sr : en;
     }
 
     initDataset() {
@@ -189,7 +206,7 @@ export class ConfusionMatrixSim {
                                 <span class="aisim-th-pill" id="aisim-cm-th-val">${this.threshold.toFixed(2)}</span>
                             </label>
                             <span class="aisim-th-sub">
-                                ${this.isSr ? 'Prevucite slajder ili kliknite na grafik:' : 'Drag slider or click curve:'}
+                                ${this.tr('Prevucite slajder ili kliknite na grafik:', 'Drag slider or click curve:')}
                             </span>
                         </div>
                         <input type="range" class="aisim-slider aisim-slider-large" id="aisim-cm-th"
@@ -457,9 +474,10 @@ export class ConfusionMatrixSim {
         } else {
             const precVal = Math.round((m.tp / (m.tp + m.fp || 1)) * 100);
             const recVal = Math.round((m.tp / (m.tp + m.fn || 1)) * 100);
-            adviceBox.textContent = this.isSr
-                ? `Standardni balans (θ ≈ 0.50): Ravnoteža preciznosti (${precVal}%) i opoziva (${recVal}%).`
-                : `Balanced threshold (θ ≈ 0.50): Balanced precision (${precVal}%) and recall (${recVal}%).`;
+            adviceBox.textContent = this.tr(
+                `Standardni balans (θ ≈ 0.50): Ravnoteža preciznosti (${precVal}%) i opoziva (${recVal}%).`,
+                `Balanced threshold (θ ≈ 0.50): Balanced precision (${precVal}%) and recall (${recVal}%).`
+            );
         }
     }
 

@@ -18,32 +18,34 @@ export class GradientDescentSim {
 
         // Translations dictionary.
         this.t = {
-            title: this.isSr ? 'Gradijentni spust (Gradient Descent)' : 'Gradient Descent Lab',
-            badge: this.isSr ? 'Poglavlje 3.2' : 'Chapter 3.2',
-            run: this.isSr ? '▶ Pokreni' : '▶ Run',
-            pause: this.isSr ? '⏸ Pauza' : '⏸ Pause',
-            step: this.isSr ? '⏭ Korak' : '⏭ Step',
-            reset: this.isSr ? '↺ Reset' : '↺ Reset',
-            lr: this.isSr ? 'Stopa učenja (α)' : 'Learning Rate (α)',
-            w0: this.isSr ? 'Početna težina (w₀)' : 'Initial weight (w₀)',
-            func: this.isSr ? 'Funkcija troška J(w)' : 'Cost Function J(w)',
-            convex: this.isSr ? 'Konveksna (1 globalni minimum)' : 'Convex (Single Minimum)',
-            nonconvex: this.isSr ? 'Nekonveksna (lokalni minimumi)' : 'Non-convex (Local Minima)',
-            plateau: this.isSr ? 'Plato / kompleksna' : 'Plateau / Complex',
-            epoch: this.isSr ? 'Epoha:' : 'Epoch:',
-            wVal: this.isSr ? 'Težina (w):' : 'Weight (w):',
-            costVal: this.isSr ? 'Trošak J(w):' : 'Cost J(w):',
-            gradVal: this.isSr ? 'Gradijent dJ/dw:' : 'Gradient dJ/dw:',
-            costHist: this.isSr ? 'Kriva učenja: J(w) po epohama' : 'Learning Curve: J(w) vs Epochs',
-            statusReady: this.isSr
-                ? 'Spremno. Kliknite na "Pokreni" ili kliknite na grafik za w₀.'
-                : 'Ready. Click Run, Step, or click curve to set w₀.',
-            statusRunning: this.isSr ? 'Obučavanje u toku...' : 'Optimizing...',
-            statusConverged: this.isSr ? '✓ Konvergiralo ka minimumu (gradijent ≈ 0)!' : '✓ Converged to minimum (gradient ≈ 0)!',
-            statusDiverging: this.isSr
-                ? '⚠ Upozorenje: Divergencija! Stopa učenja je prevelika.'
-                : '⚠ Warning: Divergence! Learning rate too high.',
-            statusOscillating: this.isSr ? '⚠ Osciluje oko minimuma.' : '⚠ Oscillating around minimum.'
+            title: this.tr('Gradijentni spust (Gradient Descent)', 'Gradient Descent Lab'),
+            badge: this.tr('Poglavlje 3.2', 'Chapter 3.2'),
+            run: this.tr('▶ Pokreni', '▶ Run'),
+            pause: this.tr('⏸ Pauza', '⏸ Pause'),
+            step: this.tr('⏭ Korak', '⏭ Step'),
+            reset: this.tr('↺ Reset', '↺ Reset'),
+            lr: this.tr('Stopa učenja (α)', 'Learning Rate (α)'),
+            w0: this.tr('Početna težina (w₀)', 'Initial weight (w₀)'),
+            func: this.tr('Funkcija troška J(w)', 'Cost Function J(w)'),
+            convex: this.tr('Konveksna (1 globalni minimum)', 'Convex (Single Minimum)'),
+            nonconvex: this.tr('Nekonveksna (lokalni minimumi)', 'Non-convex (Local Minima)'),
+            plateau: this.tr('Plato / kompleksna', 'Plateau / Complex'),
+            epoch: this.tr('Epoha:', 'Epoch:'),
+            wVal: this.tr('Težina (w):', 'Weight (w):'),
+            costVal: this.tr('Trošak J(w):', 'Cost J(w):'),
+            gradVal: this.tr('Gradijent dJ/dw:', 'Gradient dJ/dw:'),
+            costHist: this.tr('Kriva učenja: J(w) po epohama', 'Learning Curve: J(w) vs Epochs'),
+            statusReady: this.tr(
+                'Spremno. Kliknite na "Pokreni" ili kliknite na grafik za w₀.',
+                'Ready. Click Run, Step, or click curve to set w₀.'
+            ),
+            statusRunning: this.tr('Obučavanje u toku...', 'Optimizing...'),
+            statusConverged: this.tr('✓ Konvergiralo ka minimumu (gradijent ≈ 0)!', '✓ Converged to minimum (gradient ≈ 0)!'),
+            statusDiverging: this.tr(
+                '⚠ Upozorenje: Divergencija! Stopa učenja je prevelika.',
+                '⚠ Warning: Divergence! Learning rate too high.'
+            ),
+            statusOscillating: this.tr('⚠ Osciluje oko minimuma.', '⚠ Oscillating around minimum.')
         };
 
         // Mathematical function profiles.
@@ -102,6 +104,17 @@ export class GradientDescentSim {
         this.renderLayout();
         this.bindEvents();
         this.reset();
+    }
+
+    /**
+     * Pick the Serbian or English variant of a UI text.
+     *
+     * @param {String} sr Serbian text
+     * @param {String} en English text
+     * @returns {String}
+     */
+    tr(sr, en) {
+        return this.isSr ? sr : en;
     }
 
     renderLayout() {
@@ -547,7 +560,7 @@ export class GradientDescentSim {
         if (this.history.length < 2) {
             ctx.fillStyle = '#94a3b8';
             ctx.font = '11px sans-serif';
-            ctx.fillText(this.isSr ? 'Čeka na pokretanje...' : 'Awaiting training...', 15, h / 2);
+            ctx.fillText(this.tr('Čeka na pokretanje...', 'Awaiting training...'), 15, h / 2);
             return;
         }
 

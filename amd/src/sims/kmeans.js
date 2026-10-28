@@ -6,6 +6,26 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Find the center closest to a point (squared Euclidean distance).
+ *
+ * @param {Object} p Point with x and y
+ * @param {Array} centers Centers with x and y
+ * @returns {Object} {index, dist} of the closest center
+ */
+const nearestCenter = (p, centers) => {
+    let index = 0;
+    let dist = Infinity;
+    centers.forEach((c, j) => {
+        const d = Math.pow(p.x - c.x, 2) + Math.pow(p.y - c.y, 2);
+        if (d < dist) {
+            dist = d;
+            index = j;
+        }
+    });
+    return {index, dist};
+};
+
 export class KMeansSim {
     /**
      * @param {HTMLElement} container
@@ -17,37 +37,41 @@ export class KMeansSim {
         this.isSr = this.lang.startsWith('sr');
 
         this.t = {
-            title: this.isSr ? 'K-sredine (K-Means klasterovanje)' : 'K-Means Clustering Lab',
-            badge: this.isSr ? 'Poglavlje 4.5' : 'Chapter 4.5',
-            kLabel: this.isSr ? 'Broj klastera (K):' : 'Clusters (K):',
-            datasetLabel: this.isSr ? 'Skup podataka:' : 'Dataset:',
-            stepBtn: this.isSr ? '⏭ Sledeći korak' : '⏭ Next Step',
-            runBtn: this.isSr ? '▶ Pokreni' : '▶ Run',
-            pauseBtn: this.isSr ? '⏸ Pauza' : '⏸ Pause',
-            reseedBtn: this.isSr ? '🎲 Novi početni centroidi' : '🎲 Random Centroids',
-            resetBtn: this.isSr ? '↺ Reset' : '↺ Reset',
-            iteration: this.isSr ? 'Korak / Faza:' : 'Iteration / Phase:',
-            phaseAssign: this.isSr ? '1. Dodela tačaka centroidima' : '1. Assign points to centroids',
-            phaseUpdate: this.isSr ? '2. Pomeranje centroida u prosek' : '2. Move centroids to mean',
-            convergedMsg: this.isSr ? '✓ Konvergirano! Centroidi su stabilni.' : '✓ Converged! Centroids stable.',
-            inertiaLabel: this.isSr ? 'Inercija (WCSS):' : 'Inertia (WCSS):',
-            elbowTitle: this.isSr ? 'Metoda lakta (Elbow Method)' : 'Elbow Plot (WCSS vs K)',
-            addPointNotice: this.isSr
-                ? 'Nenadgledano učenje: tačke nemaju labele. Kliknite na platno da dodate tačku.'
-                : 'Unsupervised: points have no labels. Click canvas to add custom points.',
-            adviceLowK: this.isSr
-                ? 'Premalo K: Prirodne grupe su spojene u jedan preveliki klaster.'
-                : 'K is too small: Natural groups are merged together.',
-            adviceElbow: this.isSr
-                ? 'Optimalno K: Na "prelomu lakta" inercija naglo usporava pad.'
-                : 'Optimal K: The "elbow" marks the point of diminishing returns.',
-            adviceHighK: this.isSr
-                ? 'Preveliko K: Prirodne celine se veštački seckaju na sitne klastere.'
-                : 'K is too large: Natural clusters are fragmented artificially.',
+            title: this.tr('K-sredine (K-Means klasterovanje)', 'K-Means Clustering Lab'),
+            badge: this.tr('Poglavlje 4.5', 'Chapter 4.5'),
+            kLabel: this.tr('Broj klastera (K):', 'Clusters (K):'),
+            datasetLabel: this.tr('Skup podataka:', 'Dataset:'),
+            stepBtn: this.tr('⏭ Sledeći korak', '⏭ Next Step'),
+            runBtn: this.tr('▶ Pokreni', '▶ Run'),
+            pauseBtn: this.tr('⏸ Pauza', '⏸ Pause'),
+            reseedBtn: this.tr('🎲 Novi početni centroidi', '🎲 Random Centroids'),
+            resetBtn: this.tr('↺ Reset', '↺ Reset'),
+            iteration: this.tr('Korak / Faza:', 'Iteration / Phase:'),
+            phaseAssign: this.tr('1. Dodela tačaka centroidima', '1. Assign points to centroids'),
+            phaseUpdate: this.tr('2. Pomeranje centroida u prosek', '2. Move centroids to mean'),
+            convergedMsg: this.tr('✓ Konvergirano! Centroidi su stabilni.', '✓ Converged! Centroids stable.'),
+            inertiaLabel: this.tr('Inercija (WCSS):', 'Inertia (WCSS):'),
+            elbowTitle: this.tr('Metoda lakta (Elbow Method)', 'Elbow Plot (WCSS vs K)'),
+            addPointNotice: this.tr(
+                'Nenadgledano učenje: tačke nemaju labele. Kliknite na platno da dodate tačku.',
+                'Unsupervised: points have no labels. Click canvas to add custom points.'
+            ),
+            adviceLowK: this.tr(
+                'Premalo K: Prirodne grupe su spojene u jedan preveliki klaster.',
+                'K is too small: Natural groups are merged together.'
+            ),
+            adviceElbow: this.tr(
+                'Optimalno K: Na "prelomu lakta" inercija naglo usporava pad.',
+                'Optimal K: The "elbow" marks the point of diminishing returns.'
+            ),
+            adviceHighK: this.tr(
+                'Preveliko K: Prirodne celine se veštački seckaju na sitne klastere.',
+                'K is too large: Natural clusters are fragmented artificially.'
+            ),
             datasets: {
-                blobs3: this.isSr ? '🫧 3 prirodna klastera' : '🫧 3 Natural Clusters',
-                blobs4: this.isSr ? '🧭 4 industrijska senzorska režima' : '🧭 4 Sensor Regimes',
-                uniform: this.isSr ? '🎲 Ravnomerno raspoređene tačke' : '🎲 Uniform Random Points'
+                blobs3: this.tr('🫧 3 prirodna klastera', '🫧 3 Natural Clusters'),
+                blobs4: this.tr('🧭 4 industrijska senzorska režima', '🧭 4 Sensor Regimes'),
+                uniform: this.tr('🎲 Ravnomerno raspoređene tačke', '🎲 Uniform Random Points')
             }
         };
 
@@ -67,6 +91,17 @@ export class KMeansSim {
         this.renderLayout();
         this.bindEvents();
         this.update();
+    }
+
+    /**
+     * Pick the Serbian or English variant of a UI text.
+     *
+     * @param {String} sr Serbian text
+     * @param {String} en English text
+     * @returns {String}
+     */
+    tr(sr, en) {
+        return this.isSr ? sr : en;
     }
 
     initData() {
@@ -359,17 +394,7 @@ export class KMeansSim {
         if (this.phase === 'assign') {
             // Assign each point to closest centroid.
             for (const pt of this.points) {
-                let minDist = Infinity;
-                let bestCluster = 0;
-                for (let j = 0; j < this.centroids.length; j++) {
-                    const c = this.centroids[j];
-                    const dist = Math.pow(pt.x - c.x, 2) + Math.pow(pt.y - c.y, 2);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        bestCluster = j;
-                    }
-                }
-                pt.cluster = bestCluster;
+                pt.cluster = nearestCenter(pt, this.centroids).index;
             }
 
             this.phase = 'update';
@@ -459,16 +484,7 @@ export class KMeansSim {
             for (let iter = 0; iter < 6; iter++) {
                 const groups = Array.from({length: kVal}, () => []);
                 for (const p of this.points) {
-                    let minD = Infinity;
-                    let best = 0;
-                    for (let j = 0; j < kVal; j++) {
-                        const d = Math.pow(p.x - centers[j].x, 2) + Math.pow(p.y - centers[j].y, 2);
-                        if (d < minD) {
-                            minD = d;
-                            best = j;
-                        }
-                    }
-                    groups[best].push(p);
+                    groups[nearestCenter(p, centers).index].push(p);
                 }
                 for (let j = 0; j < kVal; j++) {
                     if (groups[j].length > 0) {
@@ -480,14 +496,7 @@ export class KMeansSim {
 
             let wcss = 0;
             for (const p of this.points) {
-                let minD = Infinity;
-                for (let j = 0; j < kVal; j++) {
-                    const d = Math.pow(p.x - centers[j].x, 2) + Math.pow(p.y - centers[j].y, 2);
-                    if (d < minD) {
-                        minD = d;
-                    }
-                }
-                wcss += minD;
+                wcss += nearestCenter(p, centers).dist;
             }
             this.elbowCurve.push({k: kVal, wcss});
         }

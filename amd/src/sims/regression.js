@@ -17,30 +17,33 @@ export class RegressionSim {
         this.isSr = this.lang.startsWith('sr');
 
         this.t = {
-            title: this.isSr ? 'Polinomska regresija i preprilagođavanje' : 'Polynomial Regression & Overfitting',
-            badge: this.isSr ? 'Poglavlja 3.3 & 3.10' : 'Chapters 3.3 & 3.10',
-            degreeLabel: this.isSr ? 'Stepen polinoma (d):' : 'Polynomial Degree (d):',
-            regLabel: this.isSr ? 'Regularizacija (λ):' : 'Regularization (λ):',
-            datasetLabel: this.isSr ? 'Skup podataka:' : 'Dataset:',
-            trainPts: this.isSr ? 'Trening tačke (Train)' : 'Training Points',
-            testPts: this.isSr ? 'Validacione tačke (Validation)' : 'Validation Points',
-            polyCurve: this.isSr ? 'Polinom ŷ(x)' : 'Polynomial ŷ(x)',
-            trainError: this.isSr ? 'Trening MSE greška:' : 'Training MSE:',
-            testError: this.isSr ? 'Validacioni MSE:' : 'Validation MSE:',
-            complexityPlotTitle: this.isSr ? 'Složenost vs Greška (U-kriva)' : 'Model Complexity vs Error (U-Curve)',
-            underfitting: this.isSr
-                ? 'Potprilagođavanje (Underfitting): Model je previše prost (High Bias).'
-                : 'Underfitting: Model is too simple (High Bias).',
-            optimal: this.isSr
-                ? 'Optimalno prilagođavanje (Good Fit): Dobra generalizacija na nove podatke.'
-                : 'Good Fit: Optimal generalization to unseen data.',
-            overfitting: this.isSr
-                ? 'Preprilagođavanje (Overfitting): Model je naučio šum umesto pravila (High Variance)!'
-                : 'Overfitting: Model memorized noise instead of signal (High Variance)!',
+            title: this.tr('Polinomska regresija i preprilagođavanje', 'Polynomial Regression & Overfitting'),
+            badge: this.tr('Poglavlja 3.3 & 3.10', 'Chapters 3.3 & 3.10'),
+            degreeLabel: this.tr('Stepen polinoma (d):', 'Polynomial Degree (d):'),
+            regLabel: this.tr('Regularizacija (λ):', 'Regularization (λ):'),
+            datasetLabel: this.tr('Skup podataka:', 'Dataset:'),
+            trainPts: this.tr('Trening tačke (Train)', 'Training Points'),
+            testPts: this.tr('Validacione tačke (Validation)', 'Validation Points'),
+            polyCurve: this.tr('Polinom ŷ(x)', 'Polynomial ŷ(x)'),
+            trainError: this.tr('Trening MSE greška:', 'Training MSE:'),
+            testError: this.tr('Validacioni MSE:', 'Validation MSE:'),
+            complexityPlotTitle: this.tr('Složenost vs Greška (U-kriva)', 'Model Complexity vs Error (U-Curve)'),
+            underfitting: this.tr(
+                'Potprilagođavanje (Underfitting): Model je previše prost (High Bias).',
+                'Underfitting: Model is too simple (High Bias).'
+            ),
+            optimal: this.tr(
+                'Optimalno prilagođavanje (Good Fit): Dobra generalizacija na nove podatke.',
+                'Good Fit: Optimal generalization to unseen data.'
+            ),
+            overfitting: this.tr(
+                'Preprilagođavanje (Overfitting): Model je naučio šum umesto pravila (High Variance)!',
+                'Overfitting: Model memorized noise instead of signal (High Variance)!'
+            ),
             datasets: {
-                sine: this.isSr ? '🌊 Sinusni talas sa šumom' : '🌊 Sine Wave with Noise',
-                quadratic: this.isSr ? '📈 Kvadratni trend' : '📈 Quadratic Trend',
-                engine: this.isSr ? '⚙️ Potrošnja motora po obrtajima' : '⚙️ Engine RPM vs Fuel Consumption'
+                sine: this.tr('🌊 Sinusni talas sa šumom', '🌊 Sine Wave with Noise'),
+                quadratic: this.tr('📈 Kvadratni trend', '📈 Quadratic Trend'),
+                engine: this.tr('⚙️ Potrošnja motora po obrtajima', '⚙️ Engine RPM vs Fuel Consumption')
             }
         };
 
@@ -54,6 +57,17 @@ export class RegressionSim {
         this.renderLayout();
         this.bindEvents();
         this.update();
+    }
+
+    /**
+     * Pick the Serbian or English variant of a UI text.
+     *
+     * @param {String} sr Serbian text
+     * @param {String} en English text
+     * @returns {String}
+     */
+    tr(sr, en) {
+        return this.isSr ? sr : en;
     }
 
     initData() {
@@ -219,7 +233,7 @@ export class RegressionSim {
                                 <span class="aisim-th-pill" id="aisim-reg-degree-val">d = ${this.degree}</span>
                             </label>
                             <span class="aisim-th-sub">
-                                ${this.isSr ? '1 = Prava (Underfit) ... 9 = Polinom (Overfit)' : '1 = Linear ... 9 = Overfitting'}
+                                ${this.tr('1 = Prava (Underfit) ... 9 = Polinom (Overfit)', '1 = Linear ... 9 = Overfitting')}
                             </span>
                         </div>
                         <input type="range" class="aisim-slider aisim-slider-large" id="aisim-reg-degree"
@@ -262,9 +276,10 @@ export class RegressionSim {
                                            min="0.0" max="0.5" step="0.01" value="${this.lambda}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.isSr
-                                        ? 'L2 (Ridge) regularizacija kažnjava velike težine i smanjuje overfit.'
-                                        : 'L2 (Ridge) penalizes large weights, smoothing out overfitting.'}
+                                    ${this.tr(
+                                        'L2 (Ridge) regularizacija kažnjava velike težine i smanjuje overfit.',
+                                        'L2 (Ridge) penalizes large weights, smoothing out overfitting.'
+                                    )}
                                 </div>
                             </div>
 

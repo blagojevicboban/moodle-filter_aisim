@@ -17,32 +17,35 @@ export class KnnTreeSim {
         this.isSr = this.lang.startsWith('sr');
 
         this.t = {
-            title: this.isSr ? 'Granice odlučivanja (k-NN i Stablo)' : 'Decision Boundaries (k-NN & Decision Tree)',
-            badge: this.isSr ? 'Poglavlja 3.7 & 3.8' : 'Chapters 3.7 & 3.8',
-            modelLabel: this.isSr ? 'Model:' : 'Model:',
-            knnModel: this.isSr ? 'k-Najbližih suseda (k-NN)' : 'k-Nearest Neighbors (k-NN)',
-            treeModel: this.isSr ? 'Stablo odlučivanja (Decision Tree)' : 'Decision Tree',
-            datasetLabel: this.isSr ? 'Skup podataka:' : 'Dataset:',
-            kParam: this.isSr ? 'Broj suseda (k):' : 'Number of Neighbors (k):',
-            depthParam: this.isSr ? 'Maksimalna dubina stabla:' : 'Max Tree Depth:',
-            classAPts: this.isSr ? 'Klasa A (Plavi)' : 'Class A (Blue)',
-            classBPts: this.isSr ? 'Klasa B (Crveni)' : 'Class B (Red)',
-            addPointHint: this.isSr
-                ? 'Kliknite na grafik da dodate tačku (aktivna klasa ispod).'
-                : 'Click canvas to add data points for active class.',
-            activeClassLabel: this.isSr ? 'Dodaj tačku kao:' : 'Add point as:',
-            accuracy: this.isSr ? 'Tačnost na tačkama:' : 'Training Accuracy:',
-            boundaryNotice: this.isSr ? 'Tip granice:' : 'Boundary Type:',
-            knnNotice: this.isSr
-                ? 'k-NN formira glatku ili izlomljenu granicu na osnovu euklidskog rastojanja.'
-                : 'k-NN creates smooth or jagged boundaries based on Euclidean distance.',
-            treeNotice: this.isSr
-                ? 'Stablo pravi ortogonalne (pravougaone) rezove paralelne sa osama x i y.'
-                : 'Decision Tree splits space with orthogonal axis-aligned cuts.',
+            title: this.tr('Granice odlučivanja (k-NN i Stablo)', 'Decision Boundaries (k-NN & Decision Tree)'),
+            badge: this.tr('Poglavlja 3.7 & 3.8', 'Chapters 3.7 & 3.8'),
+            modelLabel: this.tr('Model:', 'Model:'),
+            knnModel: this.tr('k-Najbližih suseda (k-NN)', 'k-Nearest Neighbors (k-NN)'),
+            treeModel: this.tr('Stablo odlučivanja (Decision Tree)', 'Decision Tree'),
+            datasetLabel: this.tr('Skup podataka:', 'Dataset:'),
+            kParam: this.tr('Broj suseda (k):', 'Number of Neighbors (k):'),
+            depthParam: this.tr('Maksimalna dubina stabla:', 'Max Tree Depth:'),
+            classAPts: this.tr('Klasa A (Plavi)', 'Class A (Blue)'),
+            classBPts: this.tr('Klasa B (Crveni)', 'Class B (Red)'),
+            addPointHint: this.tr(
+                'Kliknite na grafik da dodate tačku (aktivna klasa ispod).',
+                'Click canvas to add data points for active class.'
+            ),
+            activeClassLabel: this.tr('Dodaj tačku kao:', 'Add point as:'),
+            accuracy: this.tr('Tačnost na tačkama:', 'Training Accuracy:'),
+            boundaryNotice: this.tr('Tip granice:', 'Boundary Type:'),
+            knnNotice: this.tr(
+                'k-NN formira glatku ili izlomljenu granicu na osnovu euklidskog rastojanja.',
+                'k-NN creates smooth or jagged boundaries based on Euclidean distance.'
+            ),
+            treeNotice: this.tr(
+                'Stablo pravi ortogonalne (pravougaone) rezove paralelne sa osama x i y.',
+                'Decision Tree splits space with orthogonal axis-aligned cuts.'
+            ),
             datasets: {
-                moons: this.isSr ? '🌙 Dva polumeseca' : '🌙 Two Moons',
-                circles: this.isSr ? '⭕ Koncentrični krugovi' : '⭕ Concentric Circles',
-                blobs: this.isSr ? '🫧 Dva klastera' : '🫧 Two Blobs'
+                moons: this.tr('🌙 Dva polumeseca', '🌙 Two Moons'),
+                circles: this.tr('⭕ Koncentrični krugovi', '⭕ Concentric Circles'),
+                blobs: this.tr('🫧 Dva klastera', '🫧 Two Blobs')
             }
         };
 
@@ -59,6 +62,17 @@ export class KnnTreeSim {
         this.renderLayout();
         this.bindEvents();
         this.update();
+    }
+
+    /**
+     * Pick the Serbian or English variant of a UI text.
+     *
+     * @param {String} sr Serbian text
+     * @param {String} en English text
+     * @returns {String}
+     */
+    tr(sr, en) {
+        return this.isSr ? sr : en;
     }
 
     initData() {
@@ -172,9 +186,10 @@ export class KnnTreeSim {
                                            min="1" max="15" step="2" value="${this.k}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.isSr
-                                        ? 'k=1 stvara izlomljene Voronoi ćelije (osetljivo na šum). Veće k stvara glatku granicu.'
-                                        : 'k=1 creates jagged Voronoi cells (noisy). Larger k smooths boundary.'}
+                                    ${this.tr(
+                                        'k=1 stvara izlomljene Voronoi ćelije (osetljivo na šum). Veće k stvara glatku granicu.',
+                                        'k=1 creates jagged Voronoi cells (noisy). Larger k smooths boundary.'
+                                    )}
                                 </div>
                             </div>
 
@@ -186,9 +201,10 @@ export class KnnTreeSim {
                                            min="1" max="5" step="1" value="${this.maxDepth}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.isSr
-                                        ? 'Dubina 1 = jedan ortogonalni rez. Dubina 4-5 pravi sitne pravougaone kutije (overfit).'
-                                        : 'Depth 1 = single cut. Depth 4-5 creates fine rectangular boxes (overfitting).'}
+                                    ${this.tr(
+                                        'Dubina 1 = jedan ortogonalni rez. Dubina 4-5 pravi sitne pravougaone kutije (overfit).',
+                                        'Depth 1 = single cut. Depth 4-5 creates fine rectangular boxes (overfitting).'
+                                    )}
                                 </div>
                             </div>
 
@@ -209,7 +225,7 @@ export class KnnTreeSim {
                             <div class="aisim-controls" style="margin-top:0.5rem;">
                                 <button class="aisim-btn aisim-btn-secondary" id="btn-kt-clear"
                                         style="width:100%; justify-content:center;">
-                                    ↺ ${this.isSr ? 'Resetuj tačke na šablon' : 'Reset to default template'}
+                                    ↺ ${this.tr('Resetuj tačke na šablon', 'Reset to default template')}
                                 </button>
                             </div>
                         </div>

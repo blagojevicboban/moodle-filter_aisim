@@ -19,6 +19,71 @@ const SELECTOR = '[data-aisim]';
 let initialised = false;
 
 /**
+ * Read a data-* attribute, falling back to a default when it is missing or empty.
+ *
+ * @param {HTMLElement} el
+ * @param {String} name Attribute name without the data- prefix
+ * @param {*} fallback
+ * @returns {*}
+ */
+const attr = (el, name, fallback) => el.getAttribute('data-' + name) || fallback;
+
+/**
+ * Create a k-NN / decision tree simulation with the given initial model.
+ *
+ * @param {String} model 'knn' or 'tree'
+ * @returns {Function}
+ */
+const knnTree = (model) => (el, lang) => new KnnTreeSim(el, {
+    lang: lang,
+    model: model,
+    dataset: attr(el, 'dataset', 'moons'),
+    k: attr(el, 'k', 3),
+    depth: attr(el, 'depth', 3)
+});
+
+const gradientDescent = (el, lang) => new GradientDescentSim(el, {
+    lang: lang,
+    profile: attr(el, 'profile', 'convex'),
+    lr: attr(el, 'lr', ''),
+    w0: attr(el, 'w0', '')
+});
+
+const confusionMatrix = (el, lang) => new ConfusionMatrixSim(el, {
+    lang: lang,
+    scenario: attr(el, 'scenario', 'quality'),
+    threshold: attr(el, 'threshold', 0.50)
+});
+
+const regression = (el, lang) => new RegressionSim(el, {
+    lang: lang,
+    dataset: attr(el, 'dataset', 'sine'),
+    degree: attr(el, 'degree', 3),
+    lambda: attr(el, 'lambda', 0.0)
+});
+
+const kmeans = (el, lang) => new KMeansSim(el, {
+    lang: lang,
+    dataset: attr(el, 'dataset', 'blobs3'),
+    k: attr(el, 'k', 3)
+});
+
+/** Simulation factories by data-aisim value (several aliases per simulation). */
+const SIMS = {
+    'gradient-descent': gradientDescent,
+    'gradient_descent': gradientDescent,
+    'confusion-matrix': confusionMatrix,
+    'confusion_matrix': confusionMatrix,
+    'regression': regression,
+    'polynomial-regression': regression,
+    'knn-tree': knnTree('knn'),
+    'knn': knnTree('knn'),
+    'decision-tree': knnTree('tree'),
+    'kmeans': kmeans,
+    'k-means': kmeans
+};
+
+/**
  * Mount simulations on elements matching SELECTOR.
  *
  * @param {HTMLElement|Document} root
@@ -35,42 +100,8 @@ const mount = (root) => {
         el.dataset.aisimMounted = 'true';
 
         const simType = el.getAttribute('data-aisim');
-        const lang = document.documentElement.lang || 'en';
-
-        if (simType === 'gradient-descent' || simType === 'gradient_descent') {
-            new GradientDescentSim(el, {
-                lang: lang,
-                profile: el.getAttribute('data-profile') || 'convex',
-                lr: el.getAttribute('data-lr') || '',
-                w0: el.getAttribute('data-w0') || ''
-            });
-        } else if (simType === 'confusion-matrix' || simType === 'confusion_matrix') {
-            new ConfusionMatrixSim(el, {
-                lang: lang,
-                scenario: el.getAttribute('data-scenario') || 'quality',
-                threshold: el.getAttribute('data-threshold') || 0.50
-            });
-        } else if (simType === 'regression' || simType === 'polynomial-regression') {
-            new RegressionSim(el, {
-                lang: lang,
-                dataset: el.getAttribute('data-dataset') || 'sine',
-                degree: el.getAttribute('data-degree') || 3,
-                lambda: el.getAttribute('data-lambda') || 0.0
-            });
-        } else if (simType === 'knn-tree' || simType === 'knn' || simType === 'decision-tree') {
-            new KnnTreeSim(el, {
-                lang: lang,
-                model: simType === 'decision-tree' ? 'tree' : 'knn',
-                dataset: el.getAttribute('data-dataset') || 'moons',
-                k: el.getAttribute('data-k') || 3,
-                depth: el.getAttribute('data-depth') || 3
-            });
-        } else if (simType === 'kmeans' || simType === 'k-means') {
-            new KMeansSim(el, {
-                lang: lang,
-                dataset: el.getAttribute('data-dataset') || 'blobs3',
-                k: el.getAttribute('data-k') || 3
-            });
+        if (Object.prototype.hasOwnProperty.call(SIMS, simType)) {
+            SIMS[simType](el, document.documentElement.lang || 'en');
         }
     });
 };

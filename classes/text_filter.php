@@ -47,3 +47,4 @@ class text_filter extends \core_filters\text_filter {
         return $text;
     }
 }
+

@@ -520,3 +520,4 @@ export class GradientDescentSim {
         ctx.stroke();
     }
 }
+

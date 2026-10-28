@@ -28,13 +28,17 @@ $string['filtername'] = 'Прегледач AI симулација';
 $string['pluginname'] = 'Прегледач AI симулација';
 $string['privacy:metadata'] = 'Филтер за преглед AI симулација не чува никакве личне податке.';
 
-// Градијентни спуст.
-$string['gradient_descent'] = 'Градијентни спуст';
+// Опште команде.
 $string['run'] = 'Покрени';
 $string['pause'] = 'Пауза';
 $string['step'] = 'Корак';
 $string['reset'] = 'Ресетуј';
 $string['speed'] = 'Брзина';
+$string['status_ready'] = 'Спремно. Кликните на Покрени или Корак.';
+$string['status_running'] = 'Обучавање у току...';
+
+// Градијентни спуст.
+$string['gradient_descent'] = 'Градијентни спуст';
 $string['learning_rate'] = 'Стопа учења (α)';
 $string['initial_weight'] = 'Почетна тежина (w₀)';
 $string['current_weight'] = 'Тежина (w)';
@@ -45,8 +49,26 @@ $string['cost_history'] = 'Историја трошка J(w)';
 $string['profile_convex'] = 'Конвексна (један минимум)';
 $string['profile_nonconvex'] = 'Неконвексна (локални минимуми)';
 $string['profile_plateau'] = 'Плато / седласта тачка';
-$string['status_ready'] = 'Спремно. Кликните на Покрени или Корак.';
-$string['status_running'] = 'Обучавање у току...';
 $string['status_converged'] = 'Конвергирало ка минимуму!';
 $string['status_diverging'] = 'Упозорење: Дивергенција! Стопа учења је превелика.';
 $string['status_oscillating'] = 'Осцилује око минимума.';
+
+// Матрица конфузије.
+$string['confusion_matrix'] = 'Матрица конфузије и праг одлучивања';
+$string['threshold'] = 'Праг одлучивања (θ)';
+$string['actual_pos'] = 'Стварно позитивно (1)';
+$string['actual_neg'] = 'Стварно негативно (0)';
+$string['pred_pos'] = 'Предвиђено (1)';
+$string['pred_neg'] = 'Предвиђено (0)';
+$string['tp'] = 'Право позитивно (TP)';
+$string['tn'] = 'Право негативно (TN)';
+$string['fp'] = 'Лажно позитивно (FP - Грешка типа I)';
+$string['fn'] = 'Лажно негативно (FN - Грешка типа II)';
+$string['accuracy'] = 'Тачност (Accuracy)';
+$string['precision'] = 'Прецизност (Precision)';
+$string['recall'] = 'Опозив (Recall / Осетљивост)';
+$string['f1_score'] = 'F1-скор';
+$string['roc_curve'] = 'ROC крива (AUC)';
+$string['scenario_quality'] = 'Индустријска контрола квалитета (Шкарт)';
+$string['scenario_medical'] = 'Медицинска дијагностика (Скрининг)';
+$string['scenario_spam'] = 'Класификација нежељене поште (Spam)';

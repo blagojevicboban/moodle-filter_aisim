@@ -20,7 +20,7 @@
             background: #ffffff;
             border-radius: 12px;
             padding: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid #e2e8f0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
@@ -34,13 +34,40 @@
             color: #475569;
             line-height: 1.6;
         }
-        .lang-switch {
-            margin-top: 1rem;
+        .top-bar {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.25rem;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .sim-tabs {
+            display: flex;
+            gap: 8px;
+        }
+        .tab-btn {
+            padding: 7px 16px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.15s ease;
+        }
+        .tab-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+        .lang-switch {
+            display: flex;
+            gap: 6px;
         }
         .lang-btn {
-            padding: 4px 12px;
+            padding: 5px 12px;
             border: 1px solid #cbd5e1;
             background: #fff;
             border-radius: 6px;
@@ -60,46 +87,73 @@
         <div class="intro-card">
             <h1>🤖 AI Simulations Viewer (Moodle Filter <code>filter_aisim</code>)</h1>
             <p>
-                Ovo je lokalno testno okruženje za interaktivne AI simulacije razvijene za projekat <strong>AI for VET</strong>
-                (prateći priručnik <em>io1-fundamentals</em>). U Moodle okruženju, ovaj blok se automatski renderuje iz jednostavnog taga:
-                <code>&lt;div data-aisim="gradient-descent"&gt;&lt;/div&gt;</code>.
+                Lokalno testno okruženje za interaktivne AI simulacije razvijene za projekat <strong>AI for VET</strong>
+                (prateći priručnik <em>io1-fundamentals</em>).
+                U Moodle okruženju, ove simulacije se automatski renderuju unutar lekcija, stranica ili kvizova.
             </p>
-            <div class="lang-switch">
-                <button class="lang-btn active" onclick="setLang('sr')">🇷🇸 Srpski</button>
-                <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+            <div class="top-bar">
+                <div class="sim-tabs">
+                    <button class="tab-btn active" onclick="switchSim('gd')">📉 1. Gradijentni spust</button>
+                    <button class="tab-btn" onclick="switchSim('cm')">🎯 2. Matrica konfuzije & Prag</button>
+                </div>
+                <div class="lang-switch">
+                    <button class="lang-btn active" id="btn-lang-sr" onclick="setLang('sr')">🇷🇸 Srpski</button>
+                    <button class="lang-btn" id="btn-lang-en" onclick="setLang('en')">🇬🇧 English</button>
+                </div>
             </div>
         </div>
 
         <!-- Moodle Target Container -->
-        <div id="sim-target" data-aisim="gradient-descent" data-profile="convex" data-lr="0.15"></div>
+        <div id="sim-target"></div>
     </div>
 
     <!-- ES Module loader simulating Moodle AMD environment -->
     <script type="module">
         import {GradientDescentSim} from './amd/src/sims/gradient_descent.js';
+        import {ConfusionMatrixSim} from './amd/src/sims/confusion_matrix.js';
 
-        let currentSim = null;
+        let currentSimType = 'gd';
+        let currentLang = 'sr';
 
-        function loadSim(lang) {
-            document.documentElement.lang = lang;
+        function renderCurrent() {
+            document.documentElement.lang = currentLang;
             const target = document.getElementById('sim-target');
             target.innerHTML = '';
-            currentSim = new GradientDescentSim(target, {
-                lang: lang,
-                profile: 'convex',
-                lr: 0.15
-            });
+
+            if (currentSimType === 'gd') {
+                target.setAttribute('data-aisim', 'gradient-descent');
+                new GradientDescentSim(target, {
+                    lang: currentLang,
+                    profile: 'convex',
+                    lr: 0.15
+                });
+            } else if (currentSimType === 'cm') {
+                target.setAttribute('data-aisim', 'confusion-matrix');
+                new ConfusionMatrixSim(target, {
+                    lang: currentLang,
+                    scenario: 'quality',
+                    threshold: 0.50
+                });
+            }
         }
 
-        window.setLang = function(lang) {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(lang === 'sr' ? 'srp' : 'eng'));
+        window.switchSim = function(type) {
+            currentSimType = type;
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', (type === 'gd' && idx === 0) || (type === 'cm' && idx === 1));
             });
-            loadSim(lang);
+            renderCurrent();
+        };
+
+        window.setLang = function(lang) {
+            currentLang = lang;
+            document.getElementById('btn-lang-sr').classList.toggle('active', lang === 'sr');
+            document.getElementById('btn-lang-en').classList.toggle('active', lang === 'en');
+            renderCurrent();
         };
 
         // Initial mount.
-        loadSim('sr');
+        renderCurrent();
     </script>
 </body>
 </html>

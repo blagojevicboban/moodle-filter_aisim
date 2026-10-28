@@ -9,6 +9,7 @@
  */
 
 import {GradientDescentSim} from 'filter_aisim/sims/gradient_descent';
+import {ConfusionMatrixSim} from 'filter_aisim/sims/confusion_matrix';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -31,15 +32,21 @@ const mount = (root) => {
         el.dataset.aisimMounted = 'true';
 
         const simType = el.getAttribute('data-aisim');
-        const opts = {
-            lang: document.documentElement.lang || 'en',
-            profile: el.getAttribute('data-profile') || 'convex',
-            lr: el.getAttribute('data-lr') || '',
-            w0: el.getAttribute('data-w0') || ''
-        };
+        const lang = document.documentElement.lang || 'en';
 
         if (simType === 'gradient-descent' || simType === 'gradient_descent') {
-            new GradientDescentSim(el, opts);
+            new GradientDescentSim(el, {
+                lang: lang,
+                profile: el.getAttribute('data-profile') || 'convex',
+                lr: el.getAttribute('data-lr') || '',
+                w0: el.getAttribute('data-w0') || ''
+            });
+        } else if (simType === 'confusion-matrix' || simType === 'confusion_matrix') {
+            new ConfusionMatrixSim(el, {
+                lang: lang,
+                scenario: el.getAttribute('data-scenario') || 'quality',
+                threshold: el.getAttribute('data-threshold') || 0.50
+            });
         }
     });
 };

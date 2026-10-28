@@ -28,9 +28,15 @@ export class RegressionSim {
             trainError: this.isSr ? 'Trening MSE greška:' : 'Training MSE:',
             testError: this.isSr ? 'Validacioni MSE:' : 'Validation MSE:',
             complexityPlotTitle: this.isSr ? 'Složenost vs Greška (U-kriva)' : 'Model Complexity vs Error (U-Curve)',
-            underfitting: this.isSr ? 'Potprilagođavanje (Underfitting): Model je previše prost (High Bias).' : 'Underfitting: Model is too simple (High Bias).',
-            optimal: this.isSr ? 'Optimalno prilagođavanje (Good Fit): Dobra generalizacija na nove podatke.' : 'Good Fit: Optimal generalization to unseen data.',
-            overfitting: this.isSr ? 'Preprilagođavanje (Overfitting): Model je naučio šum umesto pravila (High Variance)!' : 'Overfitting: Model memorized noise instead of signal (High Variance)!',
+            underfitting: this.isSr
+                ? 'Potprilagođavanje (Underfitting): Model je previše prost (High Bias).'
+                : 'Underfitting: Model is too simple (High Bias).',
+            optimal: this.isSr
+                ? 'Optimalno prilagođavanje (Good Fit): Dobra generalizacija na nove podatke.'
+                : 'Good Fit: Optimal generalization to unseen data.',
+            overfitting: this.isSr
+                ? 'Preprilagođavanje (Overfitting): Model je naučio šum umesto pravila (High Variance)!'
+                : 'Overfitting: Model memorized noise instead of signal (High Variance)!',
             datasets: {
                 sine: this.isSr ? '🌊 Sinusni talas sa šumom' : '🌊 Sine Wave with Noise',
                 quadratic: this.isSr ? '📈 Kvadratni trend' : '📈 Quadratic Trend',
@@ -60,26 +66,23 @@ export class RegressionSim {
                 return Math.sin(x * Math.PI) * 1.5;
             } else if (this.datasetKey === 'quadratic') {
                 return 1.2 * Math.pow(x, 2) - 0.8 * x - 0.8;
-            } else { // engine
+            } else {
                 return 0.8 * Math.pow(x + 0.2, 3) - 1.2 * x + 0.2;
             }
         };
 
-        // Pseudo-random deterministic seed generator.
         let seed = 42;
         const rand = () => {
             seed = (seed * 9301 + 49297) % 233280;
-            return (seed / 233280) * 2 - 1; // [-1, 1]
+            return (seed / 233280) * 2 - 1;
         };
 
-        // Generate training set.
         for (let i = 0; i < numTrain; i++) {
             const x = -1.6 + (3.2 / (numTrain - 1)) * i;
             const noise = rand() * 0.45;
             this.trainPoints.push({x, y: fTrue(x) + noise});
         }
 
-        // Generate test set.
         for (let i = 0; i < numTest; i++) {
             const x = -1.5 + (3.0 / (numTest - 1)) * i + (rand() * 0.08);
             const noise = rand() * 0.45;
@@ -89,13 +92,11 @@ export class RegressionSim {
         this.computeAllDegreesErrors();
     }
 
-    // Solve for weights using Ridge Regularized Least Squares: (X^T X + lambda I) w = X^T y.
     fitPolynomial(degree, lambdaVal) {
         const d = degree;
         const n = this.trainPoints.length;
-        const m = d + 1; // number of coefficients w0..wd.
+        const m = d + 1;
 
-        // Build X^T X (m x m) and X^T y (m x 1).
         const ATA = Array.from({length: m}, () => new Float64Array(m));
         const ATy = new Float64Array(m);
 
@@ -115,18 +116,17 @@ export class RegressionSim {
             }
         }
 
-        // Add L2 Ridge penalty to diagonal (excluding bias w0).
         for (let r = 1; r < m; r++) {
             ATA[r][r] += lambdaVal;
         }
 
-        // Solve linear system ATA * w = ATy via Gaussian elimination with partial pivoting.
         for (let i = 0; i < m; i++) {
             let maxRow = i;
             for (let k = i + 1; k < m; k++) {
-                if (Math.abs(ATA[k][i]) > Math.abs(ATA[maxRow][i])) maxRow = k;
+                if (Math.abs(ATA[k][i]) > Math.abs(ATA[maxRow][i])) {
+                    maxRow = k;
+                }
             }
-            // Swap rows.
             const tmpRow = ATA[i];
             ATA[i] = ATA[maxRow];
             ATA[maxRow] = tmpRow;
@@ -134,7 +134,9 @@ export class RegressionSim {
             ATy[i] = ATy[maxRow];
             ATy[maxRow] = tmpY;
 
-            if (Math.abs(ATA[i][i]) < 1e-12) continue; // Singular matrix protection.
+            if (Math.abs(ATA[i][i]) < 1e-12) {
+                continue;
+            }
 
             for (let k = i + 1; k < m; k++) {
                 const factor = ATA[k][i] / ATA[i][i];
@@ -145,7 +147,6 @@ export class RegressionSim {
             }
         }
 
-        // Back-substitution.
         const w = new Float64Array(m);
         for (let i = m - 1; i >= 0; i--) {
             let sum = ATy[i];
@@ -188,6 +189,10 @@ export class RegressionSim {
     }
 
     renderLayout() {
+        const isSine = this.datasetKey === 'sine' ? 'selected' : '';
+        const isQuad = this.datasetKey === 'quadratic' ? 'selected' : '';
+        const isEng = this.datasetKey === 'engine' ? 'selected' : '';
+
         this.container.innerHTML = `
             <div class="aisim-container aisim-regression">
                 <div class="aisim-header">
@@ -197,9 +202,9 @@ export class RegressionSim {
                     </div>
                     <div class="aisim-dataset-select">
                         <select class="aisim-select" id="aisim-reg-dataset">
-                            <option value="sine" ${this.datasetKey === 'sine' ? 'selected' : ''}>${this.t.datasets.sine}</option>
-                            <option value="quadratic" ${this.datasetKey === 'quadratic' ? 'selected' : ''}>${this.t.datasets.quadratic}</option>
-                            <option value="engine" ${this.datasetKey === 'engine' ? 'selected' : ''}>${this.t.datasets.engine}</option>
+                            <option value="sine" ${isSine}>${this.t.datasets.sine}</option>
+                            <option value="quadratic" ${isQuad}>${this.t.datasets.quadratic}</option>
+                            <option value="engine" ${isEng}>${this.t.datasets.engine}</option>
                         </select>
                     </div>
                 </div>
@@ -211,9 +216,12 @@ export class RegressionSim {
                                 <strong>${this.t.degreeLabel}</strong>
                                 <span class="aisim-th-pill" id="aisim-reg-degree-val">d = ${this.degree}</span>
                             </label>
-                            <span class="aisim-th-sub">${this.isSr ? '1 = Prava linija (Underfitting) ... 9 = Složena oscilujuća kriva (Overfitting)' : '1 = Linear line (Underfitting) ... 9 = High variance polynomial (Overfitting)'}</span>
+                            <span class="aisim-th-sub">
+                                ${this.isSr ? '1 = Prava (Underfit) ... 9 = Polinom (Overfit)' : '1 = Linear ... 9 = Overfitting'}
+                            </span>
                         </div>
-                        <input type="range" class="aisim-slider aisim-slider-large" id="aisim-reg-degree" min="1" max="9" step="1" value="${this.degree}">
+                        <input type="range" class="aisim-slider aisim-slider-large" id="aisim-reg-degree"
+                               min="1" max="9" step="1" value="${this.degree}">
                     </div>
 
                     <div class="aisim-grid">
@@ -222,9 +230,16 @@ export class RegressionSim {
                                 <div class="aisim-canvas-header">
                                     <span>Prilagođavanje modela ŷ(x)</span>
                                     <div class="aisim-legend">
-                                        <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-neg"></span> ${this.t.trainPts}</span>
-                                        <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-pos"></span> ${this.t.testPts}</span>
-                                        <span class="aisim-legend-item"><span class="aisim-line-th" style="background:#2563eb; height:3px;"></span> ${this.t.polyCurve}</span>
+                                        <span class="aisim-legend-item">
+                                            <span class="aisim-dot aisim-dot-neg"></span> ${this.t.trainPts}
+                                        </span>
+                                        <span class="aisim-legend-item">
+                                            <span class="aisim-dot aisim-dot-pos"></span> ${this.t.testPts}
+                                        </span>
+                                        <span class="aisim-legend-item">
+                                            <span class="aisim-line-th" style="background:#2563eb; height:3px;"></span>
+                                            ${this.t.polyCurve}
+                                        </span>
                                     </div>
                                 </div>
                                 <canvas class="aisim-canvas" id="aisim-reg-canvas"></canvas>
@@ -241,10 +256,13 @@ export class RegressionSim {
                                 <div class="aisim-card-title">${this.t.regLabel}</div>
                                 <div class="aisim-slider-group">
                                     <label>λ = <span id="aisim-reg-lambda-val">${this.lambda.toFixed(3)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-reg-lambda" min="0.0" max="0.5" step="0.01" value="${this.lambda}">
+                                    <input type="range" class="aisim-slider" id="aisim-reg-lambda"
+                                           min="0.0" max="0.5" step="0.01" value="${this.lambda}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.isSr ? 'L2 (Ridge) regularizacija kažnjava prevelike koeficijente i smanjuje overfit na višim stepenima.' : 'L2 (Ridge) penalizes large weights, smoothing out overfitting at high degrees.'}
+                                    ${this.isSr
+                                        ? 'L2 (Ridge) regularizacija kažnjava velike težine i smanjuje overfit.'
+                                        : 'L2 (Ridge) penalizes large weights, smoothing out overfitting.'}
                                 </div>
                             </div>
 
@@ -263,7 +281,8 @@ export class RegressionSim {
                             <div class="aisim-card">
                                 <div class="aisim-card-title">${this.t.complexityPlotTitle}</div>
                                 <canvas class="aisim-mini-chart" id="aisim-reg-u-canvas"></canvas>
-                                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b; margin-top:4px;">
+                                <div class="aisim-u-legend"
+                                     style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b;">
                                     <span>Stepen: 1</span>
                                     <span style="color:#2563eb;">■ Train</span>
                                     <span style="color:#ef4444;">■ Test</span>
@@ -327,13 +346,13 @@ export class RegressionSim {
             this.update();
         });
 
-        // Add custom point on canvas click.
         this.canvas.addEventListener('click', (e) => {
             const rect = this.canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
 
-            const padX = 40, padY = 30;
+            const padX = 40;
+            const padY = 30;
             const gw = this.canvasWidth - 2 * padX;
             const gh = this.canvasHeight - 2 * padY;
 
@@ -341,7 +360,6 @@ export class RegressionSim {
             const y = 2.5 - ((clickY - padY) / gh) * 5.0;
 
             if (x >= -2.0 && x <= 2.0 && y >= -2.5 && y <= 2.5) {
-                // Add to train set.
                 this.trainPoints.push({x, y});
                 this.computeAllDegreesErrors();
                 this.update();
@@ -384,7 +402,8 @@ export class RegressionSim {
     }
 
     toPx(x, y) {
-        const padX = 40, padY = 30;
+        const padX = 40;
+        const padY = 30;
         const gw = this.canvasWidth - 2 * padX;
         const gh = this.canvasHeight - 2 * padY;
         const px = padX + ((x - (-2.0)) / 4.0) * gw;
@@ -398,26 +417,23 @@ export class RegressionSim {
         const h = this.canvasHeight;
         ctx.clearRect(0, 0, w, h);
 
-        const padX = 40, padY = 30;
+        const padX = 40;
+        const padY = 30;
 
-        // Draw axes.
         ctx.strokeStyle = '#cbd5e1';
         ctx.lineWidth = 1;
         const origin = this.toPx(0, 0);
 
-        // X axis.
         ctx.beginPath();
         ctx.moveTo(padX, origin.py);
         ctx.lineTo(w - padX, origin.py);
         ctx.stroke();
 
-        // Y axis.
         ctx.beginPath();
         ctx.moveTo(origin.px, padY);
         ctx.lineTo(origin.px, h - padY);
         ctx.stroke();
 
-        // Draw fitted polynomial curve.
         ctx.strokeStyle = '#2563eb';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
@@ -426,12 +442,14 @@ export class RegressionSim {
             const x = -2.0 + (4.0 / steps) * i;
             const y = this.evalPoly(this.weights, x);
             const {px, py} = this.toPx(x, Math.max(-3.5, Math.min(3.5, y)));
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
+            if (i === 0) {
+                ctx.moveTo(px, py);
+            } else {
+                ctx.lineTo(px, py);
+            }
         }
         ctx.stroke();
 
-        // Draw training points (Blue circles).
         for (const pt of this.trainPoints) {
             const {px, py} = this.toPx(pt.x, pt.y);
             ctx.fillStyle = '#2563eb';
@@ -443,7 +461,6 @@ export class RegressionSim {
             ctx.stroke();
         }
 
-        // Draw validation/test points (Orange/Red squares).
         for (const pt of this.testPoints) {
             const {px, py} = this.toPx(pt.x, pt.y);
             ctx.fillStyle = '#ef4444';
@@ -466,9 +483,9 @@ export class RegressionSim {
         const gw = w - 2 * pad;
         const gh = h - 2 * pad;
 
-        const maxErr = Math.min(4.0, Math.max(...this.degreeErrors.map(e => Math.min(4.0, Math.max(e.trainErr, e.testErr)))));
+        const allErr = this.degreeErrors.map(e => Math.min(4.0, Math.max(e.trainErr, e.testErr)));
+        const maxErr = Math.min(4.0, Math.max(...allErr));
 
-        // Draw Train error line (Blue).
         ctx.strokeStyle = '#2563eb';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -477,12 +494,14 @@ export class RegressionSim {
             const px = pad + (i / 8) * gw;
             const normY = Math.min(item.trainErr, maxErr) / maxErr;
             const py = (h - pad) - normY * gh;
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
+            if (i === 0) {
+                ctx.moveTo(px, py);
+            } else {
+                ctx.lineTo(px, py);
+            }
         }
         ctx.stroke();
 
-        // Draw Validation error line (Red/Orange).
         ctx.strokeStyle = '#ef4444';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -491,12 +510,14 @@ export class RegressionSim {
             const px = pad + (i / 8) * gw;
             const normY = Math.min(item.testErr, maxErr) / maxErr;
             const py = (h - pad) - normY * gh;
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
+            if (i === 0) {
+                ctx.moveTo(px, py);
+            } else {
+                ctx.lineTo(px, py);
+            }
         }
         ctx.stroke();
 
-        // Draw current degree indicator (Vertical line).
         const curPx = pad + ((this.degree - 1) / 8) * gw;
         ctx.strokeStyle = '#0f172a';
         ctx.lineWidth = 2;

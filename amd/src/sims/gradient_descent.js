@@ -35,10 +35,14 @@ export class GradientDescentSim {
             costVal: this.isSr ? 'Trošak J(w):' : 'Cost J(w):',
             gradVal: this.isSr ? 'Gradijent dJ/dw:' : 'Gradient dJ/dw:',
             costHist: this.isSr ? 'Kriva učenja: J(w) po epohama' : 'Learning Curve: J(w) vs Epochs',
-            statusReady: this.isSr ? 'Spremno. Kliknite na "Pokreni" ili kliknite na grafik za w₀.' : 'Ready. Click Run, Step, or click curve to set w₀.',
+            statusReady: this.isSr
+                ? 'Spremno. Kliknite na "Pokreni" ili kliknite na grafik za w₀.'
+                : 'Ready. Click Run, Step, or click curve to set w₀.',
             statusRunning: this.isSr ? 'Obučavanje u toku...' : 'Optimizing...',
             statusConverged: this.isSr ? '✓ Konvergiralo ka minimumu (gradijent ≈ 0)!' : '✓ Converged to minimum (gradient ≈ 0)!',
-            statusDiverging: this.isSr ? '⚠ Upozorenje: Divergencija! Stopa učenja je prevelika.' : '⚠ Warning: Divergence! Learning rate too high.',
+            statusDiverging: this.isSr
+                ? '⚠ Upozorenje: Divergencija! Stopa učenja je prevelika.'
+                : '⚠ Warning: Divergence! Learning rate too high.',
             statusOscillating: this.isSr ? '⚠ Osciluje oko minimuma.' : '⚠ Oscillating around minimum.'
         };
 
@@ -90,7 +94,7 @@ export class GradientDescentSim {
         this.history = [];
         this.isRunning = false;
         this.timer = null;
-        this.speed = 100; // ms per step.
+        this.speed = 100; // Speed in ms per step.
         this.status = 'ready';
 
         this.renderLayout();
@@ -99,6 +103,10 @@ export class GradientDescentSim {
     }
 
     renderLayout() {
+        const isConv = this.selectedProfileKey === 'convex' ? 'selected' : '';
+        const isNonConv = this.selectedProfileKey === 'nonconvex' ? 'selected' : '';
+        const isPlat = this.selectedProfileKey === 'plateau' ? 'selected' : '';
+
         this.container.innerHTML = `
             <div class="aisim-container">
                 <div class="aisim-header">
@@ -108,9 +116,9 @@ export class GradientDescentSim {
                     </div>
                     <div class="aisim-profile-select">
                         <select class="aisim-select" id="aisim-prof">
-                            <option value="convex" ${this.selectedProfileKey === 'convex' ? 'selected' : ''}>${this.profiles.convex.name}</option>
-                            <option value="nonconvex" ${this.selectedProfileKey === 'nonconvex' ? 'selected' : ''}>${this.profiles.nonconvex.name}</option>
-                            <option value="plateau" ${this.selectedProfileKey === 'plateau' ? 'selected' : ''}>${this.profiles.plateau.name}</option>
+                            <option value="convex" ${isConv}>${this.profiles.convex.name}</option>
+                            <option value="nonconvex" ${isNonConv}>${this.profiles.nonconvex.name}</option>
+                            <option value="plateau" ${isPlat}>${this.profiles.plateau.name}</option>
                         </select>
                     </div>
                 </div>
@@ -130,11 +138,14 @@ export class GradientDescentSim {
                                 <div class="aisim-card-title">${this.t.lr}</div>
                                 <div class="aisim-slider-group">
                                     <label>α = <span id="aisim-lr-val">${this.alpha.toFixed(3)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-lr" min="0.005" max="1.1" step="0.005" value="${this.alpha}">
+                                    <input type="range" class="aisim-slider" id="aisim-lr"
+                                           min="0.005" max="1.1" step="0.005" value="${this.alpha}">
                                 </div>
                                 <div class="aisim-slider-group">
                                     <label>${this.t.w0}: <span id="aisim-w0-val">${this.w0.toFixed(2)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-w0" min="${this.currentProfile.wMin}" max="${this.currentProfile.wMax}" step="0.1" value="${this.w0}">
+                                    <input type="range" class="aisim-slider" id="aisim-w0"
+                                           min="${this.currentProfile.wMin}" max="${this.currentProfile.wMax}"
+                                           step="0.1" value="${this.w0}">
                                 </div>
                             </div>
 
@@ -471,7 +482,8 @@ export class GradientDescentSim {
             ctx.lineWidth = 2;
             ctx.beginPath();
             const dx = tangentLength;
-            const dy = tangentLength * curGrad * ((h - 70) / (prof.jMax - prof.jMin)) / ((w - 90) / (prof.wMax - prof.wMin));
+            const dy = tangentLength * curGrad * ((h - 70) / (prof.jMax - prof.jMin)) /
+                       ((w - 90) / (prof.wMax - prof.wMin));
             ctx.moveTo(curPx - dx, curPy + dy);
             ctx.lineTo(curPx + dx, curPy - dy);
             ctx.stroke();
@@ -500,8 +512,8 @@ export class GradientDescentSim {
             return;
         }
 
-        const maxCost = Math.max(...this.history.map(pt => isNaN(pt.cost) ? 0 : pt.cost), 5);
-        const minCost = Math.min(...this.history.map(pt => isNaN(pt.cost) ? 0 : pt.cost), 0);
+        const maxCost = Math.max(...this.history.map(pt => (isNaN(pt.cost) ? 0 : pt.cost)), 5);
+        const minCost = Math.min(...this.history.map(pt => (isNaN(pt.cost) ? 0 : pt.cost)), 0);
         const costRange = Math.max(maxCost - minCost, 1);
 
         ctx.strokeStyle = '#0284c7';
@@ -520,4 +532,3 @@ export class GradientDescentSim {
         ctx.stroke();
     }
 }
-

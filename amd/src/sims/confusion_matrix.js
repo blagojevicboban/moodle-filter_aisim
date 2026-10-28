@@ -39,25 +39,37 @@ export class ConfusionMatrixSim {
             f1: this.isSr ? 'F1-skor:' : 'F1-Score:',
             scenarios: {
                 quality: {
-                    name: this.isSr ? '🏭 Industrijska kontrola kvaliteta (Škart)' : '🏭 Industrial Quality Control (Defects)',
+                    name: this.isSr ? '🏭 Industrijska kontrola kvaliteta' : '🏭 Industrial Quality Control',
                     posLabel: this.isSr ? 'Defektan deo' : 'Defective Part',
                     negLabel: this.isSr ? 'Ispravan deo' : 'Good Part',
-                    hintLow: this.isSr ? 'Nizak prag: Skoro svi defekti su uhvaćeni (visok Recall), ali ima dosta ispravnih delova poslatog na ponovnu proveru (veći FP).' : 'Low threshold: High recall on defects, but more false alarms on good parts.',
-                    hintHigh: this.isSr ? 'Visok prag: Prijavljuju se samo sigurni defekti (visok Precision), ali neispravni delovi prolaze kupcima (opasan FN)!' : 'High threshold: High precision, but dangerous defective parts leak to customers (FN)!'
+                    hintLow: this.isSr
+                        ? 'Nizak prag: Skoro svi defekti su uhvaćeni (visok Recall), ali ima više lažnih uzbuna (veći FP).'
+                        : 'Low threshold: High recall on defects, but more false alarms on good parts.',
+                    hintHigh: this.isSr
+                        ? 'Visok prag: Visok Precision, ali opasni neispravni delovi prolaze do kupaca (opasan FN)!'
+                        : 'High threshold: High precision, but dangerous defective parts leak to customers (FN)!'
                 },
                 medical: {
                     name: this.isSr ? '🏥 Medicinska dijagnostika (Skrining)' : '🏥 Medical Diagnostics (Screening)',
                     posLabel: this.isSr ? 'Pozitivan nalaz' : 'Positive Disease',
                     negLabel: this.isSr ? 'Zdrav' : 'Healthy',
-                    hintLow: this.isSr ? 'U medicini se često bira niži prag: bolje poslati zdravog na dodatne testove (FP) nego propustiti bolesnog (FN)!' : 'In medical screening, lower threshold is preferred to minimize deadly False Negatives (FN).',
-                    hintHigh: this.isSr ? 'Previsok prag: Propuštaju se bolesni pacijenti (nedopustivo visok FN)!' : 'Too high threshold: Sick patients are missed (unacceptable False Negatives)!'
+                    hintLow: this.isSr
+                        ? 'U medicini se bira niži prag: bolje poslati zdravog na test (FP) nego propustiti bolesnog (FN)!'
+                        : 'In medical screening, lower threshold is preferred to minimize deadly False Negatives (FN).',
+                    hintHigh: this.isSr
+                        ? 'Previsok prag: Propuštaju se bolesni pacijenti (nedopustivo visok FN)!'
+                        : 'Too high threshold: Sick patients are missed (unacceptable False Negatives)!'
                 },
                 spam: {
                     name: this.isSr ? '✉️ Klasifikacija neželjene pošte (Spam)' : '✉️ Spam / Security Filter',
                     posLabel: this.isSr ? 'Spam poruka' : 'Spam Message',
                     negLabel: this.isSr ? 'Legitimna pošta' : 'Legitimate Email',
-                    hintLow: this.isSr ? 'Previše agresivan filter: Važne poruke od klijenata završavaju u spam folderu (nizak Precision).' : 'Too aggressive: Important legitimate emails end up in spam.',
-                    hintHigh: this.isSr ? 'Konzervativan filter: U inbox stiže malo spama, ali nijedna bitna poruka nije greškom blokirana.' : 'Conservative filter: Very few false positives, legitimate emails are safe.'
+                    hintLow: this.isSr
+                        ? 'Previše agresivan filter: Važne poruke od klijenata završavaju u spam folderu (nizak Precision).'
+                        : 'Too aggressive: Important legitimate emails end up in spam.',
+                    hintHigh: this.isSr
+                        ? 'Konzervativan filter: U inbox stiže malo spama, ali nijedna bitna poruka nije greškom blokirana.'
+                        : 'Conservative filter: Very few false positives, legitimate emails are safe.'
                 }
             }
         };
@@ -74,31 +86,32 @@ export class ConfusionMatrixSim {
     }
 
     initDataset() {
-        // Pre-generate population of samples for reproducible realistic distributions.
         this.samples = [];
         const nNeg = 120;
         const nPos = 40;
 
-        // Negative class: normally distributed with mean ~ 0.30, std ~ 0.14.
         for (let i = 0; i < nNeg; i++) {
             const p = Math.max(0.01, Math.min(0.99, this.randomGaussian(0.30, 0.14)));
             this.samples.push({actual: 0, prob: p});
         }
 
-        // Positive class: normally distributed with mean ~ 0.70, std ~ 0.15.
         for (let i = 0; i < nPos; i++) {
             const p = Math.max(0.01, Math.min(0.99, this.randomGaussian(0.70, 0.15)));
             this.samples.push({actual: 1, prob: p});
         }
 
-        // Compute full ROC points across thresholds [0..1].
         this.computeROCCurve();
     }
 
     randomGaussian(mean, std) {
-        let u = 0, v = 0;
-        while (u === 0) u = Math.random();
-        while (v === 0) v = Math.random();
+        let u = 0;
+        let v = 0;
+        while (u === 0) {
+            u = Math.random();
+        }
+        while (v === 0) {
+            v = Math.random();
+        }
         const num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         return num * std + mean;
     }
@@ -113,8 +126,7 @@ export class ConfusionMatrixSim {
             const tpr = (m.tp + m.fn) > 0 ? (m.tp / (m.tp + m.fn)) : 0;
             this.rocPoints.push({th, fpr, tpr});
         }
-        // Approximate AUC with trapezoidal rule.
-        // Sort points by FPR ascending.
+
         const sorted = [...this.rocPoints].sort((a, b) => a.fpr - b.fpr);
         let auc = 0;
         for (let i = 1; i < sorted.length; i++) {
@@ -126,19 +138,30 @@ export class ConfusionMatrixSim {
     }
 
     calcMatrixAt(th) {
-        let tp = 0, fp = 0, tn = 0, fn = 0;
+        let tp = 0;
+        let fp = 0;
+        let tn = 0;
+        let fn = 0;
         for (const s of this.samples) {
             const pred = s.prob >= th ? 1 : 0;
-            if (s.actual === 1 && pred === 1) tp++;
-            else if (s.actual === 0 && pred === 1) fp++;
-            else if (s.actual === 0 && pred === 0) tn++;
-            else if (s.actual === 1 && pred === 0) fn++;
+            if (s.actual === 1 && pred === 1) {
+                tp++;
+            } else if (s.actual === 0 && pred === 1) {
+                fp++;
+            } else if (s.actual === 0 && pred === 0) {
+                tn++;
+            } else if (s.actual === 1 && pred === 0) {
+                fn++;
+            }
         }
         return {tp, fp, tn, fn, total: this.samples.length};
     }
 
     renderLayout() {
         const sc = this.t.scenarios[this.scenarioKey];
+        const isQ = this.scenarioKey === 'quality' ? 'selected' : '';
+        const isM = this.scenarioKey === 'medical' ? 'selected' : '';
+        const isS = this.scenarioKey === 'spam' ? 'selected' : '';
 
         this.container.innerHTML = `
             <div class="aisim-container aisim-confmat">
@@ -149,9 +172,9 @@ export class ConfusionMatrixSim {
                     </div>
                     <div class="aisim-scenario-select">
                         <select class="aisim-select" id="aisim-cm-scenario">
-                            <option value="quality" ${this.scenarioKey === 'quality' ? 'selected' : ''}>${this.t.scenarios.quality.name}</option>
-                            <option value="medical" ${this.scenarioKey === 'medical' ? 'selected' : ''}>${this.t.scenarios.medical.name}</option>
-                            <option value="spam" ${this.scenarioKey === 'spam' ? 'selected' : ''}>${this.t.scenarios.spam.name}</option>
+                            <option value="quality" ${isQ}>${this.t.scenarios.quality.name}</option>
+                            <option value="medical" ${isM}>${this.t.scenarios.medical.name}</option>
+                            <option value="spam" ${isS}>${this.t.scenarios.spam.name}</option>
                         </select>
                     </div>
                 </div>
@@ -163,9 +186,12 @@ export class ConfusionMatrixSim {
                                 <strong>${this.t.thresholdLabel}</strong>
                                 <span class="aisim-th-pill" id="aisim-cm-th-val">${this.threshold.toFixed(2)}</span>
                             </label>
-                            <span class="aisim-th-sub">${this.isSr ? 'Prevucite slajder ili kliknite na grafik distribucije:' : 'Drag slider or click on the distribution curve:'}</span>
+                            <span class="aisim-th-sub">
+                                ${this.isSr ? 'Prevucite slajder ili kliknite na grafik:' : 'Drag slider or click curve:'}
+                            </span>
                         </div>
-                        <input type="range" class="aisim-slider aisim-slider-large" id="aisim-cm-th" min="0.05" max="0.95" step="0.01" value="${this.threshold}">
+                        <input type="range" class="aisim-slider aisim-slider-large" id="aisim-cm-th"
+                               min="0.05" max="0.95" step="0.01" value="${this.threshold}">
                     </div>
 
                     <div class="aisim-grid">
@@ -174,9 +200,15 @@ export class ConfusionMatrixSim {
                                 <div class="aisim-canvas-header">
                                     <span>${this.t.probDistTitle}</span>
                                     <div class="aisim-legend">
-                                        <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-neg"></span> ${sc.negLabel} (0)</span>
-                                        <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-pos"></span> ${sc.posLabel} (1)</span>
-                                        <span class="aisim-legend-item"><span class="aisim-line-th"></span> Prag θ</span>
+                                        <span class="aisim-legend-item">
+                                            <span class="aisim-dot aisim-dot-neg"></span> ${sc.negLabel} (0)
+                                        </span>
+                                        <span class="aisim-legend-item">
+                                            <span class="aisim-dot aisim-dot-pos"></span> ${sc.posLabel} (1)
+                                        </span>
+                                        <span class="aisim-legend-item">
+                                            <span class="aisim-line-th"></span> Prag θ
+                                        </span>
                                     </div>
                                 </div>
                                 <canvas class="aisim-canvas" id="aisim-cm-dist-canvas"></canvas>
@@ -232,21 +264,27 @@ export class ConfusionMatrixSim {
                                         <span>${this.t.precision}</span>
                                         <strong id="val-prec">0%</strong>
                                     </div>
-                                    <div class="aisim-prog-bar"><div class="aisim-prog-fill aisim-fill-prec" id="bar-prec"></div></div>
+                                    <div class="aisim-prog-bar">
+                                        <div class="aisim-prog-fill aisim-fill-prec" id="bar-prec"></div>
+                                    </div>
                                 </div>
                                 <div class="aisim-metric-row">
                                     <div class="aisim-metric-header">
                                         <span>${this.t.recall}</span>
                                         <strong id="val-rec">0%</strong>
                                     </div>
-                                    <div class="aisim-prog-bar"><div class="aisim-prog-fill aisim-fill-rec" id="bar-rec"></div></div>
+                                    <div class="aisim-prog-bar">
+                                        <div class="aisim-prog-fill aisim-fill-rec" id="bar-rec"></div>
+                                    </div>
                                 </div>
                                 <div class="aisim-metric-row">
                                     <div class="aisim-metric-header">
                                         <span>${this.t.f1}</span>
                                         <strong id="val-f1">0%</strong>
                                     </div>
-                                    <div class="aisim-prog-bar"><div class="aisim-prog-fill aisim-fill-f1" id="bar-f1"></div></div>
+                                    <div class="aisim-prog-bar">
+                                        <div class="aisim-prog-fill aisim-fill-f1" id="bar-f1"></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -306,7 +344,6 @@ export class ConfusionMatrixSim {
             this.update();
         });
 
-        // Click or drag on distribution canvas to set threshold.
         const setThFromEvent = (e) => {
             const rect = this.distCanvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
@@ -326,7 +363,9 @@ export class ConfusionMatrixSim {
             setThFromEvent(e);
         });
         window.addEventListener('mousemove', (e) => {
-            if (isDragging) setThFromEvent(e);
+            if (isDragging) {
+                setThFromEvent(e);
+            }
         });
         window.addEventListener('mouseup', () => {
             isDragging = false;
@@ -380,9 +419,11 @@ export class ConfusionMatrixSim {
         } else if (this.threshold > 0.65) {
             adviceBox.textContent = sc.hintHigh;
         } else {
+            const precVal = Math.round((m.tp / (m.tp + m.fp || 1)) * 100);
+            const recVal = Math.round((m.tp / (m.tp + m.fn || 1)) * 100);
             adviceBox.textContent = this.isSr
-                ? `Standardni balans (θ ≈ 0.50): Dobra ravnoteža između preciznosti (${Math.round(m.tp/(m.tp+m.fp||1)*100)}%) i opoziva (${Math.round(m.tp/(m.tp+m.fn||1)*100)}%).`
-                : `Balanced threshold (θ ≈ 0.50): Good tradeoff between precision and recall for general classification.`;
+                ? `Standardni balans (θ ≈ 0.50): Ravnoteža preciznosti (${precVal}%) i opoziva (${recVal}%).`
+                : `Balanced threshold (θ ≈ 0.50): Balanced precision (${precVal}%) and recall (${recVal}%).`;
         }
     }
 
@@ -441,8 +482,11 @@ export class ConfusionMatrixSim {
                 const density = gaussian(x, mean, std);
                 const px = padX + x * graphW;
                 const py = (h - padY - 30) - (density / 3.0) * (graphH - 40);
-                if (i === 0) ctx.moveTo(px, h - padY - 30);
-                ctx.lineTo(px, py);
+                if (i === 0) {
+                    ctx.moveTo(px, h - padY - 30);
+                } else {
+                    ctx.lineTo(px, py);
+                }
             }
             ctx.lineTo(padX + graphW, h - padY - 30);
             ctx.closePath();
@@ -453,9 +497,8 @@ export class ConfusionMatrixSim {
             ctx.stroke();
         };
 
-        // Draw negative class distribution (mean 0.30, std 0.14).
+        // Draw negative and positive class distributions.
         drawBell(0.30, 0.14, '#2563eb', 'rgba(37, 99, 235, 0.15)');
-        // Draw positive class distribution (mean 0.70, std 0.15).
         drawBell(0.70, 0.15, '#ef4444', 'rgba(239, 68, 68, 0.15)');
 
         // Draw vertical threshold line θ.
@@ -507,14 +550,18 @@ export class ConfusionMatrixSim {
             const pt = sorted[i];
             const px = pad + pt.fpr * gw;
             const py = (h - pad) - pt.tpr * gh;
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
+            if (i === 0) {
+                ctx.moveTo(px, py);
+            } else {
+                ctx.lineTo(px, py);
+            }
         }
         ctx.stroke();
 
         // Current point on ROC.
-        const curFpr = (currentMatrix.fp + currentMatrix.tn) > 0 ? (currentMatrix.fp / (currentMatrix.fp + currentMatrix.tn)) : 0;
-        const curTpr = (currentMatrix.tp + currentMatrix.fn) > 0 ? (currentMatrix.tp / (currentMatrix.tp + currentMatrix.fn)) : 0;
+        const m = currentMatrix;
+        const curFpr = (m.fp + m.tn) > 0 ? (m.fp / (m.fp + m.tn)) : 0;
+        const curTpr = (m.tp + m.fn) > 0 ? (m.tp / (m.tp + m.fn)) : 0;
         const curPx = pad + curFpr * gw;
         const curPy = (h - pad) - curTpr * gh;
 
@@ -533,4 +580,3 @@ export class ConfusionMatrixSim {
         ctx.fillText('TPR (Recall)', pad, pad - 6);
     }
 }
-

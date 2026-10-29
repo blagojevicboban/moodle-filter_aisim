@@ -100,6 +100,14 @@ php admin/cli/upgrade.php
 
 ---
 
+## 📚 Documentation & Resources
+
+- 🇷🇸 **[Pedagoško-tehnički priručnik za nastavnike](docs/PRIRUCNIK_ZA_NASTAVNIKE.md)**
+- 🇬🇧 **[Pedagogical and Technical Teacher Guide](docs/TEACHER_GUIDE.md)**
+- 📦 **[Turnkey Course Backup (.mbz)](https://github.com/blagojevicboban/moodle-filter_aisim/releases/download/v0.5.0/aiforvet_simulations_demo_course.mbz)**
+
+---
+
 ## 📄 License
 
 Licensed under the [GNU General Public License v3 or later](LICENSE).

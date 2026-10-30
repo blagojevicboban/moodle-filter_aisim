@@ -447,3 +447,61 @@
     border: 1px solid #e2e8f0;
     border-radius: 4px;
 }
+
+/* Convolution & image filters */
+.aisim-conv-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.75rem;
+}
+.aisim-conv-imgbox .aisim-card-title {
+    margin-bottom: 0.35rem;
+}
+.aisim-conv-canvas {
+    width: 100%;
+    display: block;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: crosshair;
+    image-rendering: pixelated;
+}
+.aisim-conv-kernel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin: 0.5rem 0;
+}
+.aisim-conv-cell {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45rem 0.25rem;
+    font-size: 1rem;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #fff;
+}
+.aisim-conv-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+.aisim-conv-row .aisim-conv-cell {
+    width: 4.5rem;
+}
+.aisim-conv-check input {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+}
+.aisim-conv-calc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.aisim-conv-step {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+}

@@ -14,6 +14,7 @@ import {RegressionSim} from 'filter_aisim/sims/regression';
 import {KnnTreeSim} from 'filter_aisim/sims/knn_tree';
 import {KMeansSim} from 'filter_aisim/sims/kmeans';
 import {NeuralNetworkSim} from 'filter_aisim/sims/neural_network';
+import {ConvolutionSim} from 'filter_aisim/sims/convolution';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -81,6 +82,18 @@ const neuralNetwork = (el, lang) => new NeuralNetworkSim(el, {
     epochs: attr(el, 'epochs', 0)
 });
 
+const convolution = (el, lang) => new ConvolutionSim(el, {
+    lang: lang,
+    image: attr(el, 'image', 'shapes'),
+    // A preset name, or the 9 weights as "a,b,c,...", with an optional divisor and absolute value.
+    preset: attr(el, 'preset', 'identity'),
+    kernel: attr(el, 'kernel', ''),
+    divisor: attr(el, 'divisor', ''),
+    abs: attr(el, 'abs', undefined),
+    target: attr(el, 'target', ''),
+    presets: attr(el, 'presets', true)
+});
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -96,7 +109,9 @@ const SIMS = {
     'k-means': kmeans,
     'neural-network': neuralNetwork,
     'neural_network': neuralNetwork,
-    'perceptron': neuralNetwork
+    'perceptron': neuralNetwork,
+    'convolution': convolution,
+    'image-filters': convolution
 };
 
 /**

@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.6.0).
+> Status: **alpha** (v0.7.0).
 
 ---
 
@@ -64,6 +64,12 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Live decision boundary, network drawing (line width = weight strength) and loss curve.
 - Seeded data and weights: the same settings and `data-epochs` always give the same trained network.
 
+### 7. Convolution & Image Filters (`data-aisim="convolution"`)
+- A 3×3 kernel slides over a small grayscale image: blur, Gaussian blur, sharpen, Sobel edges, Laplacian, emboss.
+- Students type their own weights, divisor and absolute value; tapping a pixel shows the full calculation.
+- Optional target filter (`data-target`): the output is compared with the target image (R²), `data-presets="false"`
+  hides the ready-made filters so the kernel has to be built by hand.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -86,6 +92,10 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Perceptron & Neural Network (optionally pre-trained with data-epochs) -->
 <div data-aisim="neural-network" data-dataset="xor" data-layers="1" data-neurons="4" data-activation="tanh" data-lr="0.3"></div>
+
+<!-- Convolution: a ready-made filter, or data-kernel="-1,0,1,-2,0,2,-1,0,1" data-divisor="1" data-abs="true";
+     with a target to match and without the ready-made filters -->
+<div data-aisim="convolution" data-image="shapes" data-preset="identity" data-target="sobely" data-presets="false"></div>
 ```
 
 ---

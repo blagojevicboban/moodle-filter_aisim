@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-10-30
+
+### Added
+- Convolution & Image Filters simulation (`data-aisim="convolution"`): a 3×3 kernel over a 28×28 grayscale image
+  (shapes, stripes, smiley, shapes with noise). Ready-made filters (blur, Gaussian blur, sharpen, Sobel, Laplacian,
+  emboss) or typed weights, divisor and absolute value. Tapping a pixel shows its calculation. With a target filter
+  (`data-target`) the output is compared with the target image (R²); `data-presets="false"` hides the ready-made filters.
+
 ## [0.6.0] - 2026-10-30
 
 ### Added

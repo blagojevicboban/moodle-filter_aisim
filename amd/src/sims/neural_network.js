@@ -234,15 +234,7 @@ export class NeuralNetworkSim {
                     }
                 }
                 if (l > 0) {
-                    const next = [];
-                    for (let i = 0; i < prev.length; i++) {
-                        let s = 0;
-                        for (let j = 0; j < delta.length; j++) {
-                            s += this.W[l][j][i] * delta[j];
-                        }
-                        next.push(s * act.df(prev[i]));
-                    }
-                    delta = next;
+                    delta = this.backDelta(l, delta, prev, act);
                 }
             }
         }
@@ -256,6 +248,25 @@ export class NeuralNetworkSim {
             }
         }
         this.epoch++;
+    }
+
+    /**
+     * Error of layer l-1, from the error of layer l (backpropagation through the weights and the activation).
+     *
+     * @param {Number} l layer index in W
+     * @param {Array} delta error of layer l
+     * @param {Array} prev activations of layer l-1
+     * @param {Object} act activation of the hidden layers
+     * @returns {Array}
+     */
+    backDelta(l, delta, prev, act) {
+        return prev.map((a, i) => {
+            let s = 0;
+            for (let j = 0; j < delta.length; j++) {
+                s += this.W[l][j][i] * delta[j];
+            }
+            return s * act.df(a);
+        });
     }
 
     trainEpochs(count) {
@@ -598,7 +609,13 @@ export class NeuralNetworkSim {
             }
         }
         pos.forEach((layer, l) => layer.forEach((p) => {
-            ctx.fillStyle = l === 0 ? '#64748b' : (l === cols - 1 ? '#0f172a' : '#22707a');
+            let colour = '#22707a';
+            if (l === 0) {
+                colour = '#64748b';
+            } else if (l === cols - 1) {
+                colour = '#0f172a';
+            }
+            ctx.fillStyle = colour;
             ctx.beginPath();
             ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
             ctx.fill();

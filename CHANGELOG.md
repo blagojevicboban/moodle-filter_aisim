@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-10-30
+
+### Added
+- Data Split & Bias simulation (`data-aisim="data-bias"`): a k-NN model checks parts from two factories with a
+  different defect rule. Sample size, share of factory B, test split and k; accuracy on the training set, on the
+  held-out test set and on a representative "real world" set per factory. Shows how a biased sample hides a model
+  that fails for the under-represented group, and why training accuracy (k = 1: 100%) means nothing.
+
 ## [0.8.0] - 2026-10-30
 
 ### Added

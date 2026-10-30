@@ -16,6 +16,7 @@ import {KMeansSim} from 'filter_aisim/sims/kmeans';
 import {NeuralNetworkSim} from 'filter_aisim/sims/neural_network';
 import {ConvolutionSim} from 'filter_aisim/sims/convolution';
 import {QLearningSim} from 'filter_aisim/sims/q_learning';
+import {DataBiasSim} from 'filter_aisim/sims/data_bias';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -106,6 +107,16 @@ const qLearning = (el, lang) => new QLearningSim(el, {
     episodes: attr(el, 'episodes', 0)
 });
 
+const dataBias = (el, lang) => new DataBiasSim(el, {
+    lang: lang,
+    population: attr(el, 'population', 'shifted'),
+    n: attr(el, 'n', 200),
+    share: attr(el, 'share', 5),
+    test: attr(el, 'test', 25),
+    k: attr(el, 'k', 5),
+    seed: attr(el, 'seed', 1)
+});
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -126,7 +137,10 @@ const SIMS = {
     'image-filters': convolution,
     'q-learning': qLearning,
     'q_learning': qLearning,
-    'reinforcement-learning': qLearning
+    'reinforcement-learning': qLearning,
+    'data-bias': dataBias,
+    'data_bias': dataBias,
+    'data-split': dataBias
 };
 
 /**

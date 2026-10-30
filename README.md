@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.8.0).
+> Status: **alpha** (v0.9.0).
 
 ---
 
@@ -77,6 +77,12 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
   an orange line the learned path, a chart the reward per episode.
 - Seeded episodes: the same settings and `data-episodes` always give the same trained agent.
 
+### 9. Data Split & Bias (`data-aisim="data-bias"`)
+- A k-NN model checks parts from two factories, A and B, where the defect rule differs.
+- Sample size, share of factory B in the sample, held-out test share and k.
+- Accuracy on training, on the test set and on a representative "real world" set per factory: a sample with almost
+  no factory B looks excellent on its own test set and still fails for factory B.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -106,6 +112,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Q-learning (optionally pre-trained with data-episodes) -->
 <div data-aisim="q-learning" data-map="cliff" data-alpha="0.5" data-gamma="0.9" data-epsilon="0.2"></div>
+
+<!-- Data Split & Bias -->
+<div data-aisim="data-bias" data-population="shifted" data-n="200" data-share="5" data-test="25" data-k="5"></div>
 ```
 
 ---

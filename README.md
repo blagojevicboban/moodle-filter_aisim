@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.9.0).
+> Status: **beta** (v0.9.1).
 
 ---
 

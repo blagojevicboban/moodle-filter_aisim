@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-10-30
+
+### Added
+- PHPUnit tests for the filter.
+
+### Changed
+- Maturity: beta.
+
+### Removed
+- Development files that only worked on the author's machine: `demo/create_moodle_demo.php` and the `test.html`
+  playground (use https://sim.aiforvet.eu instead).
+
 ## [0.9.0] - 2026-10-30
 
 ### Added

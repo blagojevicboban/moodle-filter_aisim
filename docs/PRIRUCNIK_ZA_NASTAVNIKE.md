@@ -210,7 +210,7 @@ Ako želite da u Moodle kviz ubacite pitanje sa AI simulacijom:
 
 ### 3.3. Uvoz gotove baze pitanja (Moodle XML)
 U repozitorijumu `moodle-qtype_aisim` nalazi se gotov pripremljen paket sa reprezentativnim zadacima za svih 5 simulacija:
-1. Preuzmite fajl [`questions_aiforvet.xml`](file:///C:/tsp/moodle-qtype_aisim/demo/questions_aiforvet.xml).
+1. Preuzmite fajl [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. U vašem Moodle kursu kliknite na **Banka pitanja (Question bank) > Uvoz (Import)**.
 3. Kao format fajla izaberite **Moodle XML format**.
 4. Prevucite fajl `questions_aiforvet.xml` i kliknite na **Uvezi**.

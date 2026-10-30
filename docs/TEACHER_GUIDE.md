@@ -144,7 +144,7 @@ The suite consists of three specialized plugins designed to operate seamlessly t
 ---
 
 ### 3.3. Importing Ready-to-Use Question Banks (Moodle XML)
-1. Download [`questions_aiforvet.xml`](file:///C:/tsp/moodle-qtype_aisim/demo/questions_aiforvet.xml).
+1. Download [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. In your course, navigate to **Question bank > Import**.
 3. Select **Moodle XML format**.
 4. Upload `questions_aiforvet.xml` and click **Import**.

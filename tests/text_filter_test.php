@@ -24,7 +24,6 @@ namespace filter_aisim;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \filter_aisim\text_filter
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Run the filter on a text in a fresh page.

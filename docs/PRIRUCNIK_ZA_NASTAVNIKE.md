@@ -93,7 +93,7 @@ Zamislite planinara koji se po gustoj magli spušta sa vrha planine u dolinu. On
 4. **Nekonveksna funkcija troška:** Učenik uočava postojanje lokalnih minimuma i shvata zašto početna tačka ($w_0$) određuje u kojoj "dolini" će model završiti.
 
 #### Tipičan zadatak za kviz:
-> *"Ispitujete ponašanje gradijentnog spusta na konveksnoj funkciji troška. Podesite stopu učenja ($\alpha$) tako da algoritam uspešno konvergira ka globalnom minimumu u najviše 30 koraka (funkcija troška $J(w) \le 0.05$)."*
+> *"Ispitujete ponašanje gradijentnog spusta na konveksnoj funkciji troška čiji je minimum $J(w) = 1.00$. Podesite stopu učenja ($\alpha$) i pokrenite algoritam tako da trošak padne na $J(w) \le 1.01$."*
 
 ---
 
@@ -114,7 +114,7 @@ U industrijskoj kontroli kvaliteta, recimo da fabrika proizvodi 1000 komada na s
 - Pomeranjem praga $\theta$ udesno (visok prag, npr. 0.80): Model je "siguran" kad nešto označi kao škart (Precision raste), ali propušta defekte (Recall drastično pada).
 
 #### Tipičan zadatak za kviz:
-> *"Podesite prag odlučivanja ($\theta$) klasifikatora tako da dobijete optimalan balans između preciznosti i odziva (F1-score $\ge 0.85$)."*
+> *"Podesite prag odlučivanja ($\theta$) klasifikatora tako da uhvatite većinu škarta bez previše lažnih uzbuna: odziv (Recall) $\ge 0.80$ i preciznost (Precision) $\ge 0.70$."*
 
 ---
 
@@ -135,7 +135,7 @@ Podučenost (*underfitting*) je kada učenik pročita samo naslove lekcija i na 
 4. **Uvođenje regularizacije ($\lambda = 0.01 - 0.10$):** Čak i sa visokim stepenom $d=5$, kazneni član $\lambda \sum w^2$ "pegla" krivu i sprečava preterano podivljale koeficijente.
 
 #### Tipičan zadatak za kviz:
-> *"Za dati skup merenja odaberite stepen polinoma i parametar regularizacije ($\lambda$) tako da model generalizuje trend bez prepodešavanja (Test $R^2 \ge 0.85$)."*
+> *"Za periodični signal sa šumom odaberite stepen polinoma najviše 7 tako da model generalizuje trend bez preprilagođavanja, uz validacionu grešku $MSE \le 0.19$."*
 
 ---
 
@@ -200,8 +200,8 @@ Ako želite da u Moodle kviz ubacite pitanje sa AI simulacijom:
 4. U sekciji **Postavke AI simulacije**:
    - **Tip simulacije:** Izaberite npr. *Matrica konfuzije*.
    - **Scenario / Skup podataka:** Izaberite npr. *Industrijska kontrola (quality)*.
-   - **Ciljna vrednost (Min i Max):** Npr. Min = `0.85`, Max = `1.00`.
-   - **Dozvoljena tolerancija:** Npr. `0.05`.
+   - **Ciljna metrika 1 i 2:** Npr. za matricu konfuzije odziv `0.80` i preciznost `0.70`. Značenje polja zavisi od simulacije – pogledajte pomoć (?) uz polja i tabelu u Prilogu.
+   - **Dozvoljena tolerancija:** Koristi se samo za gradijentni spust (pola poena za trošak do cilja + tolerancije), npr. `0.05`.
    - **Početna konfiguracija:** Opcioni JSON sa inicijalnim stanjem.
 5. Podesite povratne informacije za tačan, delimično tačan i netačan odgovor.
 6. Sačuvajte pitanje. Kada učenik pokrene kviz, Moodle prikazuje interaktivno platno. Čim učenik klikne na *"Proveri odgovor"* ili preda test, Moodle upoređuje postignute vrednosti sa zadatim kriterijumima i automatski dodeljuje poene!
@@ -272,11 +272,11 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 
 | Naziv simulacije | Ključni parametri | Matematički model / Formula | Tipičan kriterijum uspeha |
 | :--- | :--- | :--- | :--- |
-| **Gradijentni spust** | $\alpha$ (stopa), $w_0$ (početak) | $w \leftarrow w - \alpha \nabla J(w)$ | $J(w) \le 0.05$ u $< 30$ koraka |
-| **Matrica konfuzije** | $\theta$ (prag odluke) | $F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$ | $F_1 \ge 0.85$ |
-| **Polinomska regresija** | $d$ (stepen), $\lambda$ (regularizacija) | $J(w) = \frac{1}{2m}\sum (h_w(x) - y)^2 + \frac{\lambda}{2}\sum w_j^2$ | Test $R^2 \ge 0.85$ |
-| **k-NN klasifikacija** | $k$ (broj suseda) | $\hat{y} = \arg\max_c \sum_{i \in N_k(x)} I(y_i = c)$ | Tačnost $\ge 88\%$ |
-| **K-Means klasterovanje** | $K$ (broj klastera) | $\min_{\mu} \sum_{i=1}^m \sum_{k=1}^K r_{ik} \|x^{(i)} - \mu_k\|^2$ | Stabilna konvergencija centroida |
+| **Gradijentni spust** | $\alpha$ (stopa), $w_0$ (početak) | $w \leftarrow w - \alpha \nabla J(w)$ | $J(w) \le 1.01$ (minimum je 1.00) |
+| **Matrica konfuzije** | $\theta$ (prag odluke) | $F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$ | Recall $\ge 0.80$ i Precision $\ge 0.70$ |
+| **Polinomska regresija** | $d$ (stepen), $\lambda$ (regularizacija) | $J(w) = \frac{1}{2m}\sum (h_w(x) - y)^2 + \frac{\lambda}{2}\sum w_j^2$ | Validaciona $MSE \le 0.19$ uz $d \le 7$ |
+| **k-NN klasifikacija** | $k$ (broj suseda) | $\hat{y} = \arg\max_c \sum_{i \in N_k(x)} I(y_i = c)$ | Tačnost $\ge 98\%$ |
+| **K-Means klasterovanje** | $K$ (broj klastera) | $\min_{\mu} \sum_{i=1}^m \sum_{k=1}^K r_{ik} \|x^{(i)} - \mu_k\|^2$ | Konvergencija uz $K = 3$ i $WCSS \le 10$ |
 
 ---
 

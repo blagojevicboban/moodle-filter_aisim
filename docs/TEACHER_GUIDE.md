@@ -137,7 +137,7 @@ The suite consists of three specialized plugins designed to operate seamlessly t
 3. Specify question name, problem statement, default mark, and penalty.
 4. Under **AI Simulation Settings**:
    - Choose the simulation type and scenario.
-   - Set target metrics (e.g. Min = `0.85`, Max = `1.00`, Tolerance = `0.05`).
+   - Set Target Metric 1 and 2 (e.g. recall `0.80` and precision `0.70` for the confusion matrix). Their meaning depends on the simulation – see the help (?) next to the fields and the table in the Appendix. The tolerance is used only for gradient descent (half marks up to target + tolerance).
    - Define custom automated feedback strings for full, partial, and incorrect answers.
 5. Save the question. During quiz attempts, Moodle tracks student parameter interactions and automatically calculates awarded points upon submission.
 
@@ -185,11 +185,11 @@ The suite consists of three specialized plugins designed to operate seamlessly t
 
 | Simulation Name | Key Parameters | Model / Governing Equation | Target Success Metric |
 | :--- | :--- | :--- | :--- |
-| **Gradient Descent** | $\alpha$ (step), $w_0$ (start) | $w \leftarrow w - \alpha \nabla J(w)$ | $J(w) \le 0.05$ in $< 30$ iterations |
-| **Confusion Matrix** | $\theta$ (decision threshold) | $F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$ | $F_1 \ge 0.85$ |
-| **Polynomial Regression** | $d$ (degree), $\lambda$ (regularization) | $J(w) = \frac{1}{2m}\sum (h_w(x) - y)^2 + \frac{\lambda}{2}\sum w_j^2$ | Test $R^2 \ge 0.85$ |
-| **k-NN Classification** | $k$ (neighbors) | $\hat{y} = \arg\max_c \sum_{i \in N_k(x)} I(y_i = c)$ | Accuracy $\ge 88\%$ |
-| **K-Means Clustering** | $K$ (clusters) | $\min_{\mu} \sum_{i=1}^m \sum_{k=1}^K r_{ik} \|x^{(i)} - \mu_k\|^2$ | Stable Centroid Convergence |
+| **Gradient Descent** | $\alpha$ (step), $w_0$ (start) | $w \leftarrow w - \alpha \nabla J(w)$ | $J(w) \le 1.01$ (the minimum is 1.00) |
+| **Confusion Matrix** | $\theta$ (decision threshold) | $F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$ | Recall $\ge 0.80$ and Precision $\ge 0.70$ |
+| **Polynomial Regression** | $d$ (degree), $\lambda$ (regularization) | $J(w) = \frac{1}{2m}\sum (h_w(x) - y)^2 + \frac{\lambda}{2}\sum w_j^2$ | Validation $MSE \le 0.19$ with $d \le 7$ |
+| **k-NN Classification** | $k$ (neighbors) | $\hat{y} = \arg\max_c \sum_{i \in N_k(x)} I(y_i = c)$ | Accuracy $\ge 98\%$ |
+| **K-Means Clustering** | $K$ (clusters) | $\min_{\mu} \sum_{i=1}^m \sum_{k=1}^K r_{ik} \|x^{(i)} - \mu_k\|^2$ | Convergence with $K = 3$ and $WCSS \le 10$ |
 
 ---
 

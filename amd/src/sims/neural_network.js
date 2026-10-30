@@ -47,57 +47,39 @@ export class NeuralNetworkSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Perceptron i neuronska mreža', 'Perceptron & Neural Network'),
-            badge: this.tr('Neuronske mreže', 'Neural Networks'),
-            architecture: this.tr('Arhitektura mreže', 'Network Architecture'),
-            layers: this.tr('Skriveni slojevi:', 'Hidden layers:'),
-            layers0: this.tr('0 – perceptron', '0 – perceptron'),
-            neurons: this.tr('Neurona po sloju', 'Neurons per layer'),
-            activation: this.tr('Aktivacija:', 'Activation:'),
-            training: this.tr('Učenje', 'Training'),
-            lr: this.tr('Stopa učenja', 'Learning rate'),
-            train: this.tr('▶ Treniraj', '▶ Train'),
-            pause: this.tr('⏸ Pauza', '⏸ Pause'),
-            step: this.tr('+10 epoha', '+10 epochs'),
-            reset: this.tr('↺ Nove težine', '↺ New weights'),
-            metrics: this.tr('Metrike', 'Metrics'),
-            epoch: this.tr('Epoha:', 'Epoch:'),
-            loss: this.tr('Gubitak (log-loss):', 'Loss (log-loss):'),
-            accuracy: this.tr('Tačnost:', 'Accuracy:'),
-            neuronsTotal: this.tr('Skrivenih neurona:', 'Hidden neurons:'),
-            network: this.tr('Mreža (debljina veze = jačina težine)', 'Network (line width = weight strength)'),
-            lossCurve: this.tr('Kriva gubitka', 'Loss curve'),
+            title: this.str('nn_title'),
+            badge: this.str('nn_badge'),
+            architecture: this.str('nn_architecture'),
+            layers: this.str('nn_layers'),
+            layers0: this.str('nn_layers0'),
+            neurons: this.str('nn_neurons'),
+            activation: this.str('nn_activation'),
+            training: this.str('nn_training'),
+            lr: this.str('nn_lr'),
+            train: this.str('nn_train'),
+            pause: this.str('nn_pause'),
+            step: this.str('nn_step'),
+            reset: this.str('nn_reset'),
+            metrics: this.str('nn_metrics'),
+            epoch: this.str('nn_epoch'),
+            loss: this.str('nn_loss'),
+            accuracy: this.str('nn_accuracy'),
+            neuronsTotal: this.str('nn_neurons_total'),
+            network: this.str('nn_network'),
+            lossCurve: this.str('nn_loss_curve'),
             datasets: {
-                linear: this.tr('📏 Linearno razdvojivi', '📏 Linearly separable'),
-                xor: this.tr('✖️ XOR (ukršteni)', '✖️ XOR (crossed)'),
-                circles: this.tr('⭕ Krug u krugu', '⭕ Circle in a circle')
+                linear: this.str('nn_datasets_linear'),
+                xor: this.str('nn_datasets_xor'),
+                circles: this.str('nn_datasets_circles')
             },
-            adviceStart: this.tr(
-                'Pritisnite „Treniraj“ i posmatrajte kako mreža pomera granicu odlučivanja.',
-                'Press “Train” and watch the network move its decision boundary.'
-            ),
-            advicePerceptron: this.tr(
-                'Perceptron (bez skrivenog sloja) može da povuče samo pravu liniju. ' +
-                    'Ovi podaci nisu linearno razdvojivi – dodajte skriveni sloj.',
-                'A perceptron (no hidden layer) can only draw a straight line. ' +
-                    'This data is not linearly separable – add a hidden layer.'
-            ),
-            adviceSolved: this.tr(
-                'Odlično! Mreža je naučila da razdvoji klase.',
-                'Well done! The network has learned to separate the classes.'
-            ),
-            adviceDiverged: this.tr(
-                'Gubitak je eksplodirao – stopa učenja je prevelika. Smanjite je i napravite nove težine.',
-                'The loss exploded – the learning rate is too high. Lower it and create new weights.'
-            ),
-            adviceStuck: this.tr(
-                'Učenje je zastalo. Probajte više neurona, drugu aktivaciju ili nove početne težine.',
-                'Training has stalled. Try more neurons, another activation or new initial weights.'
-            )
+            adviceStart: this.str('nn_advice_start'),
+            advicePerceptron: this.str('nn_advice_perceptron'),
+            adviceSolved: this.str('nn_advice_solved'),
+            adviceDiverged: this.str('nn_advice_diverged'),
+            adviceStuck: this.str('nn_advice_stuck')
         };
 
         this.datasetKey = ['linear', 'xor', 'circles'].includes(options.dataset) ? options.dataset : 'xor';
@@ -122,14 +104,18 @@ export class NeuralNetworkSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initData() {
@@ -648,3 +634,11 @@ export class NeuralNetworkSim {
         ctx.stroke();
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+NeuralNetworkSim.STRINGS = [
+    'nn_title', 'nn_badge', 'nn_architecture', 'nn_layers', 'nn_layers0', 'nn_neurons', 'nn_activation', 'nn_training',
+    'nn_lr', 'nn_train', 'nn_pause', 'nn_step', 'nn_reset', 'nn_metrics', 'nn_epoch', 'nn_loss', 'nn_accuracy',
+    'nn_neurons_total', 'nn_network', 'nn_loss_curve', 'nn_datasets_linear', 'nn_datasets_xor', 'nn_datasets_circles',
+    'nn_advice_start', 'nn_advice_perceptron', 'nn_advice_solved', 'nn_advice_diverged', 'nn_advice_stuck'
+];

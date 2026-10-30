@@ -58,66 +58,48 @@ export class ConvolutionSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Konvolucija i filteri slike', 'Convolution & Image Filters'),
-            badge: this.tr('Računarski vid', 'Computer Vision'),
-            input: this.tr('Ulazna slika', 'Input image'),
-            output: this.tr('Rezultat filtera', 'Filter output'),
-            target: this.tr('Cilj', 'Target'),
-            kernel: this.tr('Kernel 3×3 (težine)', '3×3 kernel (weights)'),
-            preset: this.tr('Gotov filter:', 'Ready-made filter:'),
-            custom: this.tr('— svoj kernel —', '— custom kernel —'),
-            divisor: this.tr('Delilac', 'Divisor'),
-            abs: this.tr('Apsolutna vrednost |x| (ivice u oba smera)', 'Absolute value |x| (edges in both directions)'),
-            targetSelect: this.tr('Cilj:', 'Target:'),
-            noTarget: this.tr('— bez cilja (slobodno) —', '— no target (free play) —'),
-            metrics: this.tr('Metrike', 'Metrics'),
-            sum: this.tr('Zbir težina / delilac:', 'Sum of weights / divisor:'),
-            match: this.tr('Podudaranje sa ciljem (R²):', 'Match with target (R²):'),
-            calc: this.tr('Računanje za izabrani piksel', 'Calculation for the selected pixel'),
-            calcHint: this.tr('Dodirnite piksel na ulaznoj slici ili rezultatu.', 'Tap a pixel on the input image or the output.'),
+            title: this.str('conv_title'),
+            badge: this.str('conv_badge'),
+            input: this.str('conv_input'),
+            output: this.str('conv_output'),
+            target: this.str('conv_target'),
+            kernel: this.str('conv_kernel'),
+            preset: this.str('conv_preset'),
+            custom: this.str('conv_custom'),
+            divisor: this.str('conv_divisor'),
+            abs: this.str('conv_abs'),
+            targetSelect: this.str('conv_target_select'),
+            noTarget: this.str('conv_no_target'),
+            metrics: this.str('conv_metrics'),
+            sum: this.str('conv_sum'),
+            match: this.str('conv_match'),
+            calc: this.str('conv_calc'),
+            calcHint: this.str('conv_calc_hint'),
             images: {
-                shapes: this.tr('🔷 Oblici', '🔷 Shapes'),
-                stripes: this.tr('🦓 Pruge', '🦓 Stripes'),
-                face: this.tr('🙂 Smajli', '🙂 Smiley'),
-                noisy: this.tr('📺 Oblici sa šumom', '📺 Shapes with noise')
+                shapes: this.str('conv_images_shapes'),
+                stripes: this.str('conv_images_stripes'),
+                face: this.str('conv_images_face'),
+                noisy: this.str('conv_images_noisy')
             },
             presets: {
-                identity: this.tr('Identitet (bez promene)', 'Identity (no change)'),
-                box: this.tr('Zamućenje (prosek)', 'Blur (average)'),
-                gaussian: this.tr('Gausovo zamućenje', 'Gaussian blur'),
-                sharpen: this.tr('Izoštravanje', 'Sharpen'),
-                sobelx: this.tr('Sobel – vertikalne ivice', 'Sobel – vertical edges'),
-                sobely: this.tr('Sobel – horizontalne ivice', 'Sobel – horizontal edges'),
-                laplacian: this.tr('Laplas – sve ivice', 'Laplacian – all edges'),
-                emboss: this.tr('Reljef', 'Emboss')
+                identity: this.str('conv_presets_identity'),
+                box: this.str('conv_presets_box'),
+                gaussian: this.str('conv_presets_gaussian'),
+                sharpen: this.str('conv_presets_sharpen'),
+                sobelx: this.str('conv_presets_sobelx'),
+                sobely: this.str('conv_presets_sobely'),
+                laplacian: this.str('conv_presets_laplacian'),
+                emboss: this.str('conv_presets_emboss')
             },
-            adviceFree: this.tr(
-                'Izaberite gotov filter ili upišite svoje težine. Svaki piksel rezultata je zbir okolnih 9 piksela ' +
-                    'pomnoženih težinama kernela.',
-                'Pick a ready-made filter or type your own weights. Every output pixel is the sum of the 9 surrounding ' +
-                    'pixels multiplied by the kernel weights.'
-            ),
-            adviceFar: this.tr(
-                'Rezultat još ne liči na cilj. Šta cilj ističe: ivice, zamućenje ili oštrinu?',
-                'The output does not look like the target yet. What does the target show: edges, blur or sharpness?'
-            ),
-            adviceClose: this.tr(
-                'Blizu ste! Proverite znakove težina, delilac i apsolutnu vrednost.',
-                'Close! Check the signs of the weights, the divisor and the absolute value.'
-            ),
-            adviceSolved: this.tr('Odlično! Vaš filter daje ciljnu sliku.', 'Well done! Your filter produces the target image.'),
-            adviceBright: this.tr(
-                'Zbir težina podeljen deliocem nije 1, pa se menja ukupna svetlina slike.',
-                'The sum of the weights divided by the divisor is not 1, so the overall brightness changes.'
-            ),
-            adviceAbs: this.tr(
-                'Ivice daju i negativne vrednosti (svetlo→tamno), a one se prikazuju kao crno. Uključite apsolutnu vrednost.',
-                'Edges also give negative values (light→dark), which show as black. Turn on the absolute value.'
-            )
+            adviceFree: this.str('conv_advice_free'),
+            adviceFar: this.str('conv_advice_far'),
+            adviceClose: this.str('conv_advice_close'),
+            adviceSolved: this.str('conv_advice_solved'),
+            adviceBright: this.str('conv_advice_bright'),
+            adviceAbs: this.str('conv_advice_abs')
         };
 
         this.imageKey = IMAGES.includes(options.image) ? options.image : 'shapes';
@@ -148,14 +130,18 @@ export class ConvolutionSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initImage() {
@@ -549,10 +535,10 @@ export class ConvolutionSim {
             steps.push(`|${fmt(raw)}| = ${fmt(Math.abs(raw))}`);
         }
         if (shown !== (this.abs ? Math.abs(raw) : raw)) {
-            steps.push(this.tr(`ograničeno na 0…1 → ${fmt(shown)}`, `clipped to 0…1 → ${fmt(shown)}`));
+            steps.push(this.str('conv_clipped', fmt(shown)));
         }
         this.container.querySelector('#aisim-conv-calc').innerHTML =
-            `<div><strong>${this.tr('Piksel', 'Pixel')} (${r + 1}, ${c + 1})</strong></div>` +
+            `<div><strong>${this.str('conv_pixel')} (${r + 1}, ${c + 1})</strong></div>` +
             steps.map((s) => `<div class="aisim-conv-step">${s}</div>`).join('');
     }
 
@@ -596,3 +582,13 @@ export class ConvolutionSim {
         ctx.strokeRect(c * px, r * px, px, px);
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+ConvolutionSim.STRINGS = [
+    'conv_title', 'conv_badge', 'conv_input', 'conv_output', 'conv_target', 'conv_kernel', 'conv_preset', 'conv_custom',
+    'conv_divisor', 'conv_abs', 'conv_target_select', 'conv_no_target', 'conv_metrics', 'conv_sum', 'conv_match',
+    'conv_calc', 'conv_calc_hint', 'conv_images_shapes', 'conv_images_stripes', 'conv_images_face', 'conv_images_noisy',
+    'conv_presets_identity', 'conv_presets_box', 'conv_presets_gaussian', 'conv_presets_sharpen', 'conv_presets_sobelx',
+    'conv_presets_sobely', 'conv_presets_laplacian', 'conv_presets_emboss', 'conv_advice_free', 'conv_advice_far',
+    'conv_advice_close', 'conv_advice_solved', 'conv_advice_bright', 'conv_advice_abs', 'conv_clipped', 'conv_pixel'
+];

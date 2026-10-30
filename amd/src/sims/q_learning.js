@@ -65,67 +65,43 @@ export class QLearningSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Učenje potkrepljivanjem (Q-learning)', 'Reinforcement Learning (Q-learning)'),
-            badge: this.tr('Učenje potkrepljivanjem', 'Reinforcement Learning'),
-            params: this.tr('Parametri učenja', 'Learning parameters'),
-            alpha: this.tr('Stopa učenja α', 'Learning rate α'),
-            gamma: this.tr('Faktor umanjenja γ (koliko vredi budućnost)', 'Discount factor γ (value of the future)'),
-            epsilon: this.tr('Istraživanje ε (nasumični potezi)', 'Exploration ε (random moves)'),
-            train: this.tr('▶ Treniraj', '▶ Train'),
-            pause: this.tr('⏸ Pauza', '⏸ Pause'),
-            one: this.tr('+1 epizoda', '+1 episode'),
-            fifty: this.tr('+50 epizoda', '+50 episodes'),
-            reset: this.tr('↺ Ispočetka', '↺ Start over'),
-            metrics: this.tr('Metrike', 'Metrics'),
-            episode: this.tr('Epizoda:', 'Episode:'),
-            avgReward: this.tr('Prosečna nagrada (poslednjih 20):', 'Average reward (last 20):'),
-            path: this.tr('Put po naučenoj politici:', 'Path of the learned policy:'),
-            optimal: this.tr('Najkraći mogući put:', 'Shortest possible path:'),
-            steps: this.tr('koraka', 'steps'),
-            noGoal: this.tr('ne stiže do cilja', 'does not reach the goal'),
-            toTreasure: this.tr('staje kod malog blaga', 'stops at the small treasure'),
-            rewardCurve: this.tr('Nagrada po epizodi', 'Reward per episode'),
-            cell: this.tr('Q-vrednosti izabranog polja', 'Q-values of the selected cell'),
-            cellHint: this.tr('Dodirnite polje da vidite njegove Q-vrednosti.', 'Tap a cell to see its Q-values.'),
-            legend: this.tr(
-                'S start · G cilj (+10) · T malo blago (+3) · crveno: litica (−10) · svaki korak −0.1. ' +
-                    'Boja polja = najveća Q-vrednost, strelica = najbolji potez.',
-                'S start · G goal (+10) · T small treasure (+3) · red: cliff (−10) · every step −0.1. ' +
-                    'Cell colour = highest Q-value, arrow = best move.'
-            ),
+            title: this.str('ql_title'),
+            badge: this.str('ql_badge'),
+            params: this.str('ql_params'),
+            alpha: this.str('ql_alpha'),
+            gamma: this.str('ql_gamma'),
+            epsilon: this.str('ql_epsilon'),
+            train: this.str('ql_train'),
+            pause: this.str('ql_pause'),
+            one: this.str('ql_one'),
+            fifty: this.str('ql_fifty'),
+            reset: this.str('ql_reset'),
+            metrics: this.str('ql_metrics'),
+            episode: this.str('ql_episode'),
+            avgReward: this.str('ql_avg_reward'),
+            path: this.str('ql_path'),
+            optimal: this.str('ql_optimal'),
+            steps: this.str('ql_steps'),
+            noGoal: this.str('ql_no_goal'),
+            toTreasure: this.str('ql_to_treasure'),
+            rewardCurve: this.str('ql_reward_curve'),
+            cell: this.str('ql_cell'),
+            cellHint: this.str('ql_cell_hint'),
+            legend: this.str('ql_legend'),
             maps: {
-                maze: this.tr('🧩 Lavirint', '🧩 Maze'),
-                cliff: this.tr('🏔️ Litica', '🏔️ Cliff'),
-                treasure: this.tr('💰 Blizu ili daleko', '💰 Near or far')
+                maze: this.str('ql_maps_maze'),
+                cliff: this.str('ql_maps_cliff'),
+                treasure: this.str('ql_maps_treasure')
             },
-            adviceStart: this.tr(
-                'Pritisnite „Treniraj“. Agent počinje bez znanja i uči iz nagrada posle svakog poteza.',
-                'Press “Train”. The agent starts knowing nothing and learns from the reward after every move.'
-            ),
-            adviceSolved: this.tr(
-                'Odlično! Naučena politika vodi najkraćim putem do cilja.',
-                'Well done! The learned policy takes the shortest path to the goal.'
-            ),
-            adviceLonger: this.tr(
-                'Agent stiže do cilja, ali ne najkraćim putem. Trenirajte još ili smanjite ε.',
-                'The agent reaches the goal, but not by the shortest path. Train more or lower ε.'
-            ),
-            adviceTreasure: this.tr(
-                'Agent bira malo blago u blizini jer mu buduće nagrade malo vrede. Povećajte γ.',
-                'The agent takes the small nearby treasure because future rewards are worth little to it. Increase γ.'
-            ),
-            adviceTreasureExplore: this.tr(
-                'Agent se zadovoljio malim blagom jer veliko još nije otkrio. Povećajte istraživanje ε ili počnite ispočetka.',
-                'The agent settled for the small treasure because it has not discovered the big one. Raise ε or start over.'
-            ),
-            adviceExplore: this.tr(
-                'Agent još nije pronašao cilj. Bez istraživanja (ε) ponavlja iste poteze – povećajte ε ili trenirajte duže.',
-                'The agent has not found the goal yet. Without exploration (ε) it repeats the same moves – raise ε or train longer.'
-            )
+            adviceStart: this.str('ql_advice_start'),
+            adviceSolved: this.str('ql_advice_solved'),
+            adviceLonger: this.str('ql_advice_longer'),
+            adviceTreasure: this.str('ql_advice_treasure'),
+            adviceTreasureExplore: this.str('ql_advice_treasure_explore'),
+            adviceExplore: this.str('ql_advice_explore')
         };
 
         this.mapKey = Object.prototype.hasOwnProperty.call(MAPS, options.map) ? options.map : 'maze';
@@ -149,14 +125,18 @@ export class QLearningSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initWorld() {
@@ -557,7 +537,7 @@ export class QLearningSim {
         const {r, c} = this.selected;
         const qv = this.Q[r * this.cols + c];
         const best = this.greedy(this.selected);
-        box.innerHTML = `<div><strong>${this.tr('Polje', 'Cell')} (${r + 1}, ${c + 1})</strong></div>` +
+        box.innerHTML = `<div><strong>${this.str('ql_cell_name')} (${r + 1}, ${c + 1})</strong></div>` +
             qv.map((v, a) => {
                 const star = a === best && v !== 0 ? ' ★' : '';
                 return `<div class="aisim-conv-step">${ARROWS[a]} Q = ${v.toFixed(3)}${star}</div>`;
@@ -688,3 +668,12 @@ export class QLearningSim {
         ctx.stroke();
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+QLearningSim.STRINGS = [
+    'ql_title', 'ql_badge', 'ql_params', 'ql_alpha', 'ql_gamma', 'ql_epsilon', 'ql_train', 'ql_pause', 'ql_one',
+    'ql_fifty', 'ql_reset', 'ql_metrics', 'ql_episode', 'ql_avg_reward', 'ql_path', 'ql_optimal', 'ql_steps',
+    'ql_no_goal', 'ql_to_treasure', 'ql_reward_curve', 'ql_cell', 'ql_cell_hint', 'ql_legend', 'ql_maps_maze',
+    'ql_maps_cliff', 'ql_maps_treasure', 'ql_advice_start', 'ql_advice_solved', 'ql_advice_longer',
+    'ql_advice_treasure', 'ql_advice_treasure_explore', 'ql_advice_explore', 'ql_cell_name'
+];

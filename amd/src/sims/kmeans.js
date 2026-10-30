@@ -33,45 +33,32 @@ export class KMeansSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('K-sredine (K-Means klasterovanje)', 'K-Means Clustering Lab'),
-            badge: this.tr('Poglavlje 4.5', 'Chapter 4.5'),
-            kLabel: this.tr('Broj klastera (K):', 'Clusters (K):'),
-            datasetLabel: this.tr('Skup podataka:', 'Dataset:'),
-            stepBtn: this.tr('⏭ Sledeći korak', '⏭ Next Step'),
-            runBtn: this.tr('▶ Pokreni', '▶ Run'),
-            pauseBtn: this.tr('⏸ Pauza', '⏸ Pause'),
-            reseedBtn: this.tr('🎲 Novi početni centroidi', '🎲 Random Centroids'),
-            resetBtn: this.tr('↺ Reset', '↺ Reset'),
-            iteration: this.tr('Korak / Faza:', 'Iteration / Phase:'),
-            phaseAssign: this.tr('1. Dodela tačaka centroidima', '1. Assign points to centroids'),
-            phaseUpdate: this.tr('2. Pomeranje centroida u prosek', '2. Move centroids to mean'),
-            convergedMsg: this.tr('✓ Konvergirano! Centroidi su stabilni.', '✓ Converged! Centroids stable.'),
-            inertiaLabel: this.tr('Inercija (WCSS):', 'Inertia (WCSS):'),
-            elbowTitle: this.tr('Metoda lakta (Elbow Method)', 'Elbow Plot (WCSS vs K)'),
-            addPointNotice: this.tr(
-                'Nenadgledano učenje: tačke nemaju labele. Kliknite na platno da dodate tačku.',
-                'Unsupervised: points have no labels. Click canvas to add custom points.'
-            ),
-            adviceLowK: this.tr(
-                'Premalo K: Prirodne grupe su spojene u jedan preveliki klaster.',
-                'K is too small: Natural groups are merged together.'
-            ),
-            adviceElbow: this.tr(
-                'Optimalno K: Na "prelomu lakta" inercija naglo usporava pad.',
-                'Optimal K: The "elbow" marks the point of diminishing returns.'
-            ),
-            adviceHighK: this.tr(
-                'Preveliko K: Prirodne celine se veštački seckaju na sitne klastere.',
-                'K is too large: Natural clusters are fragmented artificially.'
-            ),
+            title: this.str('km_title'),
+            badge: this.str('km_badge'),
+            kLabel: this.str('km_k_label'),
+            datasetLabel: this.str('km_dataset_label'),
+            stepBtn: this.str('km_step_btn'),
+            runBtn: this.str('km_run_btn'),
+            pauseBtn: this.str('km_pause_btn'),
+            reseedBtn: this.str('km_reseed_btn'),
+            resetBtn: this.str('km_reset_btn'),
+            iteration: this.str('km_iteration'),
+            phaseAssign: this.str('km_phase_assign'),
+            phaseUpdate: this.str('km_phase_update'),
+            convergedMsg: this.str('km_converged_msg'),
+            inertiaLabel: this.str('km_inertia_label'),
+            elbowTitle: this.str('km_elbow_title'),
+            addPointNotice: this.str('km_add_point_notice'),
+            adviceLowK: this.str('km_advice_low_k'),
+            adviceElbow: this.str('km_advice_elbow'),
+            adviceHighK: this.str('km_advice_high_k'),
             datasets: {
-                blobs3: this.tr('🫧 3 prirodna klastera', '🫧 3 Natural Clusters'),
-                blobs4: this.tr('🧭 4 industrijska senzorska režima', '🧭 4 Sensor Regimes'),
-                uniform: this.tr('🎲 Ravnomerno raspoređene tačke', '🎲 Uniform Random Points')
+                blobs3: this.str('km_datasets_blobs3'),
+                blobs4: this.str('km_datasets_blobs4'),
+                uniform: this.str('km_datasets_uniform')
             }
         };
 
@@ -94,14 +81,18 @@ export class KMeansSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initData() {
@@ -230,13 +221,13 @@ export class KMeansSim {
                             </div>
 
                             <div class="aisim-card">
-                                <div class="aisim-card-title">Stanje algoritma</div>
+                                <div class="aisim-card-title">${this.str('km_state')}</div>
                                 <div class="aisim-stat-row">
                                     <span>${this.t.iteration}</span>
                                     <span class="aisim-stat-val" id="val-km-iter">0</span>
                                 </div>
                                 <div class="aisim-stat-row">
-                                    <span>Faza:</span>
+                                    <span>${this.str('km_phase')}</span>
                                     <span class="aisim-stat-val" id="val-km-phase" style="font-size:0.8rem;">
                                         ${this.t.phaseAssign}
                                     </span>
@@ -253,7 +244,7 @@ export class KMeansSim {
                                 <div style="display:flex; justify-content:space-between; font-size:0.75rem;
                                             color:#64748b; margin-top:4px;">
                                     <span>K = 1</span>
-                                    <span>Inercija (WCSS)</span>
+                                    <span>${this.str('km_inertia_axis')}</span>
                                     <span>K = 6</span>
                                 </div>
                             </div>
@@ -651,3 +642,12 @@ export class KMeansSim {
         }
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+KMeansSim.STRINGS = [
+    'km_title', 'km_badge', 'km_k_label', 'km_dataset_label', 'km_step_btn', 'km_run_btn', 'km_pause_btn',
+    'km_reseed_btn', 'km_reset_btn', 'km_iteration', 'km_phase_assign', 'km_phase_update', 'km_converged_msg',
+    'km_inertia_label', 'km_elbow_title', 'km_add_point_notice', 'km_advice_low_k', 'km_advice_elbow',
+    'km_advice_high_k', 'km_datasets_blobs3', 'km_datasets_blobs4', 'km_datasets_uniform', 'km_state', 'km_phase',
+    'km_inertia_axis'
+];

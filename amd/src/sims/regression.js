@@ -13,37 +13,27 @@ export class RegressionSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Polinomska regresija i preprilagođavanje', 'Polynomial Regression & Overfitting'),
-            badge: this.tr('Poglavlja 3.3 & 3.10', 'Chapters 3.3 & 3.10'),
-            degreeLabel: this.tr('Stepen polinoma (d):', 'Polynomial Degree (d):'),
-            regLabel: this.tr('Regularizacija (λ):', 'Regularization (λ):'),
-            datasetLabel: this.tr('Skup podataka:', 'Dataset:'),
-            trainPts: this.tr('Trening tačke (Train)', 'Training Points'),
-            testPts: this.tr('Validacione tačke (Validation)', 'Validation Points'),
-            polyCurve: this.tr('Polinom ŷ(x)', 'Polynomial ŷ(x)'),
-            trainError: this.tr('Trening MSE greška:', 'Training MSE:'),
-            testError: this.tr('Validacioni MSE:', 'Validation MSE:'),
-            complexityPlotTitle: this.tr('Složenost vs Greška (U-kriva)', 'Model Complexity vs Error (U-Curve)'),
-            underfitting: this.tr(
-                'Potprilagođavanje (Underfitting): Model je previše prost (High Bias).',
-                'Underfitting: Model is too simple (High Bias).'
-            ),
-            optimal: this.tr(
-                'Optimalno prilagođavanje (Good Fit): Dobra generalizacija na nove podatke.',
-                'Good Fit: Optimal generalization to unseen data.'
-            ),
-            overfitting: this.tr(
-                'Preprilagođavanje (Overfitting): Model je naučio šum umesto pravila (High Variance)!',
-                'Overfitting: Model memorized noise instead of signal (High Variance)!'
-            ),
+            title: this.str('reg_title'),
+            badge: this.str('reg_badge'),
+            degreeLabel: this.str('reg_degree_label'),
+            regLabel: this.str('reg_reg_label'),
+            datasetLabel: this.str('reg_dataset_label'),
+            trainPts: this.str('reg_train_pts'),
+            testPts: this.str('reg_test_pts'),
+            polyCurve: this.str('reg_poly_curve'),
+            trainError: this.str('reg_train_error'),
+            testError: this.str('reg_test_error'),
+            complexityPlotTitle: this.str('reg_complexity_plot_title'),
+            underfitting: this.str('reg_underfitting'),
+            optimal: this.str('reg_optimal'),
+            overfitting: this.str('reg_overfitting'),
             datasets: {
-                sine: this.tr('🌊 Sinusni talas sa šumom', '🌊 Sine Wave with Noise'),
-                quadratic: this.tr('📈 Kvadratni trend', '📈 Quadratic Trend'),
-                engine: this.tr('⚙️ Potrošnja motora po obrtajima', '⚙️ Engine RPM vs Fuel Consumption')
+                sine: this.str('reg_datasets_sine'),
+                quadratic: this.str('reg_datasets_quadratic'),
+                engine: this.str('reg_datasets_engine')
             }
         };
 
@@ -60,14 +50,18 @@ export class RegressionSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initData() {
@@ -233,7 +227,7 @@ export class RegressionSim {
                                 <span class="aisim-th-pill" id="aisim-reg-degree-val">d = ${this.degree}</span>
                             </label>
                             <span class="aisim-th-sub">
-                                ${this.tr('1 = Prava (Underfit) ... 9 = Polinom (Overfit)', '1 = Linear ... 9 = Overfitting')}
+                                ${this.str('reg_degree_hint')}
                             </span>
                         </div>
                         <input type="range" class="aisim-slider aisim-slider-large" id="aisim-reg-degree"
@@ -244,7 +238,7 @@ export class RegressionSim {
                         <div class="aisim-col-left">
                             <div class="aisim-canvas-box">
                                 <div class="aisim-canvas-header">
-                                    <span>Prilagođavanje modela ŷ(x)</span>
+                                    <span>${this.str('reg_fit_title')}</span>
                                     <div class="aisim-legend">
                                         <span class="aisim-legend-item">
                                             <span class="aisim-dot aisim-dot-neg"></span> ${this.t.trainPts}
@@ -276,21 +270,18 @@ export class RegressionSim {
                                            min="0.0" max="0.5" step="0.01" value="${this.lambda}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.tr(
-                                        'L2 (Ridge) regularizacija kažnjava velike težine i smanjuje overfit.',
-                                        'L2 (Ridge) penalizes large weights, smoothing out overfitting.'
-                                    )}
+                                    ${this.str('reg_reg_hint')}
                                 </div>
                             </div>
 
                             <div class="aisim-card">
-                                <div class="aisim-card-title">Greška (MSE)</div>
+                                <div class="aisim-card-title">${this.str('reg_error_title')}</div>
                                 <div class="aisim-stat-row">
-                                    <span style="color:#2563eb; font-weight:600;">Train MSE:</span>
+                                    <span style="color:#2563eb; font-weight:600;">${this.t.trainError}</span>
                                     <span class="aisim-stat-val" id="val-train-mse">0.000</span>
                                 </div>
                                 <div class="aisim-stat-row">
-                                    <span style="color:#ef4444; font-weight:600;">Validation MSE:</span>
+                                    <span style="color:#ef4444; font-weight:600;">${this.t.testError}</span>
                                     <span class="aisim-stat-val" id="val-test-mse">0.000</span>
                                 </div>
                             </div>
@@ -300,9 +291,9 @@ export class RegressionSim {
                                 <canvas class="aisim-mini-chart" id="aisim-reg-u-canvas"></canvas>
                                 <div class="aisim-u-legend"
                                      style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b;">
-                                    <span>Stepen: 1</span>
-                                    <span style="color:#2563eb;">■ Train</span>
-                                    <span style="color:#ef4444;">■ Test</span>
+                                    <span>${this.str('reg_degree_axis', 1)}</span>
+                                    <span style="color:#2563eb;">■ ${this.str('reg_train_short')}</span>
+                                    <span style="color:#ef4444;">■ ${this.str('reg_test_short')}</span>
                                     <span>9</span>
                                 </div>
                             </div>
@@ -574,3 +565,12 @@ export class RegressionSim {
         ctx.setLineDash([]);
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+RegressionSim.STRINGS = [
+    'reg_title', 'reg_badge', 'reg_degree_label', 'reg_reg_label', 'reg_dataset_label', 'reg_train_pts', 'reg_test_pts',
+    'reg_poly_curve', 'reg_train_error', 'reg_test_error', 'reg_complexity_plot_title', 'reg_underfitting',
+    'reg_optimal', 'reg_overfitting', 'reg_datasets_sine', 'reg_datasets_quadratic', 'reg_datasets_engine',
+    'reg_degree_hint', 'reg_fit_title', 'reg_reg_hint', 'reg_error_title', 'reg_degree_axis', 'reg_train_short',
+    'reg_test_short'
+];

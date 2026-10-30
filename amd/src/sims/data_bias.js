@@ -41,64 +41,36 @@ export class DataBiasSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Podela podataka i pristrasnost', 'Data Split & Bias'),
-            badge: this.tr('Podaci i fer modeli', 'Data & Fairness'),
-            story: this.tr(
-                'Model (k-NN) na osnovu dva senzora odlučuje da li je deo ispravan ili neispravan. Delovi stižu iz ' +
-                    'dve fabrike: ● A (stara linija) i ■ B (nova linija), gde važi malo drugačije pravilo.',
-                'A model (k-NN) decides from two sensor readings whether a part is good or defective. Parts come from ' +
-                    'two factories: ● A (old line) and ■ B (new line), where the rule is slightly different.'
-            ),
-            data: this.tr('Prikupljanje podataka', 'Data collection'),
-            n: this.tr('Veličina uzorka', 'Sample size'),
-            share: this.tr('Udeo fabrike B u uzorku', 'Share of factory B in the sample'),
-            test: this.tr('Deo za testiranje', 'Held out for testing'),
-            model: this.tr('Model', 'Model'),
-            k: this.tr('Broj suseda k', 'Number of neighbours k'),
-            resample: this.tr('🎲 Nov uzorak', '🎲 New sample'),
-            metrics: this.tr('Tačnost', 'Accuracy'),
-            train: this.tr('Trening', 'Training'),
-            testSet: this.tr('Test skup', 'Test set'),
-            worldA: this.tr('Stvarno: fabrika A', 'Real world: factory A'),
-            worldB: this.tr('Stvarno: fabrika B', 'Real world: factory B'),
-            counts: this.tr('Trening / test:', 'Training / test:'),
-            gap: this.tr('Razlika A − B:', 'Gap A − B:'),
-            legend: this.tr(
-                'Puni znak = trening, prazan = test. Crveno = neispravan, plavo = ispravan. Isprekidana linija = ' +
-                    'pravo pravilo, pozadina = odluka modela.',
-                'Filled mark = training, hollow = test. Red = defective, blue = good. Dashed line = the true rule, ' +
-                    'background = the model\'s decision.'
-            ),
+            title: this.str('db_title'),
+            badge: this.str('db_badge'),
+            story: this.str('db_story'),
+            data: this.str('db_data'),
+            n: this.str('db_n'),
+            share: this.str('db_share'),
+            test: this.str('db_test'),
+            model: this.str('db_model'),
+            k: this.str('db_k'),
+            resample: this.str('db_resample'),
+            metrics: this.str('db_metrics'),
+            train: this.str('db_train'),
+            testSet: this.str('db_test_set'),
+            worldA: this.str('db_world_a'),
+            worldB: this.str('db_world_b'),
+            counts: this.str('db_counts'),
+            gap: this.str('db_gap'),
+            legend: this.str('db_legend'),
             populations: {
-                shifted: this.tr('🏭 B radi drugačije', '🏭 B behaves differently'),
-                similar: this.tr('🏭 B radi slično', '🏭 B behaves similarly')
+                shifted: this.str('db_populations_shifted'),
+                similar: this.str('db_populations_similar')
             },
-            adviceStart: this.tr(
-                'Pomerite udeo fabrike B i uporedite tačnost na test skupu sa stvarnom tačnošću za svaku fabriku.',
-                'Move the share of factory B and compare the test-set accuracy with the real-world accuracy per factory.'
-            ),
-            adviceMemorize: this.tr(
-                'Sa k = 1 model pamti svaku tačku: 100% na treningu ne znači ništa. Gledajte test skup.',
-                'With k = 1 the model memorises every point: 100% on training means nothing. Look at the test set.'
-            ),
-            adviceBias: this.tr(
-                'Model radi loše za fabriku B jer u uzorku skoro da nema njenih delova – a test skup iz istog uzorka to ' +
-                    'ne otkriva. Povećajte udeo fabrike B.',
-                'The model fails for factory B because the sample hardly contains its parts – and a test set from the ' +
-                    'same sample does not reveal it. Increase the share of factory B.'
-            ),
-            adviceSmallTest: this.tr(
-                'Test skup je vrlo mali: njegova tačnost skače sa svakim novim uzorkom.',
-                'The test set is very small: its accuracy jumps with every new sample.'
-            ),
-            adviceFair: this.tr(
-                'Odlično! Model radi podjednako dobro za obe fabrike.',
-                'Well done! The model works equally well for both factories.'
-            )
+            adviceStart: this.str('db_advice_start'),
+            adviceMemorize: this.str('db_advice_memorize'),
+            adviceBias: this.str('db_advice_bias'),
+            adviceSmallTest: this.str('db_advice_small_test'),
+            adviceFair: this.str('db_advice_fair')
         };
 
         this.population = POPULATIONS.includes(options.population) ? options.population : 'shifted';
@@ -118,14 +90,18 @@ export class DataBiasSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     /**
@@ -467,8 +443,8 @@ export class DataBiasSim {
             ctx.fillStyle = '#334155';
             ctx.fillText(text, x, 13);
         };
-        label(this.tr('● Fabrika A', '● Factory A'), 8);
-        const textB = this.tr('Fabrika B ■', 'Factory B ■');
+        label(this.str('db_factory_a'), 8);
+        const textB = this.str('db_factory_b');
         label(textB, w - 8 - ctx.measureText(textB).width);
     }
 
@@ -503,3 +479,11 @@ export class DataBiasSim {
         });
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+DataBiasSim.STRINGS = [
+    'db_title', 'db_badge', 'db_story', 'db_data', 'db_n', 'db_share', 'db_test', 'db_model', 'db_k', 'db_resample',
+    'db_metrics', 'db_train', 'db_test_set', 'db_world_a', 'db_world_b', 'db_counts', 'db_gap', 'db_legend',
+    'db_populations_shifted', 'db_populations_similar', 'db_advice_start', 'db_advice_memorize', 'db_advice_bias',
+    'db_advice_small_test', 'db_advice_fair', 'db_factory_a', 'db_factory_b'
+];

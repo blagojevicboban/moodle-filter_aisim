@@ -18,6 +18,8 @@ import {ConvolutionSim} from 'filter_aisim/sims/convolution';
 import {QLearningSim} from 'filter_aisim/sims/q_learning';
 import {DataBiasSim} from 'filter_aisim/sims/data_bias';
 import {eventTypes} from 'core_filters/events';
+import Notification from 'core/notification';
+import {load as loadStrings} from 'filter_aisim/strings';
 
 const SELECTOR = '[data-aisim]';
 let initialised = false;
@@ -33,47 +35,50 @@ let initialised = false;
 const attr = (el, name, fallback) => el.getAttribute('data-' + name) || fallback;
 
 /**
+ * A simulation engine with the function that reads its options from the element.
+ *
+ * @param {Function} Engine Simulation class
+ * @param {Function} options (el) => options object
+ * @returns {Object}
+ */
+const sim = (Engine, options) => ({Engine, options});
+
+/**
  * Create a k-NN / decision tree simulation with the given initial model.
  *
  * @param {String} model 'knn' or 'tree'
- * @returns {Function}
+ * @returns {Object}
  */
-const knnTree = (model) => (el, lang) => new KnnTreeSim(el, {
-    lang: lang,
+const knnTree = (model) => sim(KnnTreeSim, (el) => ({
     model: model,
     dataset: attr(el, 'dataset', 'moons'),
     k: attr(el, 'k', 3),
     depth: attr(el, 'depth', 3)
-});
+}));
 
-const gradientDescent = (el, lang) => new GradientDescentSim(el, {
-    lang: lang,
+const gradientDescent = sim(GradientDescentSim, (el) => ({
     profile: attr(el, 'profile', 'convex'),
     lr: attr(el, 'lr', ''),
     w0: attr(el, 'w0', '')
-});
+}));
 
-const confusionMatrix = (el, lang) => new ConfusionMatrixSim(el, {
-    lang: lang,
+const confusionMatrix = sim(ConfusionMatrixSim, (el) => ({
     scenario: attr(el, 'scenario', 'quality'),
     threshold: attr(el, 'threshold', 0.50)
-});
+}));
 
-const regression = (el, lang) => new RegressionSim(el, {
-    lang: lang,
+const regression = sim(RegressionSim, (el) => ({
     dataset: attr(el, 'dataset', 'sine'),
     degree: attr(el, 'degree', 3),
     lambda: attr(el, 'lambda', 0.0)
-});
+}));
 
-const kmeans = (el, lang) => new KMeansSim(el, {
-    lang: lang,
+const kmeans = sim(KMeansSim, (el) => ({
     dataset: attr(el, 'dataset', 'blobs3'),
     k: attr(el, 'k', 3)
-});
+}));
 
-const neuralNetwork = (el, lang) => new NeuralNetworkSim(el, {
-    lang: lang,
+const neuralNetwork = sim(NeuralNetworkSim, (el) => ({
     dataset: attr(el, 'dataset', 'xor'),
     layers: attr(el, 'layers', 0),
     neurons: attr(el, 'neurons', 4),
@@ -82,10 +87,9 @@ const neuralNetwork = (el, lang) => new NeuralNetworkSim(el, {
     // Same seed and epochs give the same trained network (an embedded, already trained example).
     seed: attr(el, 'seed', 1),
     epochs: attr(el, 'epochs', 0)
-});
+}));
 
-const convolution = (el, lang) => new ConvolutionSim(el, {
-    lang: lang,
+const convolution = sim(ConvolutionSim, (el) => ({
     image: attr(el, 'image', 'shapes'),
     // A preset name, or the 9 weights as "a,b,c,...", with an optional divisor and absolute value.
     preset: attr(el, 'preset', 'identity'),
@@ -94,10 +98,9 @@ const convolution = (el, lang) => new ConvolutionSim(el, {
     abs: attr(el, 'abs', undefined),
     target: attr(el, 'target', ''),
     presets: attr(el, 'presets', true)
-});
+}));
 
-const qLearning = (el, lang) => new QLearningSim(el, {
-    lang: lang,
+const qLearning = sim(QLearningSim, (el) => ({
     map: attr(el, 'map', 'maze'),
     alpha: attr(el, 'alpha', 0.5),
     gamma: attr(el, 'gamma', 0.9),
@@ -105,17 +108,16 @@ const qLearning = (el, lang) => new QLearningSim(el, {
     // Same seed and episodes give the same Q-table (an embedded, already trained agent).
     seed: attr(el, 'seed', 1),
     episodes: attr(el, 'episodes', 0)
-});
+}));
 
-const dataBias = (el, lang) => new DataBiasSim(el, {
-    lang: lang,
+const dataBias = sim(DataBiasSim, (el) => ({
     population: attr(el, 'population', 'shifted'),
     n: attr(el, 'n', 200),
     share: attr(el, 'share', 5),
     test: attr(el, 'test', 25),
     k: attr(el, 'k', 5),
     seed: attr(el, 'seed', 1)
-});
+}));
 
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
@@ -161,7 +163,10 @@ const mount = (root) => {
 
         const simType = el.getAttribute('data-aisim');
         if (Object.prototype.hasOwnProperty.call(SIMS, simType)) {
-            SIMS[simType](el, document.documentElement.lang || 'en');
+            const {Engine, options} = SIMS[simType];
+            loadStrings(Engine.STRINGS)
+                .then((strings) => new Engine(el, {...options(el), strings}))
+                .catch(Notification.exception);
         }
     });
 };

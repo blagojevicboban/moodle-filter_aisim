@@ -13,39 +13,32 @@ export class GradientDescentSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         // Translations dictionary.
         this.t = {
-            title: this.tr('Gradijentni spust (Gradient Descent)', 'Gradient Descent Lab'),
-            badge: this.tr('Poglavlje 3.2', 'Chapter 3.2'),
-            run: this.tr('▶ Pokreni', '▶ Run'),
-            pause: this.tr('⏸ Pauza', '⏸ Pause'),
-            step: this.tr('⏭ Korak', '⏭ Step'),
-            reset: this.tr('↺ Reset', '↺ Reset'),
-            lr: this.tr('Stopa učenja (α)', 'Learning Rate (α)'),
-            w0: this.tr('Početna težina (w₀)', 'Initial weight (w₀)'),
-            func: this.tr('Funkcija troška J(w)', 'Cost Function J(w)'),
-            convex: this.tr('Konveksna (1 globalni minimum)', 'Convex (Single Minimum)'),
-            nonconvex: this.tr('Nekonveksna (lokalni minimumi)', 'Non-convex (Local Minima)'),
-            plateau: this.tr('Plato / kompleksna', 'Plateau / Complex'),
-            epoch: this.tr('Epoha:', 'Epoch:'),
-            wVal: this.tr('Težina (w):', 'Weight (w):'),
-            costVal: this.tr('Trošak J(w):', 'Cost J(w):'),
-            gradVal: this.tr('Gradijent dJ/dw:', 'Gradient dJ/dw:'),
-            costHist: this.tr('Kriva učenja: J(w) po epohama', 'Learning Curve: J(w) vs Epochs'),
-            statusReady: this.tr(
-                'Spremno. Kliknite na "Pokreni" ili kliknite na grafik za w₀.',
-                'Ready. Click Run, Step, or click curve to set w₀.'
-            ),
-            statusRunning: this.tr('Obučavanje u toku...', 'Optimizing...'),
-            statusConverged: this.tr('✓ Konvergiralo ka minimumu (gradijent ≈ 0)!', '✓ Converged to minimum (gradient ≈ 0)!'),
-            statusDiverging: this.tr(
-                '⚠ Upozorenje: Divergencija! Stopa učenja je prevelika.',
-                '⚠ Warning: Divergence! Learning rate too high.'
-            ),
-            statusOscillating: this.tr('⚠ Osciluje oko minimuma.', '⚠ Oscillating around minimum.')
+            title: this.str('gd_title'),
+            badge: this.str('gd_badge'),
+            run: this.str('gd_run'),
+            pause: this.str('gd_pause'),
+            step: this.str('gd_step'),
+            reset: this.str('gd_reset'),
+            lr: this.str('gd_lr'),
+            w0: this.str('gd_w0'),
+            func: this.str('gd_func'),
+            convex: this.str('gd_convex'),
+            nonconvex: this.str('gd_nonconvex'),
+            plateau: this.str('gd_plateau'),
+            epoch: this.str('gd_epoch'),
+            wVal: this.str('gd_w_val'),
+            costVal: this.str('gd_cost_val'),
+            gradVal: this.str('gd_grad_val'),
+            costHist: this.str('gd_cost_hist'),
+            statusReady: this.str('gd_status_ready'),
+            statusRunning: this.str('gd_status_running'),
+            statusConverged: this.str('gd_status_converged'),
+            statusDiverging: this.str('gd_status_diverging'),
+            statusOscillating: this.str('gd_status_oscillating')
         };
 
         // Mathematical function profiles.
@@ -107,14 +100,18 @@ export class GradientDescentSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     renderLayout() {
@@ -165,7 +162,7 @@ export class GradientDescentSim {
                             </div>
 
                             <div class="aisim-card">
-                                <div class="aisim-card-title">Metrike & Stanje</div>
+                                <div class="aisim-card-title">${this.str('gd_metrics')}</div>
                                 <div class="aisim-stat-row">
                                     <span>${this.t.epoch}</span>
                                     <span class="aisim-stat-val" id="aisim-stat-epoch">0</span>
@@ -560,7 +557,7 @@ export class GradientDescentSim {
         if (this.history.length < 2) {
             ctx.fillStyle = '#94a3b8';
             ctx.font = '11px sans-serif';
-            ctx.fillText(this.tr('Čeka na pokretanje...', 'Awaiting training...'), 15, h / 2);
+            ctx.fillText(this.str('gd_awaiting_training'), 15, h / 2);
             return;
         }
 
@@ -584,3 +581,11 @@ export class GradientDescentSim {
         ctx.stroke();
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+GradientDescentSim.STRINGS = [
+    'gd_title', 'gd_badge', 'gd_run', 'gd_pause', 'gd_step', 'gd_reset', 'gd_lr', 'gd_w0', 'gd_func', 'gd_convex',
+    'gd_nonconvex', 'gd_plateau', 'gd_epoch', 'gd_w_val', 'gd_cost_val', 'gd_grad_val', 'gd_cost_hist',
+    'gd_status_ready', 'gd_status_running', 'gd_status_converged', 'gd_status_diverging', 'gd_status_oscillating',
+    'gd_metrics', 'gd_awaiting_training'
+];

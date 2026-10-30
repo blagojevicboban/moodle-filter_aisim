@@ -13,69 +13,50 @@ export class ConfusionMatrixSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Matrica konfuzije i prag odlučivanja', 'Confusion Matrix & Classification Threshold'),
-            badge: this.tr('Poglavlje 3.5', 'Chapter 3.5'),
-            scenario: this.tr('Scenario iz struke:', 'VET Scenario:'),
-            thresholdLabel: this.tr('Prag odlučivanja (θ):', 'Decision Threshold (θ):'),
-            probDistTitle: this.tr('Distribucija verovatnoća modela P(y=1|x)', 'Model Probability Distribution P(y=1|x)'),
-            matrixTitle: this.tr('Matrica konfuzije (2 × 2)', 'Confusion Matrix (2 × 2)'),
-            metricsTitle: this.tr('Metrike performansi', 'Performance Metrics'),
-            rocTitle: this.tr('ROC kriva (AUC)', 'ROC Curve (AUC)'),
-            actualPos: this.tr('Stvarno POZITIVNO (1)', 'Actual POSITIVE (1)'),
-            actualNeg: this.tr('Stvarno NEGATIVNO (0)', 'Actual NEGATIVE (0)'),
-            predPos: this.tr('Predviđeno (1)', 'Predicted (1)'),
-            predNeg: this.tr('Predviđeno (0)', 'Predicted (0)'),
-            tp: this.tr('TP (Pravo poz.)', 'TP (True Pos.)'),
-            fn: this.tr('FN (Lažno neg.)', 'FN (False Neg.)'),
-            fp: this.tr('FP (Lažno poz.)', 'FP (False Pos.)'),
-            tn: this.tr('TN (Pravo neg.)', 'TN (True Neg.)'),
-            accuracy: this.tr('Tačnost (Accuracy):', 'Accuracy:'),
-            precision: this.tr('Preciznost (Precision):', 'Precision:'),
-            recall: this.tr('Opoziv (Recall / Osetljivost):', 'Recall (Sensitivity):'),
-            f1: this.tr('F1-skor:', 'F1-Score:'),
+            title: this.str('cm_title'),
+            badge: this.str('cm_badge'),
+            scenario: this.str('cm_scenario'),
+            thresholdLabel: this.str('cm_threshold_label'),
+            probDistTitle: this.str('cm_prob_dist_title'),
+            matrixTitle: this.str('cm_matrix_title'),
+            metricsTitle: this.str('cm_metrics_title'),
+            rocTitle: this.str('cm_roc_title'),
+            actualPos: this.str('cm_actual_pos'),
+            actualNeg: this.str('cm_actual_neg'),
+            predPos: this.str('cm_pred_pos'),
+            predNeg: this.str('cm_pred_neg'),
+            tp: this.str('cm_tp'),
+            fn: this.str('cm_fn'),
+            fp: this.str('cm_fp'),
+            tn: this.str('cm_tn'),
+            accuracy: this.str('cm_accuracy'),
+            precision: this.str('cm_precision'),
+            recall: this.str('cm_recall'),
+            f1: this.str('cm_f1'),
             scenarios: {
                 quality: {
-                    name: this.tr('🏭 Industrijska kontrola kvaliteta', '🏭 Industrial Quality Control'),
-                    posLabel: this.tr('Defektan deo', 'Defective Part'),
-                    negLabel: this.tr('Ispravan deo', 'Good Part'),
-                    hintLow: this.tr(
-                        'Nizak prag: Skoro svi defekti su uhvaćeni (visok Recall), ali ima više lažnih uzbuna (veći FP).',
-                        'Low threshold: High recall on defects, but more false alarms on good parts.'
-                    ),
-                    hintHigh: this.tr(
-                        'Visok prag: Visok Precision, ali opasni neispravni delovi prolaze do kupaca (opasan FN)!',
-                        'High threshold: High precision, but dangerous defective parts leak to customers (FN)!'
-                    )
+                    name: this.str('cm_scenarios_quality_name'),
+                    posLabel: this.str('cm_scenarios_quality_pos_label'),
+                    negLabel: this.str('cm_scenarios_quality_neg_label'),
+                    hintLow: this.str('cm_scenarios_quality_hint_low'),
+                    hintHigh: this.str('cm_scenarios_quality_hint_high')
                 },
                 medical: {
-                    name: this.tr('🏥 Medicinska dijagnostika (Skrining)', '🏥 Medical Diagnostics (Screening)'),
-                    posLabel: this.tr('Pozitivan nalaz', 'Positive Disease'),
-                    negLabel: this.tr('Zdrav', 'Healthy'),
-                    hintLow: this.tr(
-                        'U medicini se bira niži prag: bolje poslati zdravog na test (FP) nego propustiti bolesnog (FN)!',
-                        'In medical screening, lower threshold is preferred to minimize deadly False Negatives (FN).'
-                    ),
-                    hintHigh: this.tr(
-                        'Previsok prag: Propuštaju se bolesni pacijenti (nedopustivo visok FN)!',
-                        'Too high threshold: Sick patients are missed (unacceptable False Negatives)!'
-                    )
+                    name: this.str('cm_scenarios_medical_name'),
+                    posLabel: this.str('cm_scenarios_medical_pos_label'),
+                    negLabel: this.str('cm_scenarios_medical_neg_label'),
+                    hintLow: this.str('cm_scenarios_medical_hint_low'),
+                    hintHigh: this.str('cm_scenarios_medical_hint_high')
                 },
                 spam: {
-                    name: this.tr('✉️ Klasifikacija neželjene pošte (Spam)', '✉️ Spam / Security Filter'),
-                    posLabel: this.tr('Spam poruka', 'Spam Message'),
-                    negLabel: this.tr('Legitimna pošta', 'Legitimate Email'),
-                    hintLow: this.tr(
-                        'Previše agresivan filter: Važne poruke od klijenata završavaju u spam folderu (nizak Precision).',
-                        'Too aggressive: Important legitimate emails end up in spam.'
-                    ),
-                    hintHigh: this.tr(
-                        'Konzervativan filter: U inbox stiže malo spama, ali nijedna bitna poruka nije greškom blokirana.',
-                        'Conservative filter: Very few false positives, legitimate emails are safe.'
-                    )
+                    name: this.str('cm_scenarios_spam_name'),
+                    posLabel: this.str('cm_scenarios_spam_pos_label'),
+                    negLabel: this.str('cm_scenarios_spam_neg_label'),
+                    hintLow: this.str('cm_scenarios_spam_hint_low'),
+                    hintHigh: this.str('cm_scenarios_spam_hint_high')
                 }
             }
         };
@@ -94,14 +75,18 @@ export class ConfusionMatrixSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initDataset() {
@@ -206,7 +191,7 @@ export class ConfusionMatrixSim {
                                 <span class="aisim-th-pill" id="aisim-cm-th-val">${this.threshold.toFixed(2)}</span>
                             </label>
                             <span class="aisim-th-sub">
-                                ${this.tr('Prevucite slajder ili kliknite na grafik:', 'Drag slider or click curve:')}
+                                ${this.str('cm_drag_hint')}
                             </span>
                         </div>
                         <input type="range" class="aisim-slider aisim-slider-large" id="aisim-cm-th"
@@ -226,7 +211,7 @@ export class ConfusionMatrixSim {
                                             <span class="aisim-dot aisim-dot-pos"></span> ${sc.posLabel} (1)
                                         </span>
                                         <span class="aisim-legend-item">
-                                            <span class="aisim-line-th"></span> Prag θ
+                                            <span class="aisim-line-th"></span> ${this.str('cm_threshold_short')}
                                         </span>
                                     </div>
                                 </div>
@@ -249,21 +234,21 @@ export class ConfusionMatrixSim {
 
                                     <div class="aisim-matrix-rowhead">${this.t.actualPos}</div>
                                     <div class="aisim-cell aisim-cell-tp" id="aisim-cell-tp">
-                                        <div class="aisim-cell-lbl">TP</div>
+                                        <div class="aisim-cell-lbl">${this.t.tp}</div>
                                         <div class="aisim-cell-val" id="val-tp">0</div>
                                     </div>
                                     <div class="aisim-cell aisim-cell-fn" id="aisim-cell-fn">
-                                        <div class="aisim-cell-lbl">FN (Greška II)</div>
+                                        <div class="aisim-cell-lbl">${this.t.fn}</div>
                                         <div class="aisim-cell-val" id="val-fn">0</div>
                                     </div>
 
                                     <div class="aisim-matrix-rowhead">${this.t.actualNeg}</div>
                                     <div class="aisim-cell aisim-cell-fp" id="aisim-cell-fp">
-                                        <div class="aisim-cell-lbl">FP (Greška I)</div>
+                                        <div class="aisim-cell-lbl">${this.t.fp}</div>
                                         <div class="aisim-cell-val" id="val-fp">0</div>
                                     </div>
                                     <div class="aisim-cell aisim-cell-tn" id="aisim-cell-tn">
-                                        <div class="aisim-cell-lbl">TN</div>
+                                        <div class="aisim-cell-lbl">${this.t.tn}</div>
                                         <div class="aisim-cell-val" id="val-tn">0</div>
                                     </div>
                                 </div>
@@ -474,10 +459,7 @@ export class ConfusionMatrixSim {
         } else {
             const precVal = Math.round((m.tp / (m.tp + m.fp || 1)) * 100);
             const recVal = Math.round((m.tp / (m.tp + m.fn || 1)) * 100);
-            adviceBox.textContent = this.tr(
-                `Standardni balans (θ ≈ 0.50): Ravnoteža preciznosti (${precVal}%) i opoziva (${recVal}%).`,
-                `Balanced threshold (θ ≈ 0.50): Balanced precision (${precVal}%) and recall (${recVal}%).`
-            );
+            adviceBox.textContent = this.str('cm_hint_balanced', {precval: precVal, recval: recVal});
         }
     }
 
@@ -634,3 +616,16 @@ export class ConfusionMatrixSim {
         ctx.fillText('TPR (Recall)', pad, pad - 6);
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+ConfusionMatrixSim.STRINGS = [
+    'cm_title', 'cm_badge', 'cm_scenario', 'cm_threshold_label', 'cm_prob_dist_title', 'cm_matrix_title',
+    'cm_metrics_title', 'cm_roc_title', 'cm_actual_pos', 'cm_actual_neg', 'cm_pred_pos', 'cm_pred_neg', 'cm_tp',
+    'cm_fn', 'cm_fp', 'cm_tn', 'cm_accuracy', 'cm_precision', 'cm_recall', 'cm_f1', 'cm_scenarios_quality_name',
+    'cm_scenarios_quality_pos_label', 'cm_scenarios_quality_neg_label', 'cm_scenarios_quality_hint_low',
+    'cm_scenarios_quality_hint_high', 'cm_scenarios_medical_name', 'cm_scenarios_medical_pos_label',
+    'cm_scenarios_medical_neg_label', 'cm_scenarios_medical_hint_low', 'cm_scenarios_medical_hint_high',
+    'cm_scenarios_spam_name', 'cm_scenarios_spam_pos_label', 'cm_scenarios_spam_neg_label',
+    'cm_scenarios_spam_hint_low', 'cm_scenarios_spam_hint_high', 'cm_drag_hint', 'cm_threshold_short',
+    'cm_hint_balanced'
+];

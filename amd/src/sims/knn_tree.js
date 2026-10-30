@@ -13,39 +13,29 @@ export class KnnTreeSim {
      */
     constructor(container, options = {}) {
         this.container = container;
-        this.lang = options.lang || (document.documentElement && document.documentElement.lang) || 'en';
-        this.isSr = this.lang.startsWith('sr');
+        this.strings = options.strings || {};
 
         this.t = {
-            title: this.tr('Granice odlučivanja (k-NN i Stablo)', 'Decision Boundaries (k-NN & Decision Tree)'),
-            badge: this.tr('Poglavlja 3.7 & 3.8', 'Chapters 3.7 & 3.8'),
-            modelLabel: this.tr('Model:', 'Model:'),
-            knnModel: this.tr('k-Najbližih suseda (k-NN)', 'k-Nearest Neighbors (k-NN)'),
-            treeModel: this.tr('Stablo odlučivanja (Decision Tree)', 'Decision Tree'),
-            datasetLabel: this.tr('Skup podataka:', 'Dataset:'),
-            kParam: this.tr('Broj suseda (k):', 'Number of Neighbors (k):'),
-            depthParam: this.tr('Maksimalna dubina stabla:', 'Max Tree Depth:'),
-            classAPts: this.tr('Klasa A (Plavi)', 'Class A (Blue)'),
-            classBPts: this.tr('Klasa B (Crveni)', 'Class B (Red)'),
-            addPointHint: this.tr(
-                'Kliknite na grafik da dodate tačku (aktivna klasa ispod).',
-                'Click canvas to add data points for active class.'
-            ),
-            activeClassLabel: this.tr('Dodaj tačku kao:', 'Add point as:'),
-            accuracy: this.tr('Tačnost na tačkama:', 'Training Accuracy:'),
-            boundaryNotice: this.tr('Tip granice:', 'Boundary Type:'),
-            knnNotice: this.tr(
-                'k-NN formira glatku ili izlomljenu granicu na osnovu euklidskog rastojanja.',
-                'k-NN creates smooth or jagged boundaries based on Euclidean distance.'
-            ),
-            treeNotice: this.tr(
-                'Stablo pravi ortogonalne (pravougaone) rezove paralelne sa osama x i y.',
-                'Decision Tree splits space with orthogonal axis-aligned cuts.'
-            ),
+            title: this.str('knn_title'),
+            badge: this.str('knn_badge'),
+            modelLabel: this.str('knn_model_label'),
+            knnModel: this.str('knn_knn_model'),
+            treeModel: this.str('knn_tree_model'),
+            datasetLabel: this.str('knn_dataset_label'),
+            kParam: this.str('knn_k_param'),
+            depthParam: this.str('knn_depth_param'),
+            classAPts: this.str('knn_class_apts'),
+            classBPts: this.str('knn_class_bpts'),
+            addPointHint: this.str('knn_add_point_hint'),
+            activeClassLabel: this.str('knn_active_class_label'),
+            accuracy: this.str('knn_accuracy'),
+            boundaryNotice: this.str('knn_boundary_notice'),
+            knnNotice: this.str('knn_knn_notice'),
+            treeNotice: this.str('knn_tree_notice'),
             datasets: {
-                moons: this.tr('🌙 Dva polumeseca', '🌙 Two Moons'),
-                circles: this.tr('⭕ Koncentrični krugovi', '⭕ Concentric Circles'),
-                blobs: this.tr('🫧 Dva klastera', '🫧 Two Blobs')
+                moons: this.str('knn_datasets_moons'),
+                circles: this.str('knn_datasets_circles'),
+                blobs: this.str('knn_datasets_blobs')
             }
         };
 
@@ -65,14 +55,18 @@ export class KnnTreeSim {
     }
 
     /**
-     * Pick the Serbian or English variant of a UI text.
+     * A UI text from the filter_aisim language strings, with {$a} or {$a->name} filled in.
      *
-     * @param {String} sr Serbian text
-     * @param {String} en English text
+     * @param {String} key String identifier
+     * @param {*} [a] Value, or object of named values, for the placeholders
      * @returns {String}
      */
-    tr(sr, en) {
-        return this.isSr ? sr : en;
+    str(key, a) {
+        const text = this.strings[key];
+        if (text === undefined) {
+            return '[[' + key + ']]';
+        }
+        return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
     initData() {
@@ -186,30 +180,24 @@ export class KnnTreeSim {
                                            min="1" max="15" step="2" value="${this.k}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.tr(
-                                        'k=1 stvara izlomljene Voronoi ćelije (osetljivo na šum). Veće k stvara glatku granicu.',
-                                        'k=1 creates jagged Voronoi cells (noisy). Larger k smooths boundary.'
-                                    )}
+                                    ${this.str('knn_k_hint')}
                                 </div>
                             </div>
 
                             <div class="aisim-card" id="card-param-tree" style="display:${!isKnn ? 'block' : 'none'};">
                                 <div class="aisim-card-title">${this.t.depthParam}</div>
                                 <div class="aisim-slider-group">
-                                    <label>Dubina = <span id="val-depth">${this.maxDepth}</span></label>
+                                    <label>${this.str('knn_depth')} = <span id="val-depth">${this.maxDepth}</span></label>
                                     <input type="range" class="aisim-slider" id="slider-depth"
                                            min="1" max="5" step="1" value="${this.maxDepth}">
                                 </div>
                                 <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.tr(
-                                        'Dubina 1 = jedan ortogonalni rez. Dubina 4-5 pravi sitne pravougaone kutije (overfit).',
-                                        'Depth 1 = single cut. Depth 4-5 creates fine rectangular boxes (overfitting).'
-                                    )}
+                                    ${this.str('knn_depth_hint')}
                                 </div>
                             </div>
 
                             <div class="aisim-card">
-                                <div class="aisim-card-title">Metrike</div>
+                                <div class="aisim-card-title">${this.str('knn_metrics')}</div>
                                 <div class="aisim-stat-row">
                                     <span>${this.t.accuracy}</span>
                                     <span class="aisim-stat-val" id="val-kt-acc">100%</span>
@@ -217,7 +205,7 @@ export class KnnTreeSim {
                                 <div class="aisim-stat-row">
                                     <span>${this.t.boundaryNotice}</span>
                                     <span class="aisim-stat-val" id="val-kt-btype">
-                                        ${isKnn ? 'Glatka (Voronoi/k-NN)' : 'Ortogonalna (Stablo)'}
+                                        ${isKnn ? this.str('knn_boundary_knn') : this.str('knn_boundary_tree')}
                                     </span>
                                 </div>
                             </div>
@@ -225,7 +213,7 @@ export class KnnTreeSim {
                             <div class="aisim-controls" style="margin-top:0.5rem;">
                                 <button class="aisim-btn aisim-btn-secondary" id="btn-kt-clear"
                                         style="width:100%; justify-content:center;">
-                                    ↺ ${this.tr('Resetuj tačke na šablon', 'Reset to default template')}
+                                    ↺ ${this.str('knn_reset')}
                                 </button>
                             </div>
                         </div>
@@ -294,7 +282,7 @@ export class KnnTreeSim {
             btnKnn.classList.add('active');
             btnTree.classList.remove('active');
             this.container.querySelector('#aisim-kt-advice').textContent = this.t.knnNotice;
-            this.container.querySelector('#val-kt-btype').textContent = 'Glatka (k-NN)';
+            this.container.querySelector('#val-kt-btype').textContent = this.str('knn_boundary_knn');
             this.update();
         });
 
@@ -305,7 +293,7 @@ export class KnnTreeSim {
             btnTree.classList.add('active');
             btnKnn.classList.remove('active');
             this.container.querySelector('#aisim-kt-advice').textContent = this.t.treeNotice;
-            this.container.querySelector('#val-kt-btype').textContent = 'Ortogonalna (Stablo)';
+            this.container.querySelector('#val-kt-btype').textContent = this.str('knn_boundary_tree');
             this.update();
         });
 
@@ -595,3 +583,12 @@ export class KnnTreeSim {
         }
     }
 }
+
+/** Identifiers of the filter_aisim language strings the simulation uses. */
+KnnTreeSim.STRINGS = [
+    'knn_title', 'knn_badge', 'knn_model_label', 'knn_knn_model', 'knn_tree_model', 'knn_dataset_label', 'knn_k_param',
+    'knn_depth_param', 'knn_class_apts', 'knn_class_bpts', 'knn_add_point_hint', 'knn_active_class_label',
+    'knn_accuracy', 'knn_boundary_notice', 'knn_knn_notice', 'knn_tree_notice', 'knn_datasets_moons',
+    'knn_datasets_circles', 'knn_datasets_blobs', 'knn_k_hint', 'knn_depth', 'knn_depth_hint', 'knn_metrics',
+    'knn_boundary_knn', 'knn_boundary_tree', 'knn_reset'
+];

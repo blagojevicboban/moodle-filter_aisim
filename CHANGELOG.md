@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- `demo/aiforvet_simulations_demo_course.mbz` rebuilt: the quiz questions now keep their simulation options on restore (needs `qtype_aisim` 0.5.2), and the backup has no user data.
+### Removed
+- The demo course backup (`demo/aiforvet_simulations_demo_course.mbz`) and the teacher guide section on restoring it.
 
 ## [0.5.0] - 2026-10-28
 

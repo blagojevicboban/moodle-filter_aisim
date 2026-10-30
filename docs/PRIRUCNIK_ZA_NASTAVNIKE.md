@@ -25,7 +25,6 @@
    - 3.1. Korišćenje vizuelnog TinyMCE editora (`tiny_aisim`)
    - 3.2. Kreiranje zadataka sa automatskim ocenjivanjem (`qtype_aisim`)
    - 3.3. Uvoz gotove baze pitanja (Moodle XML)
-   - 3.4. Obnavljanje celog kursa iz arhive (`.mbz` Course Restore)
 4. [Metodičke preporuke i organizacija nastavnog časa](#4-metodičke-preporuke-i-organizacija-nastavnog-časa)
    - 4.1. Struktura radioničkog/blok časa (90 minuta)
    - 4.2. Formativno ocenjivanje i učenje kroz greške
@@ -216,15 +215,6 @@ U repozitorijumu `moodle-qtype_aisim` nalazi se gotov pripremljen paket sa repre
 3. Kao format fajla izaberite **Moodle XML format**.
 4. Prevucite fajl `questions_aiforvet.xml` i kliknite na **Uvezi**.
 5. Moodle će uvesti novu kategoriju *"AI za VET - Simulacije"* sa svih 5 kompletno konfigurisanih pitanja koja odmah možete dodati u bilo koji test.
-
----
-
-### 3.4. Obnavljanje celog kursa iz arhive (`.mbz` Course Restore)
-Za najbrže pokretanje celog kursa:
-1. Preuzmite zvanični ogledni kurs sa GitHub-a ili ga generišite pomoću priložene skripte.
-2. Na Moodle-u idite na **Administracija sajta > Kursevi > Obnovi kurs (Restore course)**.
-3. Otpremite `.mbz` arhivu.
-4. Pratite korake čarobnjaka i potvrdite uvoz – dobićete kompletan kurs sa lekcijama, interaktivnim platnima i kvizom znanja.
 
 ---
 

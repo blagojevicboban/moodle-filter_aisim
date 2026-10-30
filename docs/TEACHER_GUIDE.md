@@ -25,7 +25,6 @@
    - 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
    - 3.2. Authoring Auto-Graded Interactive Assessment Tasks (`qtype_aisim`)
    - 3.3. Importing Ready-to-Use Question Banks (Moodle XML)
-   - 3.4. Restoring Complete Pre-Configured Courses (`.mbz` Course Restore)
 4. [Methodological Recommendations and Lesson Organization](#4-methodological-recommendations-and-lesson-organization)
    - 4.1. Structure of a 90-Minute Practical Workshop
    - 4.2. Formative Assessment and Error-Tolerant Learning
@@ -150,13 +149,6 @@ The suite consists of three specialized plugins designed to operate seamlessly t
 3. Select **Moodle XML format**.
 4. Upload `questions_aiforvet.xml` and click **Import**.
 5. The full question set is immediately available in your course question bank.
-
----
-
-### 3.4. Restoring Complete Pre-Configured Courses (`.mbz` Course Restore)
-1. Download the official course archive from the AI for VET repository.
-2. In Moodle, navigate to **Site administration > Courses > Restore course**.
-3. Upload the `.mbz` file and complete the restore wizard to generate an instant turn-key course.
 
 ---
 

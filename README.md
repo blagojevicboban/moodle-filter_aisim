@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.5.0).
+> Status: **alpha** (v0.6.0).
 
 ---
 
@@ -58,6 +58,12 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Dynamic Elbow plot ($K=1\dots 6$) with current operating point.
 - Centroid re-seeding to explore local minima sensitivity.
 
+### 6. Perceptron & Neural Network (`data-aisim="neural-network"`)
+- A perceptron (no hidden layer) separates only with a straight line: 100% on linear data, 50% on XOR.
+- 1–2 hidden layers with 1–8 neurons and sigmoid / tanh / ReLU bend the boundary around XOR and a circle in a circle.
+- Live decision boundary, network drawing (line width = weight strength) and loss curve.
+- Seeded data and weights: the same settings and `data-epochs` always give the same trained network.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -77,6 +83,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- K-Means Clustering -->
 <div data-aisim="kmeans" data-dataset="blobs3" data-k="3"></div>
+
+<!-- Perceptron & Neural Network (optionally pre-trained with data-epochs) -->
+<div data-aisim="neural-network" data-dataset="xor" data-layers="1" data-neurons="4" data-activation="tanh" data-lr="0.3"></div>
 ```
 
 ---

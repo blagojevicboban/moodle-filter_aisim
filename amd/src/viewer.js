@@ -13,6 +13,7 @@ import {ConfusionMatrixSim} from 'filter_aisim/sims/confusion_matrix';
 import {RegressionSim} from 'filter_aisim/sims/regression';
 import {KnnTreeSim} from 'filter_aisim/sims/knn_tree';
 import {KMeansSim} from 'filter_aisim/sims/kmeans';
+import {NeuralNetworkSim} from 'filter_aisim/sims/neural_network';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -68,6 +69,18 @@ const kmeans = (el, lang) => new KMeansSim(el, {
     k: attr(el, 'k', 3)
 });
 
+const neuralNetwork = (el, lang) => new NeuralNetworkSim(el, {
+    lang: lang,
+    dataset: attr(el, 'dataset', 'xor'),
+    layers: attr(el, 'layers', 0),
+    neurons: attr(el, 'neurons', 4),
+    activation: attr(el, 'activation', 'tanh'),
+    lr: attr(el, 'lr', 0.3),
+    // Same seed and epochs give the same trained network (an embedded, already trained example).
+    seed: attr(el, 'seed', 1),
+    epochs: attr(el, 'epochs', 0)
+});
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -80,7 +93,10 @@ const SIMS = {
     'knn': knnTree('knn'),
     'decision-tree': knnTree('tree'),
     'kmeans': kmeans,
-    'k-means': kmeans
+    'k-means': kmeans,
+    'neural-network': neuralNetwork,
+    'neural_network': neuralNetwork,
+    'perceptron': neuralNetwork
 };
 
 /**

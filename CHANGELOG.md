@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.6.0] - 2026-10-30
+
+### Added
+- Perceptron & Neural Network simulation (`data-aisim="neural-network"`): datasets linear / XOR / circle in a circle,
+  0–2 hidden layers with 1–8 neurons, sigmoid / tanh / ReLU, learning rate, live decision boundary, network drawing
+  (line width = weight) and loss curve. Seeded data and weights: the same settings and `data-epochs` give the same
+  trained network.
+
+### Changed
+- `.gitattributes`: LF line endings, as in the other aisim plugins.
 
 ### Removed
 - The demo course backup (`demo/aiforvet_simulations_demo_course.mbz`) and the teacher guide section on restoring it.

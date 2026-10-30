@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-10-30
+
+### Added
+- Reinforcement Learning simulation (`data-aisim="q-learning"`): a Q-learning agent in a grid world (maze, cliff,
+  near-or-far treasure) with learning rate α, discount factor γ and exploration ε. Shows state values, the best move
+  per cell, the learned path from the start, the reward per episode and the Q-values of a tapped cell. Seeded
+  episodes: the same settings and `data-episodes` always give the same trained agent.
+
 ## [0.7.0] - 2026-10-30
 
 ### Added

@@ -9,7 +9,7 @@
 
 Designed specifically for vocational education (VET) and aligned with the **[AI for VET](https://aiforvet.eu/)** curriculum (*IO1: Fundamentals of AI*).
 
-> Status: **alpha** (v0.7.0).
+> Status: **alpha** (v0.8.0).
 
 ---
 
@@ -70,6 +70,13 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Optional target filter (`data-target`): the output is compared with the target image (R²), `data-presets="false"`
   hides the ready-made filters so the kernel has to be built by hand.
 
+### 8. Reinforcement Learning – Q-learning (`data-aisim="q-learning"`)
+- An agent learns from rewards alone in a grid world: maze, cliff (the shortest path runs along the edge) and
+  near-or-far (a small treasure close by, a big goal further away).
+- Learning rate α, discount factor γ and exploration ε; cell colours show state values, arrows the best move,
+  an orange line the learned path, a chart the reward per episode.
+- Seeded episodes: the same settings and `data-episodes` always give the same trained agent.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -96,6 +103,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 <!-- Convolution: a ready-made filter, or data-kernel="-1,0,1,-2,0,2,-1,0,1" data-divisor="1" data-abs="true";
      with a target to match and without the ready-made filters -->
 <div data-aisim="convolution" data-image="shapes" data-preset="identity" data-target="sobely" data-presets="false"></div>
+
+<!-- Q-learning (optionally pre-trained with data-episodes) -->
+<div data-aisim="q-learning" data-map="cliff" data-alpha="0.5" data-gamma="0.9" data-epsilon="0.2"></div>
 ```
 
 ---

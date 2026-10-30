@@ -505,3 +505,10 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 0.8rem;
 }
+
+/* Q-learning */
+.aisim-ql-legend {
+    font-size: 0.8rem;
+    color: #475569;
+    line-height: 1.45;
+}

@@ -15,6 +15,7 @@ import {KnnTreeSim} from 'filter_aisim/sims/knn_tree';
 import {KMeansSim} from 'filter_aisim/sims/kmeans';
 import {NeuralNetworkSim} from 'filter_aisim/sims/neural_network';
 import {ConvolutionSim} from 'filter_aisim/sims/convolution';
+import {QLearningSim} from 'filter_aisim/sims/q_learning';
 import {eventTypes} from 'core_filters/events';
 
 const SELECTOR = '[data-aisim]';
@@ -94,6 +95,17 @@ const convolution = (el, lang) => new ConvolutionSim(el, {
     presets: attr(el, 'presets', true)
 });
 
+const qLearning = (el, lang) => new QLearningSim(el, {
+    lang: lang,
+    map: attr(el, 'map', 'maze'),
+    alpha: attr(el, 'alpha', 0.5),
+    gamma: attr(el, 'gamma', 0.9),
+    epsilon: attr(el, 'epsilon', 0.2),
+    // Same seed and episodes give the same Q-table (an embedded, already trained agent).
+    seed: attr(el, 'seed', 1),
+    episodes: attr(el, 'episodes', 0)
+});
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -111,7 +123,10 @@ const SIMS = {
     'neural_network': neuralNetwork,
     'perceptron': neuralNetwork,
     'convolution': convolution,
-    'image-filters': convolution
+    'image-filters': convolution,
+    'q-learning': qLearning,
+    'q_learning': qLearning,
+    'reinforcement-learning': qLearning
 };
 
 /**

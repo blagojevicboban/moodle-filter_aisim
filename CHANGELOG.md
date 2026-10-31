@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-10-31
+
+### Changed
+- All simulation texts live in the language files (265 strings) and are loaded with `core/str`, so the simulations
+  follow the user's language and can be translated in AMOS. The engines take them as `options.strings` and list the
+  identifiers they use in `Engine.STRINGS`.
+- Teacher guide 1.1 (`docs/`): sections for all nine simulations, a suggested lesson order and the meaning of the
+  question targets; Slovak and Portuguese editions.
+
+### Added
+- Slovak and Portuguese translations; the Serbian Cyrillic translation is complete. They are kept in the repository;
+  the release package contains English only (other languages go through AMOS).
+- PHPUnit test that the engines, their string lists and every language file agree (keys and placeholders).
+
+### Fixed
+- Serbian words in the English interface (decision tree depth, regression and k-means labels, confusion matrix cells).
+
+### Removed
+- About 60 language strings no code used.
+
 ## [0.9.1] - 2026-10-30
 
 ### Added

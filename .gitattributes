@@ -1,3 +1,13 @@
 * text=auto eol=lf
 *.min.js -diff
 *.map -diff
+
+# Not in the release package (git archive): development files, and the translations,
+# which reach Moodle sites through AMOS.
+.gitattributes export-ignore
+.github export-ignore
+.moodle-plugin-ci.yml export-ignore
+lang/sr_lt export-ignore
+lang/sr_cr export-ignore
+lang/sk export-ignore
+lang/pt export-ignore

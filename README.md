@@ -23,7 +23,7 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 | 🌲 **Decision Boundaries** | Real-time comparison between k-NN (distance-based smooth/Voronoi boundaries) and Decision Trees (orthogonal splits). |
 | 🫧 **Unsupervised Clustering** | Step-by-step K-Means algorithm (alternating assignment & centroid update) and live Elbow plot (WCSS). |
 | 🏭 **Real VET Scenarios** | Scenarios include Industrial Quality Control (Defect Detection), Medical Screening, Fuel Consumption, and Sensor Regimes. |
-| 🌍 **Multilingual** | Every simulation text comes from the Moodle language files, so the simulations follow the user's language. Included: English, Serbian Latin (`sr_lt`), Serbian Cyrillic (`sr_cr`), Slovak (`sk`) and Portuguese (`pt`). |
+| 🌍 **Multilingual** | Every simulation text comes from the Moodle language files, so the simulations follow the user's language. The package ships English; Serbian Latin (`sr_lt`), Serbian Cyrillic (`sr_cr`), Slovak (`sk`) and Portuguese (`pt`) translations are in this repository and go to Moodle sites through AMOS. |
 | 🔒 **GDPR Compliant** | Implements Moodle's Null Privacy Provider — no personal data is collected or transmitted. |
 
 ---

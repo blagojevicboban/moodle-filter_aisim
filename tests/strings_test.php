@@ -36,7 +36,11 @@ final class strings_test extends \basic_testcase {
     private function engines(): array {
         $sources = [];
         foreach (glob(__DIR__ . '/../amd/src/sims/*.js') as $file) {
-            $sources[basename($file)] = file_get_contents($file);
+            $source = file_get_contents($file);
+            // Only the engine classes; sims/layout.js holds shared helpers.
+            if (strpos($source, 'export class') !== false) {
+                $sources[basename($file)] = $source;
+            }
         }
         $this->assertNotEmpty($sources);
         return $sources;

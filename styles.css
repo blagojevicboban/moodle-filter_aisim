@@ -567,6 +567,7 @@
     height: 9px;
     border: 2.5px solid #0f172a;
 }
+
 @media (max-width: 480px) {
     .aisim-dp-hists {
         grid-template-columns: 1fr;

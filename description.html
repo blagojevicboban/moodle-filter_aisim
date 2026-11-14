@@ -1,20 +1,63 @@
-<div class="aisim-description">
-  <h2>AI Simulations Viewer: Interactive Machine Learning for Moodle</h2>
-  <p><em>Brings AI and machine learning concepts to life with interactive, client-side simulations inside Moodle courses, aligned with the AI for VET curriculum.</em></p>
+<div>
+  <p><strong>AI Simulations Viewer</strong></p>
+  <p><em>Nine interactive machine learning simulations that run in the browser inside any Moodle text.</em></p>
+  <div>
+    <a href="https://github.com/blagojevicboban/moodle-filter_aisim/actions/workflows/ci.yml" target="_blank" rel="noreferrer noopener"><img src="https://github.com/blagojevicboban/moodle-filter_aisim/actions/workflows/ci.yml/badge.svg" alt="Moodle Plugin CI"></a>
+    <a href="https://moodle.org" target="_blank" rel="noreferrer noopener"><img src="https://img.shields.io/badge/Moodle-4.5%20to%205.3-orange.svg" alt="Moodle 4.5 to 5.3"></a>
+    <a href="https://github.com/blagojevicboban/moodle-filter_aisim" target="_blank" rel="noreferrer noopener"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License GPL v3"></a>
+  </div>
 
-  <h3>Features</h3>
+  <p><strong>Live demo:</strong> try the plugins on <a href="https://aisim.tsp.edu.rs" target="_blank" rel="noreferrer noopener">aisim.tsp.edu.rs</a>. Log in as a guest, or use the demo accounts <strong>teacher</strong> and <strong>student</strong>, password <strong>Demo-2026</strong>. Everything is reset every night. The simulations alone, without Moodle: <a href="https://sim.aiforvet.eu" target="_blank" rel="noreferrer noopener">sim.aiforvet.eu</a>.</p>
+
+  <hr>
+  <p><strong>What's new in 0.10.1</strong></p>
   <ul>
-    <li><strong>Interactive Simulations:</strong> Real-time visualizations of Gradient Descent, Regression Overfitting, Confusion Matrices, Decision Boundaries, Clustering, Perceptron & Neural Networks, Convolution & Image Filters, Reinforcement Learning (Q-learning), and Data Split & Bias.</li>
-    <li><strong>Zero Server Load:</strong> 100% browser-based (HTML5 Canvas/JS) — no expensive GPUs, cloud APIs, or external tokens needed.</li>
-    <li><strong>Hands-on Learning:</strong> Students adjust hyperparameters (learning rate, epochs, decision thresholds, k-neighbors) and instantly observe effects on convergence and accuracy.</li>
-    <li><strong>Multilingual:</strong> English, Serbian Latin, and Serbian Cyrillic.</li>
-    <li><strong>GDPR Compliant:</strong> Implements Moodle's Null Privacy Provider.</li>
+    <li><strong>Templates:</strong> the layouts of the simulations are Mustache templates rendered from JavaScript, and every JavaScript source file has the full Moodle GPL header (review fixes).</li>
   </ul>
 
-  <h3>Requirements</h3>
+  <hr>
+  <p><strong>The simulations</strong></p>
   <ul>
-    <li>Supports Moodle 4.5 LTS and 5.0 - 5.3 (tested on all versions).</li>
-    <li>PHP 8.2+.</li>
+    <li><strong>Gradient descent:</strong> the learning rate and the starting weight on a convex, non-convex or plateau cost curve; convergence, oscillation and divergence.</li>
+    <li><strong>Confusion matrix:</strong> move the decision threshold and watch precision, recall, F1 and the ROC curve in three scenarios.</li>
+    <li><strong>Polynomial regression:</strong> the degree and the regularisation, training and test error, underfitting and overfitting.</li>
+    <li><strong>k-NN and decision tree:</strong> add points and compare the decision boundaries for k and the tree depth.</li>
+    <li><strong>K-means:</strong> assignment and update steps, the number of clusters and the elbow chart.</li>
+    <li><strong>Perceptron and neural network:</strong> hidden layers, neurons, activation and learning rate; train and watch the boundary, the network and the loss curve.</li>
+    <li><strong>Convolution:</strong> a 3x3 kernel on small images, presets such as blur, sharpen and edges, the calculation of a pixel, and a target filter to find.</li>
+    <li><strong>Q-learning:</strong> an agent on a grid map, the learning rate, discount and exploration, the Q-values of each cell and the reward curve.</li>
+    <li><strong>Data split and bias:</strong> how a biased sample and a small test set change the accuracy for two groups.</li>
   </ul>
+
+  <hr>
+  <p><strong>How it works</strong></p>
+  <ul>
+    <li><strong>In any text:</strong> pages, books, lessons, labels, forum posts and quiz questions; a simulation is an element with a <code>data-aisim</code> attribute, inserted most easily with the TinyMCE button.</li>
+    <li><strong>In the browser:</strong> everything runs on the student's device with HTML5 canvas; no server load, no external services, works on phones.</li>
+    <li><strong>Explains itself:</strong> every simulation shows its numbers and gives advice about what the student sees.</li>
+    <li><strong>Translatable:</strong> all texts are language strings and can be translated in AMOS.</li>
+  </ul>
+
+  <hr>
+  <p><strong>The AI simulation plugins</strong></p>
+  <ul>
+    <li><strong><a href="https://marketplace.moodle.com/plugins/filter_aisim" target="_blank" rel="noreferrer noopener">AI Simulations Viewer</a></strong> (this plugin): runs the simulations in any content.</li>
+    <li><strong><a href="https://marketplace.moodle.com/plugins/tiny_aisim" target="_blank" rel="noreferrer noopener">AI Simulation button for TinyMCE</a></strong>: inserts and edits the simulations in the editor.</li>
+    <li><strong><a href="https://github.com/blagojevicboban/moodle-qtype_aisim" target="_blank" rel="noreferrer noopener">AI Simulation question type</a></strong> (qtype_aisim): quiz questions solved inside a simulation and graded automatically.</li>
+  </ul>
+
+  <hr>
+  <p><strong>Requirements</strong></p>
+  <ul>
+    <li><strong>Moodle:</strong> 4.5 LTS to 5.3.</li>
+    <li><strong>Setup:</strong> enable the filter in Site administration, Plugins, Filters, Manage filters.</li>
+  </ul>
+
+  <hr>
+  <p><strong>Privacy</strong></p>
+  <p>The plugin stores no personal data and sends nothing to external services; it implements the Moodle Privacy API.</p>
+
+  <hr>
+  <p><strong>About</strong></p>
+  <p>Developed in the Erasmus+ project AI for VET for vocational schools. A teacher guide in English, Serbian, Slovak and Portuguese, the source code, issues and the changelog are in the <a href="https://github.com/blagojevicboban/moodle-filter_aisim" target="_blank" rel="noreferrer noopener">GitHub repository</a>.</p>
 </div>
-

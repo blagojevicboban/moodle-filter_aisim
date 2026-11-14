@@ -6,7 +6,7 @@
 *Portal oficial:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulações sem Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autores e equipa técnica do projeto AI for VET*  
-*Versão do guia: 1.4 (novembro de 2026)*  
+*Versão do guia: 1.5 (novembro de 2026)*  
 *Compatibilidade: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. O desafio: porquê IA no ensino profissional?
    - 1.2. Abordagem pedagógica: da intuição visual à compreensão técnica
    - 1.3. Arquitetura do pacote para Moodle (filtro, tipo de pergunta, editor TinyMCE)
-2. [Guia pedagógico das 12 simulações](#2-guia-pedagógico-das-12-simulações)
+2. [Guia pedagógico das 13 simulações](#2-guia-pedagógico-das-13-simulações)
    - 2.1. Módulo 1: Descida do gradiente e otimização do modelo (`gradient_descent`)
    - 2.2. Módulo 2: Matriz de confusão e limiar de decisão (`confusion_matrix`)
    - 2.3. Módulo 3: Regressão polinomial e regularização (`regression`)
@@ -29,6 +29,7 @@
    - 2.10. Módulo 10: Regressão logística (`logistic`)
    - 2.11. Módulo 11: Validação cruzada e hiperparâmetros (`cross_validation`)
    - 2.12. Módulo 12: Preparação de dados e EDA (`data_prep`)
+   - 2.13. Módulo 13: Rede neuronal recorrente (`rnn`)
 3. [Instruções técnicas para professores](#3-instruções-técnicas-para-professores)
    - 3.1. Inserir simulações com o editor visual TinyMCE (`tiny_aisim`)
    - 3.2. Criar tarefas com avaliação automática (`qtype_aisim`)
@@ -66,7 +67,7 @@ O pacote **AI for VET** propõe a **aprendizagem ativa por investigação (Activ
 
 ### 1.3. Arquitetura do pacote para Moodle
 O pacote é composto por três plugins que trabalham em conjunto:
-- **`moodle-filter_aisim`** (filtro de texto e simulações): mostra as 12 simulações interativas onde quer que surja a marca `data-aisim` no conteúdo.
+- **`moodle-filter_aisim`** (filtro de texto e simulações): mostra as 13 simulações interativas onde quer que surja a marca `data-aisim` no conteúdo.
 - **`moodle-qtype_aisim`** (tipo de pergunta e avaliação automática): coloca tarefas interativas nos testes do Moodle e avalia os valores alcançados após a submissão.
 - **`moodle-tiny_aisim`** (plugin do editor TinyMCE): uma caixa de diálogo em que o professor insere, configura e edita (com duplo clique) uma simulação sem escrever HTML.
 
@@ -74,9 +75,9 @@ As simulações seguem o idioma do utilizador no Moodle: incluem inglês, sérvi
 
 ---
 
-## 2. Guia pedagógico das 12 simulações
+## 2. Guia pedagógico das 13 simulações
 
-As simulações vão das mais simples às mais exigentes. As cinco primeiras cobrem os fundamentos (otimização, avaliação de modelos, sobreajuste, classificação, agrupamento); os módulos 6–9 acrescentam redes neuronais, processamento de imagem, aprendizagem por recompensas e o uso responsável dos dados. O módulo 10, regressão logística, é a ponte entre a regressão e as redes neuronais: pode ser trabalhado logo após a matriz de confusão ou antes do perceptrão. O módulo 11, validação cruzada, acompanha a regressão polinomial: mostra como se escolhe um hiperparâmetro de forma honesta. O módulo 12, preparação de dados, pertence ao início de tudo: antes de qualquer modelo, olhe para os dados.
+As simulações vão das mais simples às mais exigentes. As cinco primeiras cobrem os fundamentos (otimização, avaliação de modelos, sobreajuste, classificação, agrupamento); os módulos 6–9 acrescentam redes neuronais, processamento de imagem, aprendizagem por recompensas e o uso responsável dos dados. O módulo 10, regressão logística, é a ponte entre a regressão e as redes neuronais: pode ser trabalhado logo após a matriz de confusão ou antes do perceptrão. O módulo 11, validação cruzada, acompanha a regressão polinomial: mostra como se escolhe um hiperparâmetro de forma honesta. O módulo 12, preparação de dados, pertence ao início de tudo: antes de qualquer modelo, olhe para os dados. O módulo 13, a rede neuronal recorrente, vem depois da rede neuronal: acrescenta memória para sequências.
 
 ### 2.1. Módulo 1: Descida do gradiente e otimização do modelo (`gradient_descent`)
 - **Conceitos-chave:** função de custo J(w), taxa de aprendizagem α, funções convexas e não convexas, mínimos locais.
@@ -244,12 +245,27 @@ As simulações vão das mais simples às mais exigentes. As cinco primeiras cob
 
 ---
 
+### 2.13. Módulo 13: Rede neuronal recorrente (`rnn`)
+- **Conceitos-chave:** Sequências, um estado oculto que leva a memória de passo em passo (h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t), os mesmos pesos em cada passo (a rede desdobrada no tempo), o esquecimento, a retropropagação no tempo, o gradiente que desaparece e porque é que as redes LSTM e GRU têm portas.
+- **Metáfora pedagógica:** Um segredo passado ao longo de uma fila de alunos: cada aluno repete o que ouviu um pouco mais baixo (w < 1). Depois de alguns alunos as primeiras palavras perdem-se – a não ser que todos as repitam exatamente ao mesmo volume (w = 1).
+- **Aplicação prática:** Prever temperaturas, consumo de energia ou carga de máquinas a partir das últimas horas, ler sinais de sensores, texto e fala. Suavizar um sensor com ruído é o uso mais simples da memória.
+- **O que os alunos observam na simulação:**
+  1. *Termómetro sem memória:* Com w ≈ 0 a rede só escala a última leitura com ruído (erro de cerca de 0,072); com w perto de 0,35 faz a média de algumas horas e o erro desce para cerca de 0,059. O botão Treinar encontra isto em poucos cliques.
+  2. *As barras de influência:* Cada barra é a influência de uma entrada passada na última saída. É multiplicada por w em cada passo, por isso com w = 0,5 só contam as últimas entradas.
+  3. *Lembrar o primeiro valor:* A tarefa de memória precisa de w perto de 1; um u pequeno mantém a tanh na parte reta e um v grande recupera o valor (L = 20: w = 1, u = 0,3, v = 4 dão um erro de cerca de 0,003).
+  4. *w > 1:* O estado cresce até ±1 e fica preso aí: a rede guarda só o sinal, não o tamanho do valor.
+  5. *O gradiente que desaparece:* Com L = 20 e w = 0,5 o tamanho do gradiente é ≈ 0 e Treinar não muda nada – o erro não chega ao primeiro passo. É o problema que as LSTM e GRU resolvem.
+- **Tarefa típica de teste:**
+  > *"A sequência tem 20 passos. Carregue em Treinar e observe o gradiente: porque é que não ajuda? Depois ajuste a rede à mão para um erro de no máximo 0,01 com pelo menos 20 entradas lembradas."*
+
+---
+
 ## 3. Instruções técnicas para professores
 
 ### 3.1. Inserir simulações com o editor visual TinyMCE (`tiny_aisim`)
 1. Na barra de ferramentas do TinyMCE, clique no **ícone de simulação de IA** (ou escolha *Inserir > AI Simulation...*).
 2. Configure os parâmetros:
-   - Escolha uma das 12 simulações.
+   - Escolha uma das 13 simulações.
    - Ajuste o cenário, limiar, taxa de aprendizagem, grau, número de grupos, arquitetura da rede, imagem e filtro, mapa do agente ou quota do grupo nos dados.
    - Marque **Apenas leitura** se quiser que os alunos só observem a simulação.
    - Na parte inferior da caixa de diálogo vê uma pré-visualização ao vivo.
@@ -272,17 +288,17 @@ As simulações vão das mais simples às mais exigentes. As cinco primeiras cob
 ---
 
 ### 3.3. Importar o banco de perguntas pronto (Moodle XML)
-O repositório `moodle-qtype_aisim` contém 36 tarefas prontas – três para cada uma das 12 simulações (nível básico, intermédio e avançado):
+O repositório `moodle-qtype_aisim` contém 39 tarefas prontas – três para cada uma das 13 simulações (nível básico, intermédio e avançado):
 1. Descarregue [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. No seu curso, abra **Banco de perguntas > Importar**.
 3. Escolha o **formato Moodle XML**.
 4. Carregue `questions_aiforvet.xml` e clique em **Importar**.
-5. É criada a categoria *"AI za VET - Baza simulacionih zadataka (36 pitanja)"* com todas as perguntas prontas para um teste. (Os enunciados estão em sérvio; adapte-os conforme necessário.)
+5. É criada a categoria *"AI za VET - Baza simulacionih zadataka (39 pitanja)"* com todas as perguntas prontas para um teste. (Os enunciados estão em sérvio; adapte-os conforme necessário.)
 
 ---
 
 ### 3.4. AISim Lab: as simulações sem Moodle
-Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 12 simulações funcionam de forma independente – sem conta e sem recolha de dados – em português, inglês, sérvio e eslovaco. Cada simulação tem uma breve explicação e três desafios.
+Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 13 simulações funcionam de forma independente – sem conta e sem recolha de dados – em português, inglês, sérvio e eslovaco. Cada simulação tem uma breve explicação e três desafios.
 - **Trabalho de casa e telemóveis:** os alunos podem praticar fora do Moodle; o progresso nos desafios fica guardado só no próprio navegador.
 - **"Copiar ligação para esta configuração":** cria uma ligação para exatamente este estado da simulação – útil para o projetor ou para enviar aos alunos.
 - **"Incorporar no Moodle":** dá o código HTML pronto desta configuração para colar em qualquer texto do Moodle (requer `filter_aisim`).
@@ -328,6 +344,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 12 simulações funcionam de f
 | 3b. Escolher um modelo com honestidade | Validação cruzada | Os hiperparâmetros escolhem-se nas partes de validação; o conjunto de teste usa-se uma vez |
 | 4. Aprender sem respostas | K-Means | Agrupar sem rótulos |
 | 5. Redes neuronais e imagem | Perceptrão e rede neuronal, Convolução | De um neurónio ao reconhecimento de imagem |
+| 5b. Memória para sequências | Rede neuronal recorrente | Um estado levado de passo em passo; o esquecimento e o gradiente que desaparece levam às LSTM e GRU |
 | 6. Aprender com recompensas | Q-learning | Exploração vs. aproveitamento, o valor do futuro |
 
 ---
@@ -348,6 +365,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 12 simulações funcionam de f
 | **Regressão logística** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; classe 1 se σ(z) ≥ θ | Exatidão ≥ 95% (machine); sensibilidade 100% com precisão ≥ 85% |
 | **Validação cruzada** | d (grau), k (partes) | erro de CV = (1/k) · Σ MSE da parte i, cada parte deixada de fora uma vez | MSE de CV ≤ 0,11 com k ≥ 5 (sine) |
 | **Preparação de dados** | valores em falta, atípicos, escalonamento, k | min-max: x′ = (x − min) / (max − min); z-score: x′ = (x − média) / σ | Exatidão ≥ 85% (machine); exatidão ≥ 90% e sensibilidade ≥ 85% (patients) |
+| **Rede neuronal recorrente** | w (memória), u, v, comprimento da sequência L | h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t | MSE ≤ 0,065 (temperature); MSE ≤ 0,01 lembrando ≥ 20 entradas (memory, L = 20) |
 
 #### Significado dos campos "Métrica-alvo" nas perguntas (`qtype_aisim`)
 | Simulação | Métrica-alvo 1 | Métrica-alvo 2 | Metade da pontuação |
@@ -364,6 +382,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 12 simulações funcionam de f
 | Regressão logística | exatidão mínima | sensibilidade mínima (0 = sem limite); o campo Tolerância define a precisão mínima | exatidão cumprida, mas sensibilidade ou precisão não |
 | Validação cruzada | MSE de CV máximo do grau escolhido | número mínimo de partes k (0 = sem limite) | MSE cumprido, mas com poucas partes |
 | Preparação de dados | exatidão mínima nos dados de teste | sensibilidade mínima (0 = sem limite) | exatidão cumprida, mas sensibilidade não |
+| Rede neuronal recorrente | erro (MSE) máximo | número mínimo de entradas passadas lembradas (0 = sem limite) | erro cumprido, mas a rede lembra-se de poucas entradas |
 
 ---
 

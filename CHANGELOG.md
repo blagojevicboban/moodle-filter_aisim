@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0] - 2026-11-14
+
+### Added
+- Recurrent Neural Network simulation (`data-aisim="rnn"`, also `recurrent` and `recurrent-network`): one recurrent
+  neuron h_t = tanh(w·h_(t-1) + u·x_t), y_t = v·h_t with sliders for the memory weight w, the input weight u and the
+  output weight v, and training with gradient descent (+10 epochs). Charts of the sequence (input, state, output,
+  target), the network unrolled over the last five steps and bars of how strongly each past input still influences
+  the last output (how many inputs the network remembers). Datasets: a noisy thermometer (forecast the real
+  temperature of the next hour) and a memory task (remember the first value of a sequence of length L = 3–30), which
+  shows forgetting and the vanishing gradient. Book chapter 4.4.
+- Teacher guide 1.5 (`docs/`): Recurrent Neural Network module in all four editions.
+
 ## [0.13.0] - 2026-11-14
 
 ### Added

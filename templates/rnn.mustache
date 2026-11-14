@@ -1,0 +1,159 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/rnn
+
+    Layout of the Recurrent Neural Network simulation (the sequence, the network unrolled in time, the influence of
+    past inputs, weight sliders and training). It is rendered from JavaScript by the filter_aisim/sims/rnn module,
+    which then binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * memory - true for the memory task (shows the sequence length and the example button)
+    * datasets - select options as {value, label, selected}
+    * lengthslider, wslider, uslider, vslider - sliders (see filter_aisim/slider)
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Recurrent Neural Network (RNN)",
+            "badge": "Chapter 4.4",
+            "seqTitle": "Sequence",
+            "input": "input x",
+            "state": "state h",
+            "output": "output y",
+            "target": "target",
+            "example": "Another example",
+            "unrolledTitle": "The network unrolled in time",
+            "unrolledHint": "The same weights at every step.",
+            "influenceTitle": "How much the last output still depends on each input",
+            "influenceHint": "Purple bars are above 10% of the strongest one.",
+            "weights": "Weights",
+            "formula": "h_t = tanh(w·h_(t−1) + u·x_t),  y_t = v·h_t",
+            "training": "Training",
+            "train": "Train (+10 epochs)",
+            "reset": "Reset",
+            "metrics": "Result",
+            "epoch": "Epochs:",
+            "loss": "Loss (MSE):",
+            "remembered": "Inputs it remembers:",
+            "gradient": "Gradient size:",
+            "adviceStart": "Change w, or train the network."
+        },
+        "memory": true,
+        "datasets": [{"value": "memory", "label": "🧠 Remember the first value", "selected": true}],
+        "lengthslider": {"id": "aisim-rnn-length", "label": "Sequence length L", "value": 10, "text": "10",
+            "min": 3, "max": 30, "step": 1},
+        "wslider": {"id": "aisim-rnn-w", "label": "Memory w", "value": 0.5, "text": "0.50",
+            "min": -1.5, "max": 1.5, "step": 0.05},
+        "uslider": {"id": "aisim-rnn-u", "label": "Input u", "value": 1, "text": "1.00", "min": -3, "max": 3, "step": 0.1},
+        "vslider": {"id": "aisim-rnn-v", "label": "Output v", "value": 1, "text": "1.00", "min": -4, "max": 4, "step": 0.1}
+    }
+}}
+<div class="aisim-container aisim-rnn">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-rnn-dataset">
+            {{#datasets}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/datasets}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.seqTitle}}</span>
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-rnn-next"
+                                {{^memory}}hidden{{/memory}}>{{t.example}}</button>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-rnn-seq" style="height:220px;"></canvas>
+                    <div class="aisim-legend aisim-rnn-legend">
+                        <span class="aisim-legend-item"><span class="aisim-dot aisim-rnn-x"></span> {{t.input}}</span>
+                        <span class="aisim-legend-item"><span class="aisim-rnn-line aisim-rnn-h"></span> {{t.state}}</span>
+                        <span class="aisim-legend-item"><span class="aisim-rnn-line aisim-rnn-y"></span> {{t.output}}</span>
+                        <span class="aisim-legend-item"><span class="aisim-rnn-line aisim-rnn-target"></span> {{t.target}}</span>
+                    </div>
+                </div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-rnn-advice">{{t.adviceStart}}</div>
+                </div>
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.unrolledTitle}}</span>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-rnn-cell" style="height:170px;"></canvas>
+                    <div class="aisim-cv-hint">{{t.unrolledHint}}</div>
+                </div>
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.influenceTitle}}</span>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-rnn-inf" style="height:120px;"></canvas>
+                    <div class="aisim-cv-hint">{{t.influenceHint}}</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.weights}}</div>
+                    <div class="aisim-log-formula">{{t.formula}}</div>
+                    <div {{^memory}}hidden{{/memory}}>
+                        {{#lengthslider}}
+                        {{> filter_aisim/slider }}
+                        {{/lengthslider}}
+                    </div>
+                    {{#wslider}}
+                    {{> filter_aisim/slider }}
+                    {{/wslider}}
+                    {{#uslider}}
+                    {{> filter_aisim/slider }}
+                    {{/uslider}}
+                    {{#vslider}}
+                    {{> filter_aisim/slider }}
+                    {{/vslider}}
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.training}}</div>
+                    <div class="aisim-controls">
+                        <button class="aisim-btn aisim-btn-primary" id="aisim-rnn-train">{{t.train}}</button>
+                        <button class="aisim-btn aisim-btn-danger" id="aisim-rnn-reset">{{t.reset}}</button>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span>{{t.epoch}}</span>
+                        <span class="aisim-stat-val" id="aisim-rnn-epoch">0</span></div>
+                    <div class="aisim-stat-row"><span>{{t.loss}}</span>
+                        <span class="aisim-stat-val" id="aisim-rnn-loss">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.remembered}}</span>
+                        <span class="aisim-stat-val" id="aisim-rnn-mem">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.gradient}}</span>
+                        <span class="aisim-stat-val" id="aisim-rnn-grad">–</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

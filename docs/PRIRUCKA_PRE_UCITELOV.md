@@ -6,7 +6,7 @@
 *Oficiálny portál:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulácie bez Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autori a technický tím projektu AI for VET*  
-*Verzia príručky: 1.4 (november 2026)*  
+*Verzia príručky: 1.5 (november 2026)*  
 *Kompatibilita: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. Výzva: Prečo AI v odbornom vzdelávaní?
    - 1.2. Pedagogický prístup: Od vizuálnej intuície k inžinierskemu porozumeniu
    - 1.3. Architektúra balíka pre Moodle (filter, typ otázky, editor TinyMCE)
-2. [Pedagogický sprievodca 12 simuláciami](#2-pedagogický-sprievodca-12-simuláciami)
+2. [Pedagogický sprievodca 13 simuláciami](#2-pedagogický-sprievodca-13-simuláciami)
    - 2.1. Modul 1: Gradientný zostup a optimalizácia modelu (`gradient_descent`)
    - 2.2. Modul 2: Matica zámen a rozhodovací prah (`confusion_matrix`)
    - 2.3. Modul 3: Polynomiálna regresia a regularizácia (`regression`)
@@ -29,6 +29,7 @@
    - 2.10. Modul 10: Logistická regresia (`logistic`)
    - 2.11. Modul 11: Krížová validácia a hyperparametre (`cross_validation`)
    - 2.12. Modul 12: Príprava dát a EDA (`data_prep`)
+   - 2.13. Modul 13: Rekurentná neurónová sieť (`rnn`)
 3. [Technický návod pre učiteľov](#3-technický-návod-pre-učiteľov)
    - 3.1. Vkladanie simulácií vizuálnym editorom TinyMCE (`tiny_aisim`)
    - 3.2. Tvorba automaticky hodnotených úloh (`qtype_aisim`)
@@ -74,9 +75,9 @@ Simulácie sa zobrazujú v jazyku používateľa v Moodle: obsahujú angličtinu
 
 ---
 
-## 2. Pedagogický sprievodca 12 simuláciami
+## 2. Pedagogický sprievodca 13 simuláciami
 
-Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva základy (optimalizácia, hodnotenie modelu, preučenie, klasifikácia, zhlukovanie), moduly 6–9 na ne nadväzujú neurónovými sieťami, spracovaním obrazu, učením z odmien a zodpovednou prácou s dátami. Modul 10, logistická regresia, je mostom medzi regresiou a neurónovými sieťami: dá sa zaradiť hneď po matici zámen alebo pred perceptrón. Modul 11, krížová validácia, patrí k polynomiálnej regresii: ukazuje, ako sa hyperparameter volí poctivo. Modul 12, príprava dát, patrí úplne na začiatok: pred akýmkoľvek modelom sa pozrite na dáta.
+Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva základy (optimalizácia, hodnotenie modelu, preučenie, klasifikácia, zhlukovanie), moduly 6–9 na ne nadväzujú neurónovými sieťami, spracovaním obrazu, učením z odmien a zodpovednou prácou s dátami. Modul 10, logistická regresia, je mostom medzi regresiou a neurónovými sieťami: dá sa zaradiť hneď po matici zámen alebo pred perceptrón. Modul 11, krížová validácia, patrí k polynomiálnej regresii: ukazuje, ako sa hyperparameter volí poctivo. Modul 12, príprava dát, patrí úplne na začiatok: pred akýmkoľvek modelom sa pozrite na dáta. Modul 13, rekurentná neurónová sieť, nasleduje po neurónovej sieti: pridáva pamäť pre postupnosti.
 
 ### 2.1. Modul 1: Gradientný zostup a optimalizácia modelu (`gradient_descent`)
 - **Kľúčové pojmy:** nákladová funkcia J(w), rýchlosť učenia α, konvexné a nekonvexné funkcie, lokálne minimá.
@@ -244,12 +245,27 @@ Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva zá
 
 ---
 
+### 2.13. Modul 13: Rekurentná neurónová sieť (`rnn`)
+- **Kľúčové pojmy:** Postupnosti, skrytý stav, ktorý nesie pamäť z kroku do kroku (h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t), rovnaké váhy v každom kroku (sieť rozvinutá v čase), zabúdanie, spätné šírenie v čase, miznúci gradient a prečo majú siete LSTM a GRU brány.
+- **Pedagogická metafora:** Šepot podávaný pozdĺž radu žiakov: každý žiak zopakuje, čo počul, o niečo tichšie (w < 1). Po niekoľkých žiakoch sa prvé slová stratia – iba ak ich všetci opakujú presne rovnako nahlas (w = 1), zostanú.
+- **Praktické využitie:** Predpoveď teploty, spotreby energie alebo zaťaženia stroja z posledných hodín, čítanie signálov senzorov, text a reč. Priemerovanie zašumeného senzora je najjednoduchšie použitie pamäte.
+- **Čo žiaci v simulácii pozorujú:**
+  1. *Teplomer bez pamäte:* Pri w ≈ 0 sieť iba škáluje posledné zašumené meranie (chyba asi 0,072); pri w okolo 0,35 priemeruje niekoľko hodín a chyba klesne asi na 0,059. Tlačidlo Trénovať to nájde po niekoľkých kliknutiach.
+  2. *Stĺpce vplyvu:* Každý stĺpec je vplyv jedného predchádzajúceho vstupu na posledný výstup. V každom kroku sa násobí w, takže pri w = 0,5 rozhoduje iba niekoľko posledných vstupov.
+  3. *Zapamätaj si prvú hodnotu:* Úloha s pamäťou potrebuje w blízko 1; malé u drží tanh v jeho rovnej časti a veľké v hodnotu vráti (L = 20: w = 1, u = 0,3, v = 4 dajú chybu asi 0,003).
+  4. *w > 1:* Stav narastie na ±1 a tam uviazne: sieť si ponechá iba znamienko, nie veľkosť hodnoty.
+  5. *Miznúci gradient:* Pri L = 20 a w = 0,5 je veľkosť gradientu ≈ 0 a Trénovať nič nezmení – chyba sa nedostane k prvému kroku. To je problém, ktorý riešia LSTM a GRU.
+- **Typická úloha v teste:**
+  > *„Postupnosť má 20 krokov. Stlačte Trénovať a sledujte gradient: prečo nepomáha? Potom ručne nastavte sieť na chybu najviac 0,01 s aspoň 20 zapamätanými vstupmi.“*
+
+---
+
 ## 3. Technický návod pre učiteľov
 
 ### 3.1. Vkladanie simulácií vizuálnym editorom TinyMCE (`tiny_aisim`)
 1. V paneli nástrojov editora TinyMCE kliknite na **ikonu AI simulácie** (alebo v ponuke zvoľte *Vložiť > AI Simulation...*).
 2. Nastavte parametre:
-   - Zvoľte jednu z 12 simulácií.
+   - Zvoľte jednu z 13 simulácií.
    - Nastavte scenár, prah, rýchlosť učenia, stupeň, počet zhlukov, architektúru siete, obrázok a filter, mapu agenta alebo podiel skupiny v dátach.
    - Zaškrtnite **Len na čítanie**, ak chcete, aby žiaci simuláciu len pozorovali.
    - V spodnej časti dialógu vidíte živý náhľad.
@@ -272,17 +288,17 @@ Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva zá
 ---
 
 ### 3.3. Import hotovej banky otázok (Moodle XML)
-Repozitár `moodle-qtype_aisim` obsahuje 36 hotových úloh – po tri pre každú z 12 simulácií (základná, stredná a pokročilá úroveň):
+Repozitár `moodle-qtype_aisim` obsahuje 39 hotových úloh – po tri pre každú z 13 simulácií (základná, stredná a pokročilá úroveň):
 1. Stiahnite [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. V kurze otvorte **Banka otázok > Import**.
 3. Zvoľte **formát Moodle XML**.
 4. Nahrajte `questions_aiforvet.xml` a kliknite na **Importovať**.
-5. Vytvorí sa kategória *„AI za VET - Baza simulacionih zadataka (36 pitanja)“* so všetkými otázkami pripravenými do testu. (Texty otázok sú v srbčine; upravte ich podľa potreby.)
+5. Vytvorí sa kategória *„AI za VET - Baza simulacionih zadataka (39 pitanja)“* so všetkými otázkami pripravenými do testu. (Texty otázok sú v srbčine; upravte ich podľa potreby.)
 
 ---
 
 ### 3.4. AISim Lab: simulácie bez Moodle
-Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) beží všetkých 12 simulácií samostatne – bez účtu a bez zberu údajov – po slovensky, anglicky, srbsky a portugalsky. Každá simulácia má krátke vysvetlenie a tri výzvy.
+Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) beží všetkých 13 simulácií samostatne – bez účtu a bez zberu údajov – po slovensky, anglicky, srbsky a portugalsky. Každá simulácia má krátke vysvetlenie a tri výzvy.
 - **Domáca úloha a mobily:** žiaci môžu cvičiť mimo Moodle; postup vo výzvach sa ukladá len v ich prehliadači.
 - **„Kopírovať odkaz na toto nastavenie“:** vytvorí odkaz presne na tento stav simulácie – vhodné pre projektor alebo správu žiakom.
 - **„Vložiť do Moodle“:** dá hotový HTML kód tohto nastavenia na vloženie do ľubovoľného textu v Moodle (potrebný je `filter_aisim`).
@@ -328,6 +344,7 @@ Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) beží všetkých 12 simulácií 
 | 3b. Poctivá voľba modelu | Krížová validácia | Hyperparametre sa volia na validačných častiach; testovacia množina sa použije raz |
 | 4. Učenie bez odpovedí | K-Means | Zoskupovanie bez označení |
 | 5. Neurónové siete a obraz | Perceptrón a neurónová sieť, Konvolúcia | Od jedného neurónu k rozpoznávaniu obrazu |
+| 5b. Pamäť pre postupnosti | Rekurentná neurónová sieť | Stav prenášaný z kroku do kroku; zabúdanie a miznúci gradient vedú k LSTM a GRU |
 | 6. Učenie z odmien | Q-learning | Skúmanie verzus využívanie, hodnota budúcnosti |
 
 ---
@@ -348,6 +365,7 @@ Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) beží všetkých 12 simulácií 
 | **Logistická regresia** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; trieda 1, ak σ(z) ≥ θ | Správnosť ≥ 95 % (machine); záchyt 100 % pri presnosti ≥ 85 % |
 | **Krížová validácia** | d (stupeň), k (časti) | CV chyba = (1/k) · Σ MSE časti i, každá časť odložená raz | CV MSE ≤ 0,11 pri k ≥ 5 (sine) |
 | **Príprava dát** | chýbajúce hodnoty, odľahlé hodnoty, škálovanie, k | min-max: x′ = (x − min) / (max − min); z-score: x′ = (x − priemer) / σ | Správnosť ≥ 85 % (machine); správnosť ≥ 90 % a záchyt ≥ 85 % (patients) |
+| **Rekurentná neurónová sieť** | w (pamäť), u, v, dĺžka postupnosti L | h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t | MSE ≤ 0,065 (temperature); MSE ≤ 0,01 s pamäťou ≥ 20 vstupov (memory, L = 20) |
 
 #### Význam polí „Cieľová metrika“ v otázkach (`qtype_aisim`)
 | Simulácia | Cieľová metrika 1 | Cieľová metrika 2 | Polovica bodov |
@@ -364,6 +382,7 @@ Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) beží všetkých 12 simulácií 
 | Logistická regresia | minimálna správnosť | minimálny záchyt (0 = bez obmedzenia); pole Tolerancia určuje minimálnu presnosť | správnosť splnená, ale záchyt alebo presnosť nie |
 | Krížová validácia | najvyššia CV MSE zvoleného stupňa | najmenší počet častí k (0 = bez obmedzenia) | MSE splnená, ale s príliš málo časťami |
 | Príprava dát | minimálna správnosť na testovacích dátach | minimálny záchyt (0 = bez obmedzenia) | správnosť splnená, ale záchyt nie |
+| Rekurentná neurónová sieť | najvyššia chyba (MSE) | minimálny počet zapamätaných predchádzajúcich vstupov (0 = bez obmedzenia) | chyba splnená, ale sieť si pamätá príliš málo vstupov |
 
 ---
 

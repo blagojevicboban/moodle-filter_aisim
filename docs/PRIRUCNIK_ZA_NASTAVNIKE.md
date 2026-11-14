@@ -6,7 +6,7 @@
 *Zvanični portal:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulacije bez Moodle-a:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autori i tehnički tim projekta AI for VET*  
-*Verzija priručnika: 1.4 (Novembar 2026)*  
+*Verzija priručnika: 1.5 (Novembar 2026)*  
 *Kompatibilnost: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. Izazov: Zašto AI u srednjem stručnom obrazovanju?
    - 1.2. Pedagoški pristup: Od vizuelne intuicije do inženjerskog razumevanja
    - 1.3. Arhitektura Moodle AI paketa (Filter, Kviz, TinyMCE editor)
-2. [Pedagoški vodič kroz 12 simulacija](#2-pedagoški-vodič-kroz-12-simulacija)
+2. [Pedagoški vodič kroz 13 simulacija](#2-pedagoški-vodič-kroz-13-simulacija)
    - 2.1. Modul 1: Gradijentni spust i optimizacija modela (`gradient_descent`)
    - 2.2. Modul 2: Matrica konfuzije i prag odlučivanja (`confusion_matrix`)
    - 2.3. Modul 3: Polinomska regresija i regularizacija (`regression`)
@@ -29,6 +29,7 @@
    - 2.10. Modul 10: Logistička regresija (`logistic`)
    - 2.11. Modul 11: Unakrsna validacija i hiperparametri (`cross_validation`)
    - 2.12. Modul 12: Priprema podataka i EDA (`data_prep`)
+   - 2.13. Modul 13: Rekurentna neuronska mreža (`rnn`)
 3. [Tehničko uputstvo za nastavnike](#3-tehničko-uputstvo-za-nastavnike)
    - 3.1. Korišćenje vizuelnog TinyMCE editora (`tiny_aisim`)
    - 3.2. Kreiranje zadataka sa automatskim ocenjivanjem (`qtype_aisim`)
@@ -74,7 +75,7 @@ Komplet se sastoji od tri međusobno povezane komponente:
 |  |     moodle-tiny_aisim    |  |  moodle-filter_aisim |  | moodle-qtype_aisim|  |
 |  |   (TinyMCE 6/7 Editor)   |  | (Rendering & Engine) |  |  (Kviz zadaci &   |  |
 |  |                          |  |                      |  | Auto-ocenjivanje) |  |
-|  | - Dugme u traci editora  |  | - 12 simulacija u    |  | - Ciljne metrike  |  |
+|  | - Dugme u traci editora  |  | - 13 simulacija u    |  | - Ciljne metrike  |  |
 |  | - Modalni dijalog        |  |   browseru           |  | - Tolerancije     |  |
 |  | - Odabir scenarija       |  | - 5 jezika           |  | - Automatski      |  |
 |  | - Dvoklik za izmenu      |  | - Režim samo-čitanje |  |   bodovi i saveti |  |
@@ -86,9 +87,9 @@ Simulacije prate jezik korisnika u Moodle-u: uključeni su engleski, srpski (lat
 
 ---
 
-## 2. Pedagoški vodič kroz 12 simulacija
+## 2. Pedagoški vodič kroz 13 simulacija
 
-Simulacije su poređane od jednostavnijih ka složenijim. Prvih pet pokriva osnove (optimizacija, ocenjivanje modela, prepodešavanje, klasifikacija, klasterovanje), a moduli 6–9 nadograđuju ih neuronskim mrežama, obradom slike, učenjem iz nagrada i pitanjem odgovornog rada sa podacima. Modul 10, logistička regresija, je most između regresije i neuronskih mreža: može se raditi odmah posle matrice konfuzije ili pre perceptrona. Modul 11, unakrsna validacija, ide uz polinomsku regresiju: pokazuje kako se hiperparametar bira pošteno. Modul 12, priprema podataka, pripada samom početku: pre bilo kog modela, pogledajte podatke.
+Simulacije su poređane od jednostavnijih ka složenijim. Prvih pet pokriva osnove (optimizacija, ocenjivanje modela, prepodešavanje, klasifikacija, klasterovanje), a moduli 6–9 nadograđuju ih neuronskim mrežama, obradom slike, učenjem iz nagrada i pitanjem odgovornog rada sa podacima. Modul 10, logistička regresija, je most između regresije i neuronskih mreža: može se raditi odmah posle matrice konfuzije ili pre perceptrona. Modul 11, unakrsna validacija, ide uz polinomsku regresiju: pokazuje kako se hiperparametar bira pošteno. Modul 12, priprema podataka, pripada samom početku: pre bilo kog modela, pogledajte podatke. Modul 13, rekurentna neuronska mreža, dolazi posle neuronske mreže: dodaje memoriju za nizove.
 
 ### 2.1. Modul 1: Gradijentni spust i optimizacija modela (`gradient_descent`)
 - **Fokus:** Minimizacija funkcije troška J(w), stopa učenja α, konveksne vs. nekonveksne funkcije, lokalni minimumi.
@@ -349,13 +350,36 @@ Kuvar proverava namirnice pre kuvanja: pokvareno jaje (nemoguće merenje), sasto
 
 ---
 
+### 2.13. Modul 13: Rekurentna neuronska mreža (`rnn`)
+- **Fokus:** Nizovi, skriveno stanje koje nosi memoriju iz koraka u korak (h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t), iste težine u svakom koraku (mreža razvijena kroz vreme), zaboravljanje, propagacija unazad kroz vreme, nestajući gradijent i zašto mreže LSTM i GRU imaju kapije.
+
+#### Pedagoška metafora:
+Šapat koji se prenosi duž reda učenika: svaki učenik ponovi ono što je čuo malo tiše (w < 1). Posle nekoliko učenika prve reči se izgube – osim ako ih svi ponavljaju tačno istom jačinom (w = 1).
+
+#### Inženjerska primena:
+- Prognoza temperature, potrošnje energije ili opterećenja mašine iz poslednjih sati.
+- Čitanje signala sa senzora, tekst i govor.
+- Uprosečavanje senzora sa šumom je najjednostavnija upotreba memorije.
+
+#### Šta učenici uočavaju u simulaciji:
+1. **Termometar bez memorije:** Sa w ≈ 0 mreža samo skalira poslednje merenje sa šumom (greška oko 0.072); sa w oko 0.35 uprosečava nekoliko sati i greška pada na oko 0.059. Dugme Treniraj to nađe posle nekoliko klikova.
+2. **Stubići uticaja:** Svaki stubić je uticaj jednog prethodnog ulaza na poslednji izlaz. U svakom koraku se množi sa w, pa za w = 0.5 važi samo poslednjih nekoliko ulaza.
+3. **Zapamti prvu vrednost:** Zadatak sa memorijom traži w blizu 1; malo u drži tanh u pravom delu, a veliko v vraća vrednost (L = 20: w = 1, u = 0.3, v = 4 daju grešku oko 0.003).
+4. **w > 1:** Stanje raste do ±1 i tu se zaglavi: mreža čuva samo znak, ne i veličinu vrednosti.
+5. **Nestajući gradijent:** Za L = 20 i w = 0.5 veličina gradijenta je ≈ 0 i Treniraj ništa ne menja – greška ne stiže do prvog koraka. To je problem koji rešavaju LSTM i GRU.
+
+#### Tipičan zadatak za kviz:
+> *"Niz ima 20 koraka. Pritisnite Treniraj i pratite gradijent: zašto ne pomaže? Zatim ručno podesite mrežu na grešku od najviše 0.01 uz bar 20 zapamćenih ulaza."*
+
+---
+
 ## 3. Tehničko uputstvo za nastavnike
 
 ### 3.1. Korišćenje vizuelnog TinyMCE editora (`tiny_aisim`)
 Prilikom izrade lekcije (Page), knjige (Book), forum poruke ili opisa zadatka u Moodle-u:
 1. U liniji sa alatkama TinyMCE editora kliknite na **ikonu sa simbolom AI simulacije** (ili u meniju izaberite *Insert > AI Simulation...*).
 2. Otvara se modalni prozor sa opcijama:
-   - **Tip simulacije:** Izaberite jednu od 12 simulacija iz padajućeg menija.
+   - **Tip simulacije:** Izaberite jednu od 13 simulacija iz padajućeg menija.
    - **Specifični parametri:** Izaberite početni scenario, prag, stopu učenja, stepen polinoma, broj klastera, arhitekturu mreže, sliku i filter, mapu agenta ili udeo grupe u podacima.
    - **Režim samo za čitanje (Read-only):** Označite ovu opciju ukoliko želite da učenici mogu da posmatraju simulaciju, ali ne i da menjaju njene početne parametre.
    - **Pregled uživo (Preview):** Na dnu dijaloga odmah vidite kako će izgledati kartica simulacije.
@@ -384,17 +408,17 @@ Ako želite da u Moodle kviz ubacite pitanje sa AI simulacijom:
 ---
 
 ### 3.3. Uvoz gotove baze pitanja (Moodle XML)
-U repozitorijumu `moodle-qtype_aisim` nalazi se gotov paket od 36 zadataka – po tri za svaku od 12 simulacija (osnovni, srednji i napredni nivo):
+U repozitorijumu `moodle-qtype_aisim` nalazi se gotov paket od 39 zadataka – po tri za svaku od 13 simulacija (osnovni, srednji i napredni nivo):
 1. Preuzmite fajl [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. U vašem Moodle kursu kliknite na **Banka pitanja (Question bank) > Uvoz (Import)**.
 3. Kao format fajla izaberite **Moodle XML format**.
 4. Prevucite fajl `questions_aiforvet.xml` i kliknite na **Uvezi**.
-5. Moodle će uvesti novu kategoriju *"AI za VET - Baza simulacionih zadataka (36 pitanja)"* sa kompletno konfigurisanim pitanjima koja odmah možete dodati u bilo koji test.
+5. Moodle će uvesti novu kategoriju *"AI za VET - Baza simulacionih zadataka (39 pitanja)"* sa kompletno konfigurisanim pitanjima koja odmah možete dodati u bilo koji test.
 
 ---
 
 ### 3.4. AISim Lab: simulacije bez Moodle-a
-Na adresi [sim.aiforvet.eu](https://sim.aiforvet.eu/) svih 12 simulacija radi samostalno, bez naloga i bez prikupljanja podataka, na srpskom, engleskom, slovačkom i portugalskom. Svaka simulacija ima kratko objašnjenje i tri izazova.
+Na adresi [sim.aiforvet.eu](https://sim.aiforvet.eu/) svih 13 simulacija radi samostalno, bez naloga i bez prikupljanja podataka, na srpskom, engleskom, slovačkom i portugalskom. Svaka simulacija ima kratko objašnjenje i tri izazova.
 - **Domaći zadatak i rad na telefonu:** Učenici mogu da vežbaju van Moodle-a; napredak u izazovima čuva se samo u njihovom browseru.
 - **Dugme "Kopiraj link do ove postavke":** Pravi link do tačno određenog stanja simulacije – zgodno za projektor ili za poruku učenicima.
 - **Dugme "Ugradi u Moodle":** Daje gotov HTML kod za tu postavku koji se lepi u bilo koji Moodle tekst (potreban je `filter_aisim`).
@@ -461,6 +485,7 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 | 3b. Pošten izbor modela | Unakrsna validacija | Hiperparametri se biraju na validacionim delovima; test skup se koristi jednom |
 | 4. Učenje bez odgovora | K-Means | Grupisanje bez labela |
 | 5. Neuronske mreže i slika | Perceptron i neuronska mreža, Konvolucija | Od jednog neurona do prepoznavanja slike |
+| 5b. Memorija za nizove | Rekurentna neuronska mreža | Stanje koje se prenosi iz koraka u korak; zaboravljanje i nestajući gradijent vode do LSTM i GRU |
 | 6. Učenje iz nagrada | Q-learning | Istraživanje vs. iskorišćavanje, vrednost budućnosti |
 
 ---
@@ -481,6 +506,7 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 | **Logistička regresija** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; klasa 1 ako je σ(z) ≥ θ | Tačnost ≥ 95% (machine); opoziv 100% uz preciznost ≥ 85% |
 | **Unakrsna validacija** | d (stepen), k (delovi) | CV greška = (1/k) · Σ MSE dela i, svaki deo izdvojen jednom | CV MSE ≤ 0,11 uz k ≥ 5 (sine) |
 | **Priprema podataka** | nedostajuće vrednosti, autlajeri, skaliranje, k | min-max: x′ = (x − min) / (max − min); z-score: x′ = (x − prosek) / σ | Tačnost ≥ 85% (machine); tačnost ≥ 90% i opoziv ≥ 85% (patients) |
+| **Rekurentna neuronska mreža** | w (memorija), u, v, dužina niza L | h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t | MSE ≤ 0.065 (temperature); MSE ≤ 0.01 uz pamćenje ≥ 20 ulaza (memory, L = 20) |
 
 #### Značenje polja "Ciljna metrika" u pitanjima (`qtype_aisim`)
 | Simulacija | Ciljna metrika 1 | Ciljna metrika 2 | Pola poena |
@@ -497,6 +523,7 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 | Logistička regresija | najmanja tačnost | najmanji opoziv (0 = bez ograničenja); polje Tolerancija zadaje najmanju preciznost | tačnost ispunjena, ali opoziv ili preciznost nisu |
 | Unakrsna validacija | najveći CV MSE izabranog stepena | najmanji broj delova k (0 = bez ograničenja) | MSE ispunjen, ali sa premalo delova |
 | Priprema podataka | najmanja tačnost na test podacima | najmanji opoziv (0 = bez ograničenja) | tačnost ispunjena, ali opoziv nije |
+| Rekurentna neuronska mreža | najveća greška (MSE) | najmanji broj zapamćenih prethodnih ulaza (0 = bez ograničenja) | greška ispunjena, ali mreža pamti premalo ulaza |
 
 ---
 

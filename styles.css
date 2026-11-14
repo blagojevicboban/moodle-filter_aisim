@@ -588,3 +588,36 @@
     color: #475569;
     line-height: 1.45;
 }
+
+/* Recurrent neural network */
+.aisim-rnn-legend {
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+.aisim-rnn-x {
+    background: #94a3b8;
+}
+.aisim-rnn-line {
+    display: inline-block;
+    width: 16px;
+    height: 0;
+    border-top: 2px solid #2563eb;
+}
+.aisim-rnn-h {
+    border-top: 2px dashed #a855f7;
+}
+.aisim-rnn-y {
+    border-top: 2px solid #2563eb;
+}
+.aisim-rnn-target {
+    border-top: 2px dashed #16a34a;
+}
+.aisim-rnn .aisim-canvas-box {
+    min-height: 0;
+}
+.aisim-rnn .aisim-cv-hint {
+    margin: 6px 0 0;
+}
+.aisim-rnn [hidden] {
+    display: none;
+}

@@ -102,6 +102,14 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
   scaling (none, min-max, z-score); the space the k-NN model sees, with the same scale on both axes.
 - Accuracy and recall on clean test data; datasets machines and patients.
 
+### 13. Recurrent Neural Network (`data-aisim="rnn"`)
+- One recurrent neuron: h_t = tanh(w·h_(t-1) + u·x_t), y_t = v·h_t; sliders for w (memory), u and v, or training
+  with gradient descent (+10 epochs).
+- The sequence, the network unrolled over the last five steps and how strongly each past input still influences the
+  last output (how many inputs the network remembers).
+- Datasets: a noisy thermometer and a memory task with a sequence length L (`data-length`, 3–30) that shows
+  forgetting and the vanishing gradient.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -143,6 +151,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Data Preparation & EDA -->
 <div data-aisim="data-prep" data-dataset="machine" data-missing="zero" data-outliers="keep" data-scaling="none" data-k="5"></div>
+
+<!-- Recurrent Neural Network (data-dataset="temperature" or "memory") -->
+<div data-aisim="rnn" data-dataset="memory" data-length="10" data-w="0.5" data-u="1" data-v="1"></div>
 ```
 
 ---

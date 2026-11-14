@@ -35,6 +35,7 @@ import {DataBiasSim} from 'filter_aisim/sims/data_bias';
 import {LogisticSim} from 'filter_aisim/sims/logistic';
 import {CrossValidationSim} from 'filter_aisim/sims/cross_validation';
 import {DataPrepSim} from 'filter_aisim/sims/data_prep';
+import {RnnSim} from 'filter_aisim/sims/rnn';
 import {eventTypes} from 'core_filters/events';
 import Notification from 'core/notification';
 import {load as loadStrings} from 'filter_aisim/strings';
@@ -163,6 +164,14 @@ const dataPrep = sim(DataPrepSim, (el) => ({
     k: attr(el, 'k', 5)
 }));
 
+const rnn = sim(RnnSim, (el) => ({
+    dataset: attr(el, 'dataset', 'temperature'),
+    length: attr(el, 'length', 10),
+    w: attr(el, 'w', 0.5),
+    u: attr(el, 'u', 1),
+    v: attr(el, 'v', 1)
+}));
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -197,7 +206,10 @@ const SIMS = {
     'k-fold': crossValidation,
     'data-prep': dataPrep,
     'data_prep': dataPrep,
-    'eda': dataPrep
+    'eda': dataPrep,
+    'rnn': rnn,
+    'recurrent': rnn,
+    'recurrent-network': rnn
 };
 
 /**

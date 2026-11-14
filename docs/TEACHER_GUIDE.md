@@ -6,7 +6,7 @@
 *Official Portal:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulations without Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Authors and Technical Development Team of AI for VET*  
-*Guide Version: 1.4 (November 2026)*  
+*Guide Version: 1.5 (November 2026)*  
 *Compatibility: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. The Challenge: Why AI in Vocational Education and Training (VET)?
    - 1.2. Pedagogical Methodology: From Visual Intuition to Engineering Proficiency
    - 1.3. Architecture of the Moodle AI Suite (Filter, Quiz Question Type, TinyMCE Editor)
-2. [Pedagogical Guide across the 12 Simulations](#2-pedagogical-guide-across-the-12-simulations)
+2. [Pedagogical Guide across the 13 Simulations](#2-pedagogical-guide-across-the-13-simulations)
    - 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
    - 2.2. Module 2: Confusion Matrix & Decision Threshold (`confusion_matrix`)
    - 2.3. Module 3: Polynomial Regression & Regularization (`regression`)
@@ -29,6 +29,7 @@
    - 2.10. Module 10: Logistic Regression (`logistic`)
    - 2.11. Module 11: Cross-Validation & Hyperparameters (`cross_validation`)
    - 2.12. Module 12: Data Preparation & EDA (`data_prep`)
+   - 2.13. Module 13: Recurrent Neural Network (`rnn`)
 3. [Technical Instructions for Educators](#3-technical-instructions-for-educators)
    - 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
    - 3.2. Authoring Auto-Graded Interactive Assessment Tasks (`qtype_aisim`)
@@ -74,9 +75,9 @@ The simulations follow the user's Moodle language: English, Serbian (Latin and C
 
 ---
 
-## 2. Pedagogical Guide across the 12 Simulations
+## 2. Pedagogical Guide across the 13 Simulations
 
-The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron. Module 11, cross-validation, belongs with polynomial regression: it shows how a hyperparameter is chosen honestly. Module 12, data preparation, fits at the very beginning: before any model, look at the data.
+The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron. Module 11, cross-validation, belongs with polynomial regression: it shows how a hyperparameter is chosen honestly. Module 12, data preparation, fits at the very beginning: before any model, look at the data. Module 13, the recurrent neural network, comes after the neural network: it adds memory for sequences.
 
 ### 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
 - **Key Concepts:** Cost function J(w), learning rate α, convex vs. non-convex landscapes, global vs. local minima.
@@ -242,12 +243,27 @@ The simulations go from simpler to more demanding. The first five cover the foun
 
 ---
 
+### 2.13. Module 13: Recurrent Neural Network (`rnn`)
+- **Key Concepts:** Sequences, a hidden state that carries memory from step to step (h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t), the same weights at every step (the network unrolled in time), forgetting, backpropagation through time, the vanishing gradient, and why LSTM and GRU networks have gates.
+- **Pedagogical Metaphor:** A whisper passed along a row of students: every student repeats what they heard a little more quietly (w < 1). After a few students the first words are lost – unless everyone repeats them at exactly the same volume (w = 1).
+- **Practical Application:** Forecasting temperatures, energy use or machine load from the last hours, reading sensor signals, text and speech. Smoothing a noisy sensor is the simplest use of memory.
+- **Key Learning Observations:**
+  1. *Thermometer without memory:* With w ≈ 0 the network only scales the last noisy reading (loss about 0.072); with w about 0.35 it averages a few hours and the loss falls to about 0.059. Train finds this in a few clicks.
+  2. *The influence bars:* Every bar is the influence of one past input on the last output. It is multiplied by w at every step, so with w = 0.5 only the last few inputs count.
+  3. *Remember the first value:* The memory task needs w close to 1; a small u keeps tanh in its straight part and a large v brings the value back (L = 20: w = 1, u = 0.3, v = 4 give a loss of about 0.003).
+  4. *w > 1:* The state grows to ±1 and sticks there: the network keeps only the sign, not the size of the value.
+  5. *The vanishing gradient:* With L = 20 and w = 0.5 the gradient size is ≈ 0 and Train changes nothing – the error does not reach the first step. This is the problem LSTM and GRU solve.
+- **Typical Quiz Task:**
+  > *"The sequence has 20 steps. Press Train and watch the gradient: why does it not help? Then set the network by hand to a loss of at most 0.01 with at least 20 remembered inputs."*
+
+---
+
 ## 3. Technical Instructions for Educators
 
 ### 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
 1. In the TinyMCE editor toolbar, click the **AI Simulation icon** (or choose *Insert > AI Simulation...*).
 2. Configure parameters:
-   - Select one of the 12 simulations.
+   - Select one of the 13 simulations.
    - Adjust the scenario, threshold, learning rate, degree, cluster count, network architecture, image and filter, agent map or the group share in the data.
    - Check **Read-only mode** if you wish to lock controls for guided observation.
    - Inspect the live simulation card preview at the bottom of the modal.
@@ -270,17 +286,17 @@ The simulations go from simpler to more demanding. The first five cover the foun
 ---
 
 ### 3.3. Importing the Ready-to-Use Question Bank (Moodle XML)
-The `moodle-qtype_aisim` repository contains 36 ready-made tasks – three for each of the 12 simulations (basic, intermediate and advanced level):
+The `moodle-qtype_aisim` repository contains 39 ready-made tasks – three for each of the 13 simulations (basic, intermediate and advanced level):
 1. Download [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. In your course, navigate to **Question bank > Import**.
 3. Select **Moodle XML format**.
 4. Upload `questions_aiforvet.xml` and click **Import**.
-5. The category *"AI za VET - Baza simulacionih zadataka (36 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
+5. The category *"AI za VET - Baza simulacionih zadataka (39 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
 
 ---
 
 ### 3.4. AISim Lab: the Simulations without Moodle
-At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 12 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
+At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 13 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
 - **Homework and phones:** Students can practise outside Moodle; challenge progress is kept only in their own browser.
 - **"Copy link to this setup":** Creates a link to exactly this state of the simulation – handy for the projector or for a message to students.
 - **"Embed in Moodle":** Gives ready-made HTML for that setup to paste into any Moodle text (needs `filter_aisim`).
@@ -326,6 +342,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 12 simulations run on their o
 | 3b. Choosing a model honestly | Cross-Validation | Hyperparameters are chosen on validation folds; the test set is used once |
 | 4. Learning without answers | K-Means | Grouping without labels |
 | 5. Neural networks and images | Perceptron & Neural Network, Convolution | From one neuron to image recognition |
+| 5b. Memory for sequences | Recurrent Neural Network | A state carried from step to step; forgetting and the vanishing gradient lead to LSTM and GRU |
 | 6. Learning from rewards | Q-learning | Exploration vs. exploitation, the value of the future |
 
 ---
@@ -346,6 +363,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 12 simulations run on their o
 | **Logistic Regression** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; class 1 if σ(z) ≥ θ | Accuracy ≥ 95% (machine); recall 100% with precision ≥ 85% |
 | **Cross-Validation** | d (degree), k (folds) | CV error = (1/k) · Σ MSE of fold i, each fold held out once | CV MSE ≤ 0.11 with k ≥ 5 (sine) |
 | **Data Preparation** | missing values, outliers, scaling, k | min-max: x′ = (x − min) / (max − min); z-score: x′ = (x − mean) / σ | Accuracy ≥ 85% (machine); accuracy ≥ 90% and recall ≥ 85% (patients) |
+| **Recurrent Neural Network** | w (memory), u, v, sequence length L | h_t = tanh(w·h_(t−1) + u·x_t), y_t = v·h_t | MSE ≤ 0.065 (temperature); MSE ≤ 0.01 remembering ≥ 20 inputs (memory, L = 20) |
 
 #### Meaning of the "Target Metric" fields in questions (`qtype_aisim`)
 | Simulation | Target Metric 1 | Target Metric 2 | Half marks |
@@ -362,6 +380,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 12 simulations run on their o
 | Logistic Regression | minimum accuracy | minimum recall (0 = no limit); the Tolerance field sets the minimum precision | accuracy met, but recall or precision missed |
 | Cross-Validation | highest cross-validation MSE of the chosen degree | minimum number of folds k (0 = no limit) | MSE met, but with too few folds |
 | Data Preparation | minimum accuracy on the test data | minimum recall (0 = no limit) | accuracy met, but recall missed |
+| Recurrent Neural Network | highest loss (MSE) | minimum number of remembered past inputs (0 = no limit) | loss met, but the network remembers too few inputs |
 
 ---
 

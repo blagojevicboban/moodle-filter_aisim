@@ -6,7 +6,7 @@
 *Official Portal:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulations without Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Authors and Technical Development Team of AI for VET*  
-*Guide Version: 1.2 (November 2026)*  
+*Guide Version: 1.3 (November 2026)*  
 *Compatibility: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. The Challenge: Why AI in Vocational Education and Training (VET)?
    - 1.2. Pedagogical Methodology: From Visual Intuition to Engineering Proficiency
    - 1.3. Architecture of the Moodle AI Suite (Filter, Quiz Question Type, TinyMCE Editor)
-2. [Pedagogical Guide across the 10 Simulations](#2-pedagogical-guide-across-the-10-simulations)
+2. [Pedagogical Guide across the 11 Simulations](#2-pedagogical-guide-across-the-11-simulations)
    - 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
    - 2.2. Module 2: Confusion Matrix & Decision Threshold (`confusion_matrix`)
    - 2.3. Module 3: Polynomial Regression & Regularization (`regression`)
@@ -27,6 +27,7 @@
    - 2.8. Module 8: Reinforcement Learning – Q-learning (`q_learning`)
    - 2.9. Module 9: Data Split & Bias (`data_bias`)
    - 2.10. Module 10: Logistic Regression (`logistic`)
+   - 2.11. Module 11: Cross-Validation & Hyperparameters (`cross_validation`)
 3. [Technical Instructions for Educators](#3-technical-instructions-for-educators)
    - 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
    - 3.2. Authoring Auto-Graded Interactive Assessment Tasks (`qtype_aisim`)
@@ -72,9 +73,9 @@ The simulations follow the user's Moodle language: English, Serbian (Latin and C
 
 ---
 
-## 2. Pedagogical Guide across the 10 Simulations
+## 2. Pedagogical Guide across the 11 Simulations
 
-The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron.
+The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron. Module 11, cross-validation, belongs with polynomial regression: it shows how a hyperparameter is chosen honestly.
 
 ### 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
 - **Key Concepts:** Cost function J(w), learning rate α, convex vs. non-convex landscapes, global vs. local minima.
@@ -210,12 +211,27 @@ The simulations go from simpler to more demanding. The first five cover the foun
 
 ---
 
+### 2.11. Module 11: Cross-Validation & Hyperparameters (`cross_validation`)
+- **Key Concepts:** Hyperparameter, training error vs. validation error, k-fold cross-validation, mean and spread of the fold errors, underfitting and overfitting, a test set that is used only once.
+- **Pedagogical Metaphor:** A coach picks the line-up for the final. Judging players only by training (where they know every drill) always favours the one who memorised the drills. So the coach holds several friendly matches, each against a different opponent (the folds), and picks the team that does best on average. The final (the test set) is played only once – after that, the choice can no longer be changed.
+- **Practical Application:** Choosing the complexity of any model: the degree of a polynomial, k in k-NN, the depth of a tree, the number of neurons, the strength of regularisation. Model selection in industry is done exactly like this, and a separate test set is kept for the final report.
+- **Key Learning Observations:**
+  1. *Moving the degree:* The training error (blue) always falls, the cross-validation error (red) falls and then rises again – the U-curve. The best degree is marked with ★.
+  2. *The fold bars:* Every fold gives a different error; their mean is the estimate and their spread shows how much to trust it.
+  3. *k = 2 and 🎲 New split:* With few folds every model learns from half of the data and the best degree jumps from split to split, especially on very noisy data. With k = 10 it settles.
+  4. *🔒 Final test:* The test error of the chosen degree is close to the cross-validation estimate, but not equal – it is a new sample of data.
+  5. *Tuning after the test:* Once the test result is seen, choosing again by it turns the test into a validation set; the simulation reminds the students of this.
+- **Typical Quiz Task:**
+  > *"With at least 5 folds, choose the degree of the polynomial so that the cross-validation MSE is at most 0.11. Why can the training error not choose the degree?"*
+
+---
+
 ## 3. Technical Instructions for Educators
 
 ### 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
 1. In the TinyMCE editor toolbar, click the **AI Simulation icon** (or choose *Insert > AI Simulation...*).
 2. Configure parameters:
-   - Select one of the 10 simulations.
+   - Select one of the 11 simulations.
    - Adjust the scenario, threshold, learning rate, degree, cluster count, network architecture, image and filter, agent map or the group share in the data.
    - Check **Read-only mode** if you wish to lock controls for guided observation.
    - Inspect the live simulation card preview at the bottom of the modal.
@@ -238,17 +254,17 @@ The simulations go from simpler to more demanding. The first five cover the foun
 ---
 
 ### 3.3. Importing the Ready-to-Use Question Bank (Moodle XML)
-The `moodle-qtype_aisim` repository contains 30 ready-made tasks – three for each of the 10 simulations (basic, intermediate and advanced level):
+The `moodle-qtype_aisim` repository contains 33 ready-made tasks – three for each of the 11 simulations (basic, intermediate and advanced level):
 1. Download [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. In your course, navigate to **Question bank > Import**.
 3. Select **Moodle XML format**.
 4. Upload `questions_aiforvet.xml` and click **Import**.
-5. The category *"AI za VET - Baza simulacionih zadataka (30 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
+5. The category *"AI za VET - Baza simulacionih zadataka (33 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
 
 ---
 
 ### 3.4. AISim Lab: the Simulations without Moodle
-At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 10 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
+At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 11 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
 - **Homework and phones:** Students can practise outside Moodle; challenge progress is kept only in their own browser.
 - **"Copy link to this setup":** Creates a link to exactly this state of the simulation – handy for the projector or for a message to students.
 - **"Embed in Moodle":** Gives ready-made HTML for that setup to paste into any Moodle text (needs `filter_aisim`).
@@ -290,6 +306,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 10 simulations run on their o
 | 1b. From a score to a decision | Logistic Regression | A probability, a straight boundary and a threshold chosen by the cost of each error |
 | 2. How we measure a model | Confusion Matrix, Data Split & Bias | Accuracy is not enough; the test must be fair and representative |
 | 3. Model complexity | Polynomial Regression, k-NN & Decision Tree | Too simple vs. overfitted |
+| 3b. Choosing a model honestly | Cross-Validation | Hyperparameters are chosen on validation folds; the test set is used once |
 | 4. Learning without answers | K-Means | Grouping without labels |
 | 5. Neural networks and images | Perceptron & Neural Network, Convolution | From one neuron to image recognition |
 | 6. Learning from rewards | Q-learning | Exploration vs. exploitation, the value of the future |
@@ -310,6 +327,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 10 simulations run on their o
 | **Q-learning** | α, γ, ε, episodes | Q(s,a) ← Q(s,a) + α · (r + γ · max Q(s′,·) − Q(s,a)) | Shortest path (e.g. 10 steps) within ≤ 200 episodes |
 | **Data Split & Bias** | sample size, share of group B, test %, k | worst-group accuracy = min(accuracy A, accuracy B) | Both factories ≥ 88% with ≤ 120 samples |
 | **Logistic Regression** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; class 1 if σ(z) ≥ θ | Accuracy ≥ 95% (machine); recall 100% with precision ≥ 85% |
+| **Cross-Validation** | d (degree), k (folds) | CV error = (1/k) · Σ MSE of fold i, each fold held out once | CV MSE ≤ 0.11 with k ≥ 5 (sine) |
 
 #### Meaning of the "Target Metric" fields in questions (`qtype_aisim`)
 | Simulation | Target Metric 1 | Target Metric 2 | Half marks |
@@ -324,6 +342,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 10 simulations run on their o
 | Q-learning | maximum steps to the goal | maximum training episodes (0 = no limit) | the agent reaches the goal, but by a longer path or after more episodes |
 | Data Split & Bias | minimum accuracy of the weakest factory | maximum sample size (0 = no limit) | accuracy met, but with too many samples |
 | Logistic Regression | minimum accuracy | minimum recall (0 = no limit); the Tolerance field sets the minimum precision | accuracy met, but recall or precision missed |
+| Cross-Validation | highest cross-validation MSE of the chosen degree | minimum number of folds k (0 = no limit) | MSE met, but with too few folds |
 
 ---
 

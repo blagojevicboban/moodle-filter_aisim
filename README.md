@@ -90,6 +90,12 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Accuracy, precision, recall and the loss curve; datasets machine failure, exam result and a ring that no straight
   line can separate.
 
+### 11. Cross-Validation (`data-aisim="cross-validation"`)
+- The degree of a polynomial (1–9) is the hyperparameter; the training data is split into k folds (2–10).
+- Each fold is held out once: bars of the fold errors, their mean and spread, and the training and cross-validation
+  error by degree (U-curve, best degree ★).
+- 🎲 draws a new split (`data-seed`), 🔒 unlocks a separate test set once (`data-tested="1"`).
+
 ---
 
 ## 💻 Usage in Moodle
@@ -125,6 +131,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Logistic Regression (add data-readonly="1" to any simulation to lock its controls) -->
 <div data-aisim="logistic" data-dataset="machine" data-w1="0" data-w2="0" data-b="0" data-threshold="0.5" data-lr="0.5"></div>
+
+<!-- Cross-Validation -->
+<div data-aisim="cross-validation" data-dataset="sine" data-k="5" data-degree="1" data-seed="1"></div>
 ```
 
 ---

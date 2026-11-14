@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.12.0] - 2026-11-14
+
+### Added
+- Cross-Validation simulation (`data-aisim="cross-validation"`, also `cross_validation` and `k-fold`): the degree of a
+  polynomial is the hyperparameter. The training data is split into k folds (2–10), each fold is held out once, and
+  the mean and spread of the fold errors choose the degree (★). Charts of the data coloured by fold, the error of
+  every fold and the training and cross-validation error by degree; 🎲 draws a new split and 🔒 unlocks a separate
+  test set once. Datasets sine wave, sensor warm-up curve and very noisy measurements. Book chapters 3.9–3.11.
+- Teacher guide 1.3 (`docs/`): Cross-Validation module in all four editions.
 
 ### Fixed
 - `data-aisim="knn_tree"`, which the editor button writes, showed nothing; it is now an alias of `knn-tree`, and

@@ -6,7 +6,7 @@
 *Portal oficial:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulações sem Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autores e equipa técnica do projeto AI for VET*  
-*Versão do guia: 1.2 (novembro de 2026)*  
+*Versão do guia: 1.3 (novembro de 2026)*  
 *Compatibilidade: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. O desafio: porquê IA no ensino profissional?
    - 1.2. Abordagem pedagógica: da intuição visual à compreensão técnica
    - 1.3. Arquitetura do pacote para Moodle (filtro, tipo de pergunta, editor TinyMCE)
-2. [Guia pedagógico das 10 simulações](#2-guia-pedagógico-das-10-simulações)
+2. [Guia pedagógico das 11 simulações](#2-guia-pedagógico-das-11-simulações)
    - 2.1. Módulo 1: Descida do gradiente e otimização do modelo (`gradient_descent`)
    - 2.2. Módulo 2: Matriz de confusão e limiar de decisão (`confusion_matrix`)
    - 2.3. Módulo 3: Regressão polinomial e regularização (`regression`)
@@ -27,6 +27,7 @@
    - 2.8. Módulo 8: Aprendizagem por reforço – Q-learning (`q_learning`)
    - 2.9. Módulo 9: Divisão de dados e enviesamento (`data_bias`)
    - 2.10. Módulo 10: Regressão logística (`logistic`)
+   - 2.11. Módulo 11: Validação cruzada e hiperparâmetros (`cross_validation`)
 3. [Instruções técnicas para professores](#3-instruções-técnicas-para-professores)
    - 3.1. Inserir simulações com o editor visual TinyMCE (`tiny_aisim`)
    - 3.2. Criar tarefas com avaliação automática (`qtype_aisim`)
@@ -64,7 +65,7 @@ O pacote **AI for VET** propõe a **aprendizagem ativa por investigação (Activ
 
 ### 1.3. Arquitetura do pacote para Moodle
 O pacote é composto por três plugins que trabalham em conjunto:
-- **`moodle-filter_aisim`** (filtro de texto e simulações): mostra as 10 simulações interativas onde quer que surja a marca `data-aisim` no conteúdo.
+- **`moodle-filter_aisim`** (filtro de texto e simulações): mostra as 11 simulações interativas onde quer que surja a marca `data-aisim` no conteúdo.
 - **`moodle-qtype_aisim`** (tipo de pergunta e avaliação automática): coloca tarefas interativas nos testes do Moodle e avalia os valores alcançados após a submissão.
 - **`moodle-tiny_aisim`** (plugin do editor TinyMCE): uma caixa de diálogo em que o professor insere, configura e edita (com duplo clique) uma simulação sem escrever HTML.
 
@@ -72,9 +73,9 @@ As simulações seguem o idioma do utilizador no Moodle: incluem inglês, sérvi
 
 ---
 
-## 2. Guia pedagógico das 10 simulações
+## 2. Guia pedagógico das 11 simulações
 
-As simulações vão das mais simples às mais exigentes. As cinco primeiras cobrem os fundamentos (otimização, avaliação de modelos, sobreajuste, classificação, agrupamento); os módulos 6–9 acrescentam redes neuronais, processamento de imagem, aprendizagem por recompensas e o uso responsável dos dados. O módulo 10, regressão logística, é a ponte entre a regressão e as redes neuronais: pode ser trabalhado logo após a matriz de confusão ou antes do perceptrão.
+As simulações vão das mais simples às mais exigentes. As cinco primeiras cobrem os fundamentos (otimização, avaliação de modelos, sobreajuste, classificação, agrupamento); os módulos 6–9 acrescentam redes neuronais, processamento de imagem, aprendizagem por recompensas e o uso responsável dos dados. O módulo 10, regressão logística, é a ponte entre a regressão e as redes neuronais: pode ser trabalhado logo após a matriz de confusão ou antes do perceptrão. O módulo 11, validação cruzada, acompanha a regressão polinomial: mostra como se escolhe um hiperparâmetro de forma honesta.
 
 ### 2.1. Módulo 1: Descida do gradiente e otimização do modelo (`gradient_descent`)
 - **Conceitos-chave:** função de custo J(w), taxa de aprendizagem α, funções convexas e não convexas, mínimos locais.
@@ -212,12 +213,27 @@ As simulações vão das mais simples às mais exigentes. As cinco primeiras cob
 
 ---
 
+### 2.11. Módulo 11: Validação cruzada e hiperparâmetros (`cross_validation`)
+- **Conceitos-chave:** Hiperparâmetro, erro de treino e erro de validação, validação cruzada com k partes, média e dispersão dos erros das partes, subajuste e sobreajuste, um conjunto de teste usado só uma vez.
+- **Metáfora pedagógica:** Um treinador escolhe a equipa para a final. Se avaliar os jogadores só pelos treinos (onde conhecem todos os exercícios), escolhe sempre quem decorou os exercícios. Por isso faz vários jogos amigáveis, cada um contra um adversário diferente (as partes), e escolhe a equipa que é melhor em média. A final (o conjunto de teste) joga-se só uma vez – depois disso a escolha já não muda.
+- **Aplicação prática:** Escolher a complexidade de qualquer modelo: o grau de um polinómio, o k do k-NN, a profundidade de uma árvore, o número de neurónios, a força da regularização. Na indústria o modelo escolhe-se exatamente assim, e um conjunto de teste separado fica guardado para o relatório final.
+- **O que os alunos observam na simulação:**
+  1. *Mover o grau:* O erro de treino (azul) desce sempre, o erro de validação cruzada (vermelho) desce e depois volta a subir – a curva em U. O melhor grau está marcado com ★.
+  2. *As barras das partes:* Cada parte dá um erro diferente; a média é a estimativa e a dispersão mostra quanto confiar nela.
+  3. *k = 2 e 🎲 Nova divisão:* Com poucas partes cada modelo aprende com metade dos dados e o melhor grau salta de divisão para divisão, sobretudo com dados muito ruidosos. Com k = 10 estabiliza.
+  4. *🔒 Teste final:* O erro de teste do grau escolhido fica perto da estimativa da validação cruzada, mas não é igual – é uma nova amostra de dados.
+  5. *Afinar depois do teste:* Depois de ver o resultado do teste, escolher de novo com base nele transforma o teste num conjunto de validação; a simulação lembra isso.
+- **Tarefa típica de teste:**
+  > *"Com pelo menos 5 partes, escolha o grau do polinómio para que o MSE de validação cruzada seja no máximo 0,11. Porque é que o erro de treino não pode escolher o grau?"*
+
+---
+
 ## 3. Instruções técnicas para professores
 
 ### 3.1. Inserir simulações com o editor visual TinyMCE (`tiny_aisim`)
 1. Na barra de ferramentas do TinyMCE, clique no **ícone de simulação de IA** (ou escolha *Inserir > AI Simulation...*).
 2. Configure os parâmetros:
-   - Escolha uma das 10 simulações.
+   - Escolha uma das 11 simulações.
    - Ajuste o cenário, limiar, taxa de aprendizagem, grau, número de grupos, arquitetura da rede, imagem e filtro, mapa do agente ou quota do grupo nos dados.
    - Marque **Apenas leitura** se quiser que os alunos só observem a simulação.
    - Na parte inferior da caixa de diálogo vê uma pré-visualização ao vivo.
@@ -240,17 +256,17 @@ As simulações vão das mais simples às mais exigentes. As cinco primeiras cob
 ---
 
 ### 3.3. Importar o banco de perguntas pronto (Moodle XML)
-O repositório `moodle-qtype_aisim` contém 30 tarefas prontas – três para cada uma das 10 simulações (nível básico, intermédio e avançado):
+O repositório `moodle-qtype_aisim` contém 33 tarefas prontas – três para cada uma das 11 simulações (nível básico, intermédio e avançado):
 1. Descarregue [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. No seu curso, abra **Banco de perguntas > Importar**.
 3. Escolha o **formato Moodle XML**.
 4. Carregue `questions_aiforvet.xml` e clique em **Importar**.
-5. É criada a categoria *"AI za VET - Baza simulacionih zadataka (30 pitanja)"* com todas as perguntas prontas para um teste. (Os enunciados estão em sérvio; adapte-os conforme necessário.)
+5. É criada a categoria *"AI za VET - Baza simulacionih zadataka (33 pitanja)"* com todas as perguntas prontas para um teste. (Os enunciados estão em sérvio; adapte-os conforme necessário.)
 
 ---
 
 ### 3.4. AISim Lab: as simulações sem Moodle
-Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 10 simulações funcionam de forma independente – sem conta e sem recolha de dados – em português, inglês, sérvio e eslovaco. Cada simulação tem uma breve explicação e três desafios.
+Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 11 simulações funcionam de forma independente – sem conta e sem recolha de dados – em português, inglês, sérvio e eslovaco. Cada simulação tem uma breve explicação e três desafios.
 - **Trabalho de casa e telemóveis:** os alunos podem praticar fora do Moodle; o progresso nos desafios fica guardado só no próprio navegador.
 - **"Copiar ligação para esta configuração":** cria uma ligação para exatamente este estado da simulação – útil para o projetor ou para enviar aos alunos.
 - **"Incorporar no Moodle":** dá o código HTML pronto desta configuração para colar em qualquer texto do Moodle (requer `filter_aisim`).
@@ -292,6 +308,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 10 simulações funcionam de f
 | 1b. Da pontuação à decisão | Regressão logística | Uma probabilidade, uma fronteira reta e um limiar escolhido pelo custo de cada erro |
 | 2. Como medimos um modelo | Matriz de confusão, Divisão de dados e enviesamento | A exatidão não chega; o teste tem de ser justo e representativo |
 | 3. Complexidade do modelo | Regressão polinomial, k-NN e árvore de decisão | Demasiado simples vs. sobreajustado |
+| 3b. Escolher um modelo com honestidade | Validação cruzada | Os hiperparâmetros escolhem-se nas partes de validação; o conjunto de teste usa-se uma vez |
 | 4. Aprender sem respostas | K-Means | Agrupar sem rótulos |
 | 5. Redes neuronais e imagem | Perceptrão e rede neuronal, Convolução | De um neurónio ao reconhecimento de imagem |
 | 6. Aprender com recompensas | Q-learning | Exploração vs. aproveitamento, o valor do futuro |
@@ -312,6 +329,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 10 simulações funcionam de f
 | **Q-learning** | α, γ, ε, episódios | Q(s,a) ← Q(s,a) + α · (r + γ · max Q(s′,·) − Q(s,a)) | Caminho mais curto (p. ex. 10 passos) em ≤ 200 episódios |
 | **Divisão de dados e enviesamento** | tamanho da amostra, quota do grupo B, teste %, k | exatidão do pior grupo = min(exatidão A, exatidão B) | Ambas as fábricas ≥ 88% com ≤ 120 amostras |
 | **Regressão logística** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; classe 1 se σ(z) ≥ θ | Exatidão ≥ 95% (machine); sensibilidade 100% com precisão ≥ 85% |
+| **Validação cruzada** | d (grau), k (partes) | erro de CV = (1/k) · Σ MSE da parte i, cada parte deixada de fora uma vez | MSE de CV ≤ 0,11 com k ≥ 5 (sine) |
 
 #### Significado dos campos "Métrica-alvo" nas perguntas (`qtype_aisim`)
 | Simulação | Métrica-alvo 1 | Métrica-alvo 2 | Metade da pontuação |
@@ -326,6 +344,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 10 simulações funcionam de f
 | Q-learning | máximo de passos até ao objetivo | máximo de episódios de treino (0 = sem limite) | o agente chega ao objetivo, mas por um caminho mais longo ou após mais episódios |
 | Divisão de dados e enviesamento | exatidão mínima da fábrica mais fraca | tamanho máximo da amostra (0 = sem limite) | exatidão cumprida, mas com demasiadas amostras |
 | Regressão logística | exatidão mínima | sensibilidade mínima (0 = sem limite); o campo Tolerância define a precisão mínima | exatidão cumprida, mas sensibilidade ou precisão não |
+| Validação cruzada | MSE de CV máximo do grau escolhido | número mínimo de partes k (0 = sem limite) | MSE cumprido, mas com poucas partes |
 
 ---
 

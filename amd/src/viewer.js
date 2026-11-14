@@ -33,6 +33,7 @@ import {ConvolutionSim} from 'filter_aisim/sims/convolution';
 import {QLearningSim} from 'filter_aisim/sims/q_learning';
 import {DataBiasSim} from 'filter_aisim/sims/data_bias';
 import {LogisticSim} from 'filter_aisim/sims/logistic';
+import {CrossValidationSim} from 'filter_aisim/sims/cross_validation';
 import {eventTypes} from 'core_filters/events';
 import Notification from 'core/notification';
 import {load as loadStrings} from 'filter_aisim/strings';
@@ -144,6 +145,15 @@ const logistic = sim(LogisticSim, (el) => ({
     lr: attr(el, 'lr', 0.5)
 }));
 
+const crossValidation = sim(CrossValidationSim, (el) => ({
+    dataset: attr(el, 'dataset', 'sine'),
+    k: attr(el, 'k', 5),
+    degree: attr(el, 'degree', 1),
+    // Same seed gives the same split into folds.
+    seed: attr(el, 'seed', 1),
+    tested: attr(el, 'tested', '0')
+}));
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -172,7 +182,10 @@ const SIMS = {
     'data-split': dataBias,
     'logistic': logistic,
     'logistic-regression': logistic,
-    'logistic_regression': logistic
+    'logistic_regression': logistic,
+    'cross-validation': crossValidation,
+    'cross_validation': crossValidation,
+    'k-fold': crossValidation
 };
 
 /**

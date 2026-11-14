@@ -1,0 +1,161 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/cross_validation
+
+    Layout of the Cross-Validation simulation (polynomial degree as the hyperparameter, k folds, a locked test set).
+    It is rendered from JavaScript by the filter_aisim/sims/cross_validation module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * datasets - select options as {value, label, selected}
+    * degree, folds - one slider each (see filter_aisim/slider)
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Cross-Validation",
+            "badge": "Chapters 3.9–3.11",
+            "dataTitle": "Data and the model trained on all training data",
+            "trainPts": "Training data (colour = fold)",
+            "testPts": "Test set (locked)",
+            "settings": "Hyperparameter and validation",
+            "degreeHint": "The degree is a hyperparameter: the data does not learn it, you choose it.",
+            "foldsHint": "Every fold is held out once for validation.",
+            "reshuffle": "🎲 New split",
+            "testBtn": "🔒 Final test",
+            "foldsTitle": "Validation error of each fold",
+            "curveTitle": "Error by degree",
+            "trainShort": "Training",
+            "cvShort": "Cross-validation",
+            "metrics": "Metrics",
+            "trainError": "Training MSE:",
+            "cvError": "CV MSE (mean of folds):",
+            "cvSpread": "Spread of the folds:",
+            "bestDegree": "Best degree by CV:",
+            "testError": "Test MSE:",
+            "testHidden": "locked",
+            "adviceStart": "Move the degree."
+        },
+        "datasets": [
+            {
+                "value": "sine",
+                "label": "🌊 Sine wave with noise",
+                "selected": true
+            }
+        ],
+        "degree": {
+            "id": "aisim-cv-degree",
+            "label": "Polynomial degree d",
+            "value": 1,
+            "text": "1",
+            "min": 1,
+            "max": 9,
+            "step": 1
+        },
+        "folds": {
+            "id": "aisim-cv-k",
+            "label": "Number of folds k",
+            "value": 5,
+            "text": "5",
+            "min": 2,
+            "max": 10,
+            "step": 1
+        }
+    }
+}}
+<div class="aisim-container aisim-cv">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-cv-dataset">
+            {{#datasets}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/datasets}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.dataTitle}}</span>
+                        <div class="aisim-legend">
+                            <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-neg"></span> {{t.trainPts}}</span>
+                            <span class="aisim-legend-item"><span class="aisim-cv-square"></span> {{t.testPts}}</span>
+                        </div>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-cv-canvas" style="height:280px;"></canvas>
+                </div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-cv-advice">{{t.adviceStart}}</div>
+                </div>
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.foldsTitle}}</div>
+                    <canvas class="aisim-canvas" id="aisim-cv-folds" style="height:150px;"></canvas>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.settings}}</div>
+                    {{#degree}}
+                    {{> filter_aisim/slider }}
+                    {{/degree}}
+                    <div class="aisim-cv-hint">{{t.degreeHint}}</div>
+                    {{#folds}}
+                    {{> filter_aisim/slider }}
+                    {{/folds}}
+                    <div class="aisim-cv-hint">{{t.foldsHint}}</div>
+                    <div class="aisim-controls">
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-cv-reshuffle">{{t.reshuffle}}</button>
+                        <button class="aisim-btn aisim-btn-primary" id="aisim-cv-test">{{t.testBtn}}</button>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span style="color:#2563eb;">{{t.trainError}}</span>
+                        <span class="aisim-stat-val" id="aisim-cv-train">–</span></div>
+                    <div class="aisim-stat-row"><span style="color:#ef4444;">{{t.cvError}}</span>
+                        <span class="aisim-stat-val" id="aisim-cv-mean">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.cvSpread}}</span>
+                        <span class="aisim-stat-val" id="aisim-cv-sd">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.bestDegree}}</span>
+                        <span class="aisim-stat-val" id="aisim-cv-best">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.testError}}</span>
+                        <span class="aisim-stat-val" id="aisim-cv-testval">{{t.testHidden}}</span></div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.curveTitle}}</div>
+                    <canvas class="aisim-canvas" id="aisim-cv-curve" style="height:170px;"></canvas>
+                    <div class="aisim-cv-legend">
+                        <span style="color:#2563eb;">■ {{t.trainShort}}</span>
+                        <span style="color:#ef4444;">■ {{t.cvShort}}</span>
+                        <span style="color:#f59e0b;">★ d</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

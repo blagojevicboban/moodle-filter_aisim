@@ -25,11 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'filter_aisim';
-$plugin->version   = 2026111404;
+$plugin->version   = 2026111405;
 $plugin->requires  = 2024100700; // Moodle 4.5.
 $plugin->supported = [405, 503];
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.14.0';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '1.0.0';
 $plugin->source    = 'https://github.com/blagojevicboban/moodle-filter_aisim';
 $plugin->tracker   = 'https://github.com/blagojevicboban/moodle-filter_aisim/issues';
 $plugin->documentation = 'https://github.com/blagojevicboban/moodle-filter_aisim/blob/master/docs/PRIRUCNIK_ZA_NASTAVNIKE.md';

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- `data-aisim="knn_tree"`, which the editor button writes, showed nothing; it is now an alias of `knn-tree`, and
+  `data-model` chooses the initial model (k-NN or decision tree) for every k-NN alias.
+
 ## [0.11.0] - 2026-11-14
 
 ### Added

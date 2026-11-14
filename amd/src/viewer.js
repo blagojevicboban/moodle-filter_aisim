@@ -60,13 +60,13 @@ const attr = (el, name, fallback) => el.getAttribute('data-' + name) || fallback
 const sim = (Engine, options) => ({Engine, options});
 
 /**
- * Create a k-NN / decision tree simulation with the given initial model.
+ * Create a k-NN / decision tree simulation; data-model ('knn' or 'tree') overrides the initial model.
  *
  * @param {String} model 'knn' or 'tree'
  * @returns {Object}
  */
 const knnTree = (model) => sim(KnnTreeSim, (el) => ({
-    model: model,
+    model: attr(el, 'model', model),
     dataset: attr(el, 'dataset', 'moons'),
     k: attr(el, 'k', 3),
     depth: attr(el, 'depth', 3)
@@ -153,6 +153,8 @@ const SIMS = {
     'regression': regression,
     'polynomial-regression': regression,
     'knn-tree': knnTree('knn'),
+    // The editor button writes the underscore form.
+    'knn_tree': knnTree('knn'),
     'knn': knnTree('knn'),
     'decision-tree': knnTree('tree'),
     'kmeans': kmeans,

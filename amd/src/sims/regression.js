@@ -1,10 +1,27 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Polynomial Regression & Overfitting/Underfitting interactive simulation engine.
  *
  * @module filter_aisim/sims/regression
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 export class RegressionSim {
     /**
@@ -44,9 +61,10 @@ export class RegressionSim {
         this.readonly = !!options.readonly;
 
         this.initData();
-        this.renderLayout();
-        this.bindEvents();
-        this.update();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            this.update();
+        });
     }
 
     /**
@@ -198,111 +216,24 @@ export class RegressionSim {
         }
     }
 
-    renderLayout() {
-        const isSine = this.datasetKey === 'sine' ? 'selected' : '';
-        const isQuad = this.datasetKey === 'quadratic' ? 'selected' : '';
-        const isEng = this.datasetKey === 'engine' ? 'selected' : '';
-
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-regression">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <div class="aisim-dataset-select">
-                        <select class="aisim-select" id="aisim-reg-dataset">
-                            <option value="sine" ${isSine}>${this.t.datasets.sine}</option>
-                            <option value="quadratic" ${isQuad}>${this.t.datasets.quadratic}</option>
-                            <option value="engine" ${isEng}>${this.t.datasets.engine}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-slider-card">
-                        <div class="aisim-th-header">
-                            <label for="aisim-reg-degree">
-                                <strong>${this.t.degreeLabel}</strong>
-                                <span class="aisim-th-pill" id="aisim-reg-degree-val">d = ${this.degree}</span>
-                            </label>
-                            <span class="aisim-th-sub">
-                                ${this.str('reg_degree_hint')}
-                            </span>
-                        </div>
-                        <input type="range" class="aisim-slider aisim-slider-large" id="aisim-reg-degree"
-                               min="1" max="9" step="1" value="${this.degree}">
-                    </div>
-
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-canvas-box">
-                                <div class="aisim-canvas-header">
-                                    <span>${this.str('reg_fit_title')}</span>
-                                    <div class="aisim-legend">
-                                        <span class="aisim-legend-item">
-                                            <span class="aisim-dot aisim-dot-neg"></span> ${this.t.trainPts}
-                                        </span>
-                                        <span class="aisim-legend-item">
-                                            <span class="aisim-dot aisim-dot-pos"></span> ${this.t.testPts}
-                                        </span>
-                                        <span class="aisim-legend-item">
-                                            <span class="aisim-line-th" style="background:#2563eb; height:3px;"></span>
-                                            ${this.t.polyCurve}
-                                        </span>
-                                    </div>
-                                </div>
-                                <canvas class="aisim-canvas" id="aisim-reg-canvas"></canvas>
-                            </div>
-
-                            <div class="aisim-card aisim-advice-card" id="aisim-reg-advice">
-                                <div class="aisim-advice-icon" id="aisim-reg-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-reg-advice-text">...</div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.regLabel}</div>
-                                <div class="aisim-slider-group">
-                                    <label>λ = <span id="aisim-reg-lambda-val">${this.lambda.toFixed(3)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-reg-lambda"
-                                           min="0.0" max="0.5" step="0.01" value="${this.lambda}">
-                                </div>
-                                <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.str('reg_reg_hint')}
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.str('reg_error_title')}</div>
-                                <div class="aisim-stat-row">
-                                    <span style="color:#2563eb; font-weight:600;">${this.t.trainError}</span>
-                                    <span class="aisim-stat-val" id="val-train-mse">0.000</span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span style="color:#ef4444; font-weight:600;">${this.t.testError}</span>
-                                    <span class="aisim-stat-val" id="val-test-mse">0.000</span>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.complexityPlotTitle}</div>
-                                <canvas class="aisim-mini-chart" id="aisim-reg-u-canvas"></canvas>
-                                <div class="aisim-u-legend"
-                                     style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b;">
-                                    <span>${this.str('reg_degree_axis', 1)}</span>
-                                    <span style="color:#2563eb;">■ ${this.str('reg_train_short')}</span>
-                                    <span style="color:#ef4444;">■ ${this.str('reg_test_short')}</span>
-                                    <span>9</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
+    async renderLayout() {
+        const context = {
+            t: {
+                ...this.t,
+                degreeHint: this.str('reg_degree_hint'),
+                fitTitle: this.str('reg_fit_title'),
+                regHint: this.str('reg_reg_hint'),
+                errorTitle: this.str('reg_error_title'),
+                degreeAxis: this.str('reg_degree_axis', 1),
+                trainShort: this.str('reg_train_short'),
+                testShort: this.str('reg_test_short'),
+            },
+            datasets: selectOptions(['sine', 'quadratic', 'engine'].map((k) => [k, this.t.datasets[k]]), this.datasetKey),
+            degree: this.degree,
+            lambda: this.lambda,
+            lambdatext: this.lambda.toFixed(3),
+        };
+        await renderTemplate(this.container, 'regression', context);
         this.canvas = this.container.querySelector('#aisim-reg-canvas');
         this.uCanvas = this.container.querySelector('#aisim-reg-u-canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -362,9 +293,10 @@ export class RegressionSim {
         selDataset.addEventListener('change', (e) => {
             this.datasetKey = e.target.value;
             this.initData();
-            this.renderLayout();
-            this.bindEvents();
-            this.update();
+            whenRendered(this.renderLayout(), () => {
+                this.bindEvents();
+                this.update();
+            });
         });
 
         this.canvas.addEventListener('click', (e) => {

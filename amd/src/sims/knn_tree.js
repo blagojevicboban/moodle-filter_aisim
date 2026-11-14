@@ -1,10 +1,27 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Decision Boundaries 2D: k-NN and Decision Tree interactive simulation engine.
  *
  * @module filter_aisim/sims/knn_tree
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 export class KnnTreeSim {
     /**
@@ -49,9 +66,10 @@ export class KnnTreeSim {
         this.readonly = !!options.readonly;
 
         this.initData();
-        this.renderLayout();
-        this.bindEvents();
-        this.update();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            this.update();
+        });
     }
 
     /**
@@ -111,117 +129,29 @@ export class KnnTreeSim {
         }
     }
 
-    renderLayout() {
+    async renderLayout() {
         const isKnn = this.modelType === 'knn';
-        const isM = this.datasetKey === 'moons' ? 'selected' : '';
-        const isC = this.datasetKey === 'circles' ? 'selected' : '';
-        const isB = this.datasetKey === 'blobs' ? 'selected' : '';
-
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-knntree">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <select class="aisim-select" id="aisim-kt-dataset">
-                            <option value="moons" ${isM}>${this.t.datasets.moons}</option>
-                            <option value="circles" ${isC}>${this.t.datasets.circles}</option>
-                            <option value="blobs" ${isB}>${this.t.datasets.blobs}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="aisim-body">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <div class="sim-tabs">
-                            <button class="tab-btn ${isKnn ? 'active' : ''}" id="btn-tab-knn">
-                                🔵 ${this.t.knnModel}
-                            </button>
-                            <button class="tab-btn ${!isKnn ? 'active' : ''}" id="btn-tab-tree">
-                                🌲 ${this.t.treeModel}
-                            </button>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
-                            <span style="font-weight:600;">${this.t.activeClassLabel}</span>
-                            <button class="aisim-btn ${this.activeClass === 0 ? 'aisim-btn-primary' : 'aisim-btn-secondary'}"
-                                    id="btn-cls-a" style="padding:3px 10px;">
-                                ● ${this.t.classAPts}
-                            </button>
-                            <button class="aisim-btn ${this.activeClass === 1 ? 'aisim-btn-danger' : 'aisim-btn-secondary'}"
-                                    id="btn-cls-b" style="padding:3px 10px;">
-                                ● ${this.t.classBPts}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-canvas-box" style="padding:0; overflow:hidden;">
-                                <canvas class="aisim-canvas" id="aisim-kt-canvas"
-                                        style="height:320px; cursor:crosshair;"></canvas>
-                            </div>
-
-                            <div class="aisim-card aisim-advice-card">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-kt-advice">
-                                    ${isKnn ? this.t.knnNotice : this.t.treeNotice}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card" id="card-param-knn" style="display:${isKnn ? 'block' : 'none'};">
-                                <div class="aisim-card-title">${this.t.kParam}</div>
-                                <div class="aisim-slider-group">
-                                    <label>k = <span id="val-k">${this.k}</span></label>
-                                    <input type="range" class="aisim-slider" id="slider-k"
-                                           min="1" max="15" step="2" value="${this.k}">
-                                </div>
-                                <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.str('knn_k_hint')}
-                                </div>
-                            </div>
-
-                            <div class="aisim-card" id="card-param-tree" style="display:${!isKnn ? 'block' : 'none'};">
-                                <div class="aisim-card-title">${this.t.depthParam}</div>
-                                <div class="aisim-slider-group">
-                                    <label>${this.str('knn_depth')} = <span id="val-depth">${this.maxDepth}</span></label>
-                                    <input type="range" class="aisim-slider" id="slider-depth"
-                                           min="1" max="5" step="1" value="${this.maxDepth}">
-                                </div>
-                                <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
-                                    ${this.str('knn_depth_hint')}
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.str('knn_metrics')}</div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.accuracy}</span>
-                                    <span class="aisim-stat-val" id="val-kt-acc">100%</span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.boundaryNotice}</span>
-                                    <span class="aisim-stat-val" id="val-kt-btype">
-                                        ${isKnn ? this.str('knn_boundary_knn') : this.str('knn_boundary_tree')}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="aisim-controls" style="margin-top:0.5rem;">
-                                <button class="aisim-btn aisim-btn-secondary" id="btn-kt-clear"
-                                        style="width:100%; justify-content:center;">
-                                    ↺ ${this.str('knn_reset')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
+        const context = {
+            t: {
+                ...this.t,
+                kHint: this.str('knn_k_hint'),
+                depth: this.str('knn_depth'),
+                depthHint: this.str('knn_depth_hint'),
+                metrics: this.str('knn_metrics'),
+                resetLabel: this.str('knn_reset'),
+            },
+            datasets: selectOptions(['moons', 'circles', 'blobs'].map((k) => [k, this.t.datasets[k]]), this.datasetKey),
+            isknn: isKnn,
+            classabtn: this.activeClass === 0 ? 'aisim-btn-primary' : 'aisim-btn-secondary',
+            classbbtn: this.activeClass === 1 ? 'aisim-btn-danger' : 'aisim-btn-secondary',
+            notice: isKnn ? this.t.knnNotice : this.t.treeNotice,
+            knndisplay: isKnn ? 'block' : 'none',
+            treedisplay: isKnn ? 'none' : 'block',
+            boundary: isKnn ? this.str('knn_boundary_knn') : this.str('knn_boundary_tree'),
+            k: this.k,
+            maxdepth: this.maxDepth,
+        };
+        await renderTemplate(this.container, 'knn_tree', context);
         this.canvas = this.container.querySelector('#aisim-kt-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.setupDPI();

@@ -1,10 +1,27 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Confusion Matrix & Classification Threshold interactive simulation engine.
  *
  * @module filter_aisim/sims/confusion_matrix
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 export class ConfusionMatrixSim {
     /**
@@ -69,9 +86,10 @@ export class ConfusionMatrixSim {
         // Generate synthetic distributions for dataset.
         this.initDataset();
 
-        this.renderLayout();
-        this.bindEvents();
-        this.update();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            this.update();
+        });
     }
 
     /**
@@ -161,150 +179,19 @@ export class ConfusionMatrixSim {
         return {tp, fp, tn, fn, total: this.samples.length};
     }
 
-    renderLayout() {
+    async renderLayout() {
         const sc = this.t.scenarios[this.scenarioKey];
-        const isQ = this.scenarioKey === 'quality' ? 'selected' : '';
-        const isM = this.scenarioKey === 'medical' ? 'selected' : '';
-        const isS = this.scenarioKey === 'spam' ? 'selected' : '';
-
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-confmat">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <div class="aisim-scenario-select">
-                        <select class="aisim-select" id="aisim-cm-scenario">
-                            <option value="quality" ${isQ}>${this.t.scenarios.quality.name}</option>
-                            <option value="medical" ${isM}>${this.t.scenarios.medical.name}</option>
-                            <option value="spam" ${isS}>${this.t.scenarios.spam.name}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-slider-card">
-                        <div class="aisim-th-header">
-                            <label for="aisim-cm-th">
-                                <strong>${this.t.thresholdLabel}</strong>
-                                <span class="aisim-th-pill" id="aisim-cm-th-val">${this.threshold.toFixed(2)}</span>
-                            </label>
-                            <span class="aisim-th-sub">
-                                ${this.str('cm_drag_hint')}
-                            </span>
-                        </div>
-                        <input type="range" class="aisim-slider aisim-slider-large" id="aisim-cm-th"
-                               min="0.05" max="0.95" step="0.01" value="${this.threshold}">
-                    </div>
-
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-canvas-box">
-                                <div class="aisim-canvas-header">
-                                    <span>${this.t.probDistTitle}</span>
-                                    <div class="aisim-legend">
-                                        <span class="aisim-legend-item">
-                                            <span class="aisim-dot aisim-dot-neg"></span> ${sc.negLabel} (0)
-                                        </span>
-                                        <span class="aisim-legend-item">
-                                            <span class="aisim-dot aisim-dot-pos"></span> ${sc.posLabel} (1)
-                                        </span>
-                                        <span class="aisim-legend-item">
-                                            <span class="aisim-line-th"></span> ${this.str('cm_threshold_short')}
-                                        </span>
-                                    </div>
-                                </div>
-                                <canvas class="aisim-canvas" id="aisim-cm-dist-canvas"></canvas>
-                            </div>
-
-                            <div class="aisim-card aisim-advice-card" id="aisim-cm-advice">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-cm-advice-text">...</div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.matrixTitle}</div>
-                                <div class="aisim-matrix-grid">
-                                    <div class="aisim-matrix-corner"></div>
-                                    <div class="aisim-matrix-head">${this.t.predPos}</div>
-                                    <div class="aisim-matrix-head">${this.t.predNeg}</div>
-
-                                    <div class="aisim-matrix-rowhead">${this.t.actualPos}</div>
-                                    <div class="aisim-cell aisim-cell-tp" id="aisim-cell-tp">
-                                        <div class="aisim-cell-lbl">${this.t.tp}</div>
-                                        <div class="aisim-cell-val" id="val-tp">0</div>
-                                    </div>
-                                    <div class="aisim-cell aisim-cell-fn" id="aisim-cell-fn">
-                                        <div class="aisim-cell-lbl">${this.t.fn}</div>
-                                        <div class="aisim-cell-val" id="val-fn">0</div>
-                                    </div>
-
-                                    <div class="aisim-matrix-rowhead">${this.t.actualNeg}</div>
-                                    <div class="aisim-cell aisim-cell-fp" id="aisim-cell-fp">
-                                        <div class="aisim-cell-lbl">${this.t.fp}</div>
-                                        <div class="aisim-cell-val" id="val-fp">0</div>
-                                    </div>
-                                    <div class="aisim-cell aisim-cell-tn" id="aisim-cell-tn">
-                                        <div class="aisim-cell-lbl">${this.t.tn}</div>
-                                        <div class="aisim-cell-val" id="val-tn">0</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.metricsTitle}</div>
-                                <div class="aisim-metric-row">
-                                    <div class="aisim-metric-header">
-                                        <span>${this.t.accuracy}</span>
-                                        <strong id="val-acc">0%</strong>
-                                    </div>
-                                    <div class="aisim-prog-bar"><div class="aisim-prog-fill" id="bar-acc"></div></div>
-                                </div>
-                                <div class="aisim-metric-row">
-                                    <div class="aisim-metric-header">
-                                        <span>${this.t.precision}</span>
-                                        <strong id="val-prec">0%</strong>
-                                    </div>
-                                    <div class="aisim-prog-bar">
-                                        <div class="aisim-prog-fill aisim-fill-prec" id="bar-prec"></div>
-                                    </div>
-                                </div>
-                                <div class="aisim-metric-row">
-                                    <div class="aisim-metric-header">
-                                        <span>${this.t.recall}</span>
-                                        <strong id="val-rec">0%</strong>
-                                    </div>
-                                    <div class="aisim-prog-bar">
-                                        <div class="aisim-prog-fill aisim-fill-rec" id="bar-rec"></div>
-                                    </div>
-                                </div>
-                                <div class="aisim-metric-row">
-                                    <div class="aisim-metric-header">
-                                        <span>${this.t.f1}</span>
-                                        <strong id="val-f1">0%</strong>
-                                    </div>
-                                    <div class="aisim-prog-bar">
-                                        <div class="aisim-prog-fill aisim-fill-f1" id="bar-f1"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">
-                                    <span>${this.t.rocTitle}</span>
-                                    <span class="aisim-auc-badge">AUC = ${this.auc.toFixed(3)}</span>
-                                </div>
-                                <canvas class="aisim-mini-chart" id="aisim-cm-roc-canvas"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
+        const context = {
+            t: {...this.t, dragHint: this.str('cm_drag_hint'), thresholdShort: this.str('cm_threshold_short')},
+            scenarios: selectOptions(['quality', 'medical', 'spam'].map((k) => [k, this.t.scenarios[k].name]),
+                this.scenarioKey),
+            threshold: this.threshold,
+            thresholdtext: this.threshold.toFixed(2),
+            neglabel: sc.negLabel,
+            poslabel: sc.posLabel,
+            auctext: this.auc.toFixed(3),
+        };
+        await renderTemplate(this.container, 'confusion_matrix', context);
         this.distCanvas = this.container.querySelector('#aisim-cm-dist-canvas');
         this.rocCanvas = this.container.querySelector('#aisim-cm-roc-canvas');
         this.distCtx = this.distCanvas.getContext('2d');
@@ -353,9 +240,10 @@ export class ConfusionMatrixSim {
         selScenario.addEventListener('change', (e) => {
             this.scenarioKey = e.target.value;
             this.initDataset();
-            this.renderLayout();
-            this.bindEvents();
-            this.update();
+            whenRendered(this.renderLayout(), () => {
+                this.bindEvents();
+                this.update();
+            });
         });
 
         const setThFromEvent = (e) => {

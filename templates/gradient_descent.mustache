@@ -1,0 +1,142 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/gradient_descent
+
+    Layout of the Gradient Descent simulation (cost curve, learning rate and starting weight).
+    It is rendered from JavaScript by the filter_aisim/sims/gradient_descent module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Gradient Descent Lab",
+            "badge": "Chapter 3.2",
+            "run": "▶ Run",
+            "step": "⏭ Step",
+            "reset": "↺ Reset",
+            "lr": "Learning Rate (α)",
+            "w0": "Initial weight (w₀)",
+            "epoch": "Epoch:",
+            "wVal": "Weight (w):",
+            "costVal": "Cost J(w):",
+            "gradVal": "Gradient dJ/dw:",
+            "costHist": "Learning Curve: J(w) vs Epochs",
+            "statusReady": "Ready. Click Run, Step, or click curve to set w₀.",
+            "metrics": "Metrics & state"
+        },
+        "profiles": [
+            {
+                "value": "convex",
+                "label": "Convex (Single Minimum)",
+                "selected": true
+            },
+            {
+                "value": "nonconvex",
+                "label": "Non-convex (Local Minima)",
+                "selected": false
+            },
+            {
+                "value": "plateau",
+                "label": "Plateau / Complex",
+                "selected": false
+            }
+        ],
+        "alpha": 0.15,
+        "alphatext": "0.150",
+        "w0": -0.5,
+        "w0text": "-0.50",
+        "wmin": -1.5,
+        "wmax": 5.5
+    }
+}}
+<div class="aisim-container">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <div class="aisim-profile-select">
+            <select class="aisim-select" id="aisim-prof">
+                {{#profiles}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/profiles}}
+            </select>
+        </div>
+    </div>
+    <div class="aisim-body">
+        <div class="aisim-controls">
+            <button class="aisim-btn aisim-btn-primary" id="aisim-btn-run">{{t.run}}</button>
+            <button class="aisim-btn aisim-btn-secondary" id="aisim-btn-step">{{t.step}}</button>
+            <button class="aisim-btn aisim-btn-danger" id="aisim-btn-reset">{{t.reset}}</button>
+        </div>
+
+        <div class="aisim-grid">
+            <div class="aisim-canvas-box">
+                <canvas class="aisim-canvas" id="aisim-main-canvas"></canvas>
+            </div>
+            <div class="aisim-sidebar">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.lr}}</div>
+                    <div class="aisim-slider-group">
+                        <label>α = <span id="aisim-lr-val">{{alphatext}}</span></label>
+                        <input type="range" class="aisim-slider" id="aisim-lr"
+                               min="0.005" max="1.1" step="0.005" value="{{alpha}}">
+                    </div>
+                    <div class="aisim-slider-group">
+                        <label>{{t.w0}}: <span id="aisim-w0-val">{{w0text}}</span></label>
+                        <input type="range" class="aisim-slider" id="aisim-w0"
+                               min="{{wmin}}" max="{{wmax}}" step="0.1" value="{{w0}}">
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.epoch}}</span>
+                        <span class="aisim-stat-val" id="aisim-stat-epoch">0</span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.wVal}}</span>
+                        <span class="aisim-stat-val" id="aisim-stat-w">0.000</span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.costVal}}</span>
+                        <span class="aisim-stat-val" id="aisim-stat-cost">0.000</span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.gradVal}}</span>
+                        <span class="aisim-stat-val" id="aisim-stat-grad">0.000</span>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.costHist}}</div>
+                    <canvas class="aisim-mini-chart" id="aisim-mini-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="aisim-status-bar" id="aisim-status">
+            {{t.statusReady}}
+        </div>
+    </div>
+</div>

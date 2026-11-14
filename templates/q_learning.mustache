@@ -1,0 +1,160 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/q_learning
+
+    Layout of the Q-Learning simulation (grid map, learning parameters, reward curve).
+    It is rendered from JavaScript by the filter_aisim/sims/q_learning module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Reinforcement Learning (Q-learning)",
+            "badge": "Reinforcement Learning",
+            "params": "Learning parameters",
+            "train": "▶ Train",
+            "one": "+1 episode",
+            "fifty": "+50 episodes",
+            "reset": "↺ Start over",
+            "metrics": "Metrics",
+            "episode": "Episode:",
+            "avgReward": "Average reward (last 20):",
+            "path": "Path of the learned policy:",
+            "optimal": "Shortest possible path:",
+            "rewardCurve": "Reward per episode",
+            "cell": "Q-values of the selected cell",
+            "cellHint": "Tap a cell to see its Q-values.",
+            "legend": "S start · G goal (+10) · T small treasure (+3) · red: cliff (−10) · every step −0.1. Cell colour = highest Q-value, arrow = best move.",
+            "adviceStart": "Press “Train”. The agent starts knowing nothing and learns from the reward after every move."
+        },
+        "maps": [
+            {
+                "value": "maze",
+                "label": "🧩 Maze",
+                "selected": true
+            },
+            {
+                "value": "cliff",
+                "label": "🏔️ Cliff",
+                "selected": false
+            },
+            {
+                "value": "treasure",
+                "label": "💰 Near or far",
+                "selected": false
+            }
+        ],
+        "sliders": [
+            {
+                "id": "aisim-ql-alpha",
+                "label": "Learning rate α",
+                "value": 0.5,
+                "text": "0.50",
+                "min": 0.05,
+                "max": 1,
+                "step": 0.05
+            },
+            {
+                "id": "aisim-ql-gamma",
+                "label": "Discount factor γ (value of the future)",
+                "value": 0.9,
+                "text": "0.90",
+                "min": 0,
+                "max": 1,
+                "step": 0.05
+            },
+            {
+                "id": "aisim-ql-epsilon",
+                "label": "Exploration ε (random moves)",
+                "value": 0.2,
+                "text": "0.20",
+                "min": 0,
+                "max": 1,
+                "step": 0.05
+            }
+        ]
+    }
+}}
+<div class="aisim-container aisim-ql">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-ql-map">
+            {{#maps}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/maps}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box" style="padding:0; overflow:hidden; min-height:0;">
+                    <canvas class="aisim-canvas" id="aisim-ql-canvas" style="cursor:pointer;"></canvas>
+                </div>
+                <div class="aisim-ql-legend">{{t.legend}}</div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-ql-advice">{{t.adviceStart}}</div>
+                </div>
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.cell}}</div>
+                    <div class="aisim-conv-calc" id="aisim-ql-cell">{{t.cellHint}}</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.params}}</div>
+                    {{#sliders}}
+                    {{> filter_aisim/slider }}
+                    {{/sliders}}
+                    <div class="aisim-controls">
+                        <button class="aisim-btn aisim-btn-primary" id="aisim-ql-run">{{t.train}}</button>
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-ql-one">{{t.one}}</button>
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-ql-fifty">{{t.fifty}}</button>
+                        <button class="aisim-btn aisim-btn-danger" id="aisim-ql-reset">{{t.reset}}</button>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span>{{t.episode}}</span>
+                        <span class="aisim-stat-val" id="aisim-ql-episode">0</span></div>
+                    <div class="aisim-stat-row"><span>{{t.avgReward}}</span>
+                        <span class="aisim-stat-val" id="aisim-ql-avg">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.path}}</span>
+                        <span class="aisim-stat-val" id="aisim-ql-path">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.optimal}}</span>
+                        <span class="aisim-stat-val" id="aisim-ql-optimal">–</span></div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.rewardCurve}}</div>
+                    <canvas class="aisim-canvas" id="aisim-ql-curve" style="height:110px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

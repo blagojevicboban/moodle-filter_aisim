@@ -1,3 +1,18 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Data split & bias: a k-NN model checks parts from two factories, A and B, where the defect rule differs.
  *
@@ -7,9 +22,11 @@
  * for factory B.
  *
  * @module filter_aisim/sims/data_bias
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 const POPULATIONS = ['shifted', 'similar'];
 const WORLD_PER_GROUP = 300;
@@ -84,9 +101,10 @@ export class DataBiasSim {
 
         this.initWorld();
         this.sample();
-        this.renderLayout();
-        this.bindEvents();
-        this.update();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            this.update();
+        });
     }
 
     /**
@@ -212,66 +230,21 @@ export class DataBiasSim {
         };
     }
 
-    renderLayout() {
-        const opt = (value, label, current) => `<option value="${value}" ${value === current ? 'selected' : ''}>${label}</option>`;
-        const slider = (id, label, value, min, max, step, unit = '') => `
-            <div class="aisim-slider-group">
-                <label for="aisim-db-${id}">${label} = <span id="aisim-db-${id}-val">${value}${unit}</span></label>
-                <input type="range" class="aisim-slider" id="aisim-db-${id}" min="${min}" max="${max}" step="${step}"
-                       value="${value}">
-            </div>`;
-        const stat = (id, label) => `<div class="aisim-stat-row"><span>${label}</span>
-            <span class="aisim-stat-val" id="aisim-db-${id}">–</span></div>`;
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-db">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <select class="aisim-select" id="aisim-db-population">
-                        ${POPULATIONS.map((k) => opt(k, this.t.populations[k], this.population)).join('')}
-                    </select>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-ql-legend">${this.t.story}</div>
-                            <div class="aisim-canvas-box" style="padding:0; overflow:hidden; min-height:0;">
-                                <canvas class="aisim-canvas" id="aisim-db-canvas" style="height:320px;"></canvas>
-                            </div>
-                            <div class="aisim-ql-legend">${this.t.legend}</div>
-                            <div class="aisim-card aisim-advice-card">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-db-advice">${this.t.adviceStart}</div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.data}</div>
-                                ${slider('n', this.t.n, this.n, 40, 400, 20)}
-                                ${slider('share', this.t.share, this.share, 0, 50, 5, '%')}
-                                ${slider('test', this.t.test, this.testPct, 10, 50, 5, '%')}
-                                <div class="aisim-card-title" style="margin-top:0.75rem;">${this.t.model}</div>
-                                ${slider('k', this.t.k, this.k, 1, 25, 2)}
-                                <div class="aisim-controls">
-                                    <button class="aisim-btn aisim-btn-secondary" id="aisim-db-resample">${this.t.resample}</button>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.metrics}</div>
-                                <canvas class="aisim-canvas" id="aisim-db-bars" style="height:150px; cursor:default;"></canvas>
-                                ${stat('counts', this.t.counts)}
-                                ${stat('gap', this.t.gap)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+    async renderLayout() {
+        const slider = (id, label, value, min, max, step, unit = '') =>
+            ({id: 'aisim-db-' + id, label, value, text: value + unit, min, max, step});
+        const context = {
+            t: this.t,
+            populations: selectOptions(POPULATIONS.map((k) => [k, this.t.populations[k]]), this.population),
+            datasliders: [
+                slider('n', this.t.n, this.n, 40, 400, 20),
+                slider('share', this.t.share, this.share, 0, 50, 5, '%'),
+                slider('test', this.t.test, this.testPct, 10, 50, 5, '%'),
+            ],
+            modelsliders: [slider('k', this.t.k, this.k, 1, 25, 2)],
+            stats: [{id: 'counts', label: this.t.counts}, {id: 'gap', label: this.t.gap}],
+        };
+        await renderTemplate(this.container, 'data_bias', context);
         this.canvas = this.container.querySelector('#aisim-db-canvas');
         this.bars = this.container.querySelector('#aisim-db-bars');
         this.setupDPI();

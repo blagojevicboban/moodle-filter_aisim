@@ -1,10 +1,27 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Gradient Descent interactive simulation engine.
  *
  * @module filter_aisim/sims/gradient_descent
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 export class GradientDescentSim {
     /**
@@ -94,9 +111,10 @@ export class GradientDescentSim {
         this.onChange = options.onChange || null;
         this.readonly = !!options.readonly;
 
-        this.renderLayout();
-        this.bindEvents();
-        this.reset();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            this.reset();
+        });
     }
 
     /**
@@ -114,87 +132,19 @@ export class GradientDescentSim {
         return text.replace(/\{\$a(?:->(\w+))?\}/g, (m, name) => String(name ? a[name] : a));
     }
 
-    renderLayout() {
-        const isConv = this.selectedProfileKey === 'convex' ? 'selected' : '';
-        const isNonConv = this.selectedProfileKey === 'nonconvex' ? 'selected' : '';
-        const isPlat = this.selectedProfileKey === 'plateau' ? 'selected' : '';
-
-        this.container.innerHTML = `
-            <div class="aisim-container">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <div class="aisim-profile-select">
-                        <select class="aisim-select" id="aisim-prof">
-                            <option value="convex" ${isConv}>${this.profiles.convex.name}</option>
-                            <option value="nonconvex" ${isNonConv}>${this.profiles.nonconvex.name}</option>
-                            <option value="plateau" ${isPlat}>${this.profiles.plateau.name}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="aisim-body">
-                    <div class="aisim-controls">
-                        <button class="aisim-btn aisim-btn-primary" id="aisim-btn-run">${this.t.run}</button>
-                        <button class="aisim-btn aisim-btn-secondary" id="aisim-btn-step">${this.t.step}</button>
-                        <button class="aisim-btn aisim-btn-danger" id="aisim-btn-reset">${this.t.reset}</button>
-                    </div>
-
-                    <div class="aisim-grid">
-                        <div class="aisim-canvas-box">
-                            <canvas class="aisim-canvas" id="aisim-main-canvas"></canvas>
-                        </div>
-                        <div class="aisim-sidebar">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.lr}</div>
-                                <div class="aisim-slider-group">
-                                    <label>α = <span id="aisim-lr-val">${this.alpha.toFixed(3)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-lr"
-                                           min="0.005" max="1.1" step="0.005" value="${this.alpha}">
-                                </div>
-                                <div class="aisim-slider-group">
-                                    <label>${this.t.w0}: <span id="aisim-w0-val">${this.w0.toFixed(2)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-w0"
-                                           min="${this.currentProfile.wMin}" max="${this.currentProfile.wMax}"
-                                           step="0.1" value="${this.w0}">
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.str('gd_metrics')}</div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.epoch}</span>
-                                    <span class="aisim-stat-val" id="aisim-stat-epoch">0</span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.wVal}</span>
-                                    <span class="aisim-stat-val" id="aisim-stat-w">0.000</span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.costVal}</span>
-                                    <span class="aisim-stat-val" id="aisim-stat-cost">0.000</span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.gradVal}</span>
-                                    <span class="aisim-stat-val" id="aisim-stat-grad">0.000</span>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.costHist}</div>
-                                <canvas class="aisim-mini-chart" id="aisim-mini-canvas"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="aisim-status-bar" id="aisim-status">
-                        ${this.t.statusReady}
-                    </div>
-                </div>
-            </div>
-        `;
-
+    async renderLayout() {
+        const context = {
+            t: {...this.t, metrics: this.str('gd_metrics')},
+            profiles: selectOptions(['convex', 'nonconvex', 'plateau'].map((k) => [k, this.profiles[k].name]),
+                this.selectedProfileKey),
+            alpha: this.alpha,
+            alphatext: this.alpha.toFixed(3),
+            w0: this.w0,
+            w0text: this.w0.toFixed(2),
+            wmin: this.currentProfile.wMin,
+            wmax: this.currentProfile.wMax,
+        };
+        await renderTemplate(this.container, 'gradient_descent', context);
         this.canvas = this.container.querySelector('#aisim-main-canvas');
         this.miniCanvas = this.container.querySelector('#aisim-mini-canvas');
         this.ctx = this.canvas.getContext('2d');

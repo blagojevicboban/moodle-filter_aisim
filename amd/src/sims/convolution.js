@@ -1,3 +1,18 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Convolution & image filters: a 3×3 kernel slides over a small grayscale image.
  *
@@ -5,9 +20,11 @@
  * the calculation for that pixel. With a target filter the output is compared with the target image (R²).
  *
  * @module filter_aisim/sims/convolution
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions, showSteps} from 'filter_aisim/sims/layout';
 
 const SIZE = 28;
 
@@ -120,13 +137,14 @@ export class ConvolutionSim {
         this.selected = {r: 9, c: 9};
 
         this.initImage();
-        this.renderLayout();
-        this.bindEvents();
-        window.addEventListener('resize', () => {
-            this.setupDPI();
-            this.draw();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            window.addEventListener('resize', () => {
+                this.setupDPI();
+                this.draw();
+            });
+            this.update();
         });
-        this.update();
     }
 
     /**
@@ -280,99 +298,33 @@ export class ConvolutionSim {
         return found ? found[0] : '';
     }
 
-    renderLayout() {
-        const opt = (value, label, current) => `<option value="${value}" ${value === current ? 'selected' : ''}>${label}</option>`;
-        const presetOptions = [opt('', this.t.custom, this.currentPreset())]
-            .concat(Object.keys(PRESETS).map((k) => opt(k, this.t.presets[k], this.currentPreset()))).join('');
-        const targetOptions = [opt('', this.t.noTarget, this.targetKey)]
-            .concat(Object.keys(PRESETS).filter((k) => k !== 'identity')
-                .map((k) => opt(k, this.t.presets[k], this.targetKey))).join('');
-        const cells = this.kernel.map((v, i) => `<input type="number" class="aisim-conv-cell" data-i="${i}"
-            min="-9" max="9" step="1" value="${v}" inputmode="numeric" aria-label="w${Math.floor(i / 3) + 1}${(i % 3) + 1}">`)
-            .join('');
-        const imageBox = (id, label) => `
-            <div class="aisim-conv-imgbox">
-                <div class="aisim-card-title">${label}</div>
-                <canvas class="aisim-canvas aisim-conv-canvas" id="${id}"></canvas>
-            </div>`;
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-conv">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <select class="aisim-select" id="aisim-conv-image">
-                        ${IMAGES.map((k) => opt(k, this.t.images[k], this.imageKey)).join('')}
-                    </select>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-conv-images">
-                                ${imageBox('aisim-conv-in', this.t.input)}
-                                ${imageBox('aisim-conv-out', this.t.output)}
-                                ${this.targetImage ? imageBox('aisim-conv-target', this.t.target) : ''}
-                            </div>
-                            <div class="aisim-card aisim-advice-card">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-conv-advice">${this.t.adviceFree}</div>
-                            </div>
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.calc}</div>
-                                <div class="aisim-conv-calc" id="aisim-conv-calc">${this.t.calcHint}</div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.kernel}</div>
-                                <div class="aisim-slider-group" ${this.showPresets ? '' : 'style="display:none;"'}>
-                                    <label for="aisim-conv-preset">${this.t.preset}</label>
-                                    <select class="aisim-select" id="aisim-conv-preset" style="width:100%;">
-                                        ${presetOptions}
-                                    </select>
-                                </div>
-                                <div class="aisim-conv-kernel">${cells}</div>
-                                <div class="aisim-conv-row">
-                                    <label for="aisim-conv-divisor">${this.t.divisor} ÷</label>
-                                    <input type="number" class="aisim-conv-cell" id="aisim-conv-divisor"
-                                           min="1" max="32" step="1" value="${this.divisor}" inputmode="numeric">
-                                </div>
-                                <label class="aisim-conv-row aisim-conv-check">
-                                    <input type="checkbox" id="aisim-conv-abs" ${this.abs ? 'checked' : ''}>
-                                    <span>${this.t.abs}</span>
-                                </label>
-                            </div>
-
-                            <div class="aisim-card" ${this.targetFixed ? 'style="display:none;"' : ''}>
-                                <div class="aisim-slider-group">
-                                    <label for="aisim-conv-targetsel">${this.t.targetSelect}</label>
-                                    <select class="aisim-select" id="aisim-conv-targetsel" style="width:100%;">
-                                        ${targetOptions}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.metrics}</div>
-                                <div class="aisim-stat-row"><span>${this.t.sum}</span>
-                                    <span class="aisim-stat-val" id="aisim-conv-sum">1</span></div>
-                                <div class="aisim-stat-row" id="aisim-conv-match-row"><span>${this.t.match}</span>
-                                    <span class="aisim-stat-val" id="aisim-conv-match">–</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+    async renderLayout() {
+        const preset = this.currentPreset();
+        const imageboxes = [{id: 'aisim-conv-in', label: this.t.input}, {id: 'aisim-conv-out', label: this.t.output}];
+        if (this.targetImage) {
+            imageboxes.push({id: 'aisim-conv-target', label: this.t.target});
+        }
+        const context = {
+            t: this.t,
+            images: selectOptions(IMAGES.map((k) => [k, this.t.images[k]]), this.imageKey),
+            imageboxes,
+            showpresets: this.showPresets,
+            presets: selectOptions([['', this.t.custom]].concat(Object.keys(PRESETS).map((k) => [k, this.t.presets[k]])),
+                preset),
+            cells: this.kernel.map((value, i) => ({i, value, name: `w${Math.floor(i / 3) + 1}${(i % 3) + 1}`})),
+            divisor: this.divisor,
+            abs: this.abs,
+            targetfixed: this.targetFixed,
+            targets: selectOptions([['', this.t.noTarget]].concat(Object.keys(PRESETS).filter((k) => k !== 'identity')
+                .map((k) => [k, this.t.presets[k]])), this.targetKey),
+            matchdisplay: this.targetImage ? 'flex' : 'none',
+        };
+        await renderTemplate(this.container, 'convolution', context);
         this.canvases = {
             input: this.container.querySelector('#aisim-conv-in'),
             output: this.container.querySelector('#aisim-conv-out'),
             target: this.container.querySelector('#aisim-conv-target')
         };
-        this.container.querySelector('#aisim-conv-match-row').style.display = this.targetImage ? 'flex' : 'none';
         this.setupDPI();
     }
 
@@ -463,9 +415,10 @@ export class ConvolutionSim {
             this.targetKey = e.target.value;
             this.initImage();
             // The target box appears or disappears, so the layout is drawn again.
-            this.renderLayout();
-            this.bindEvents();
-            this.update();
+            whenRendered(this.renderLayout(), () => {
+                this.bindEvents();
+                this.update();
+            });
         });
     }
 
@@ -524,22 +477,25 @@ export class ConvolutionSim {
         const {r, c} = this.selected;
         const f = this.filter();
         const fmt = (v) => (Math.round(v * 100) / 100).toString();
-        const terms = [];
+        // First line: (<span>p×w</span> + ... ) ÷ divisor = raw, the products as spans.
+        const sum = ['('];
         for (let i = 0; i < 9; i++) {
-            terms.push(`<span>${fmt(this.pixel(r + Math.floor(i / 3) - 1, c + (i % 3) - 1))}×${this.kernel[i]}</span>`);
+            if (i) {
+                sum.push(' + ');
+            }
+            sum.push({span: `${fmt(this.pixel(r + Math.floor(i / 3) - 1, c + (i % 3) - 1))}×${this.kernel[i]}`});
         }
         const raw = this.rawAt(f, r, c);
         const shown = this.shown(f, raw);
-        const steps = [`(${terms.join(' + ')}) ÷ ${this.divisor} = ${fmt(raw)}`];
+        sum.push(`) ÷ ${this.divisor} = ${fmt(raw)}`);
+        const steps = [sum];
         if (this.abs) {
             steps.push(`|${fmt(raw)}| = ${fmt(Math.abs(raw))}`);
         }
         if (shown !== (this.abs ? Math.abs(raw) : raw)) {
             steps.push(this.str('conv_clipped', fmt(shown)));
         }
-        this.container.querySelector('#aisim-conv-calc').innerHTML =
-            `<div><strong>${this.str('conv_pixel')} (${r + 1}, ${c + 1})</strong></div>` +
-            steps.map((s) => `<div class="aisim-conv-step">${s}</div>`).join('');
+        showSteps(this.container.querySelector('#aisim-conv-calc'), `${this.str('conv_pixel')} (${r + 1}, ${c + 1})`, steps);
     }
 
     draw() {

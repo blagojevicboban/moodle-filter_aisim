@@ -1,0 +1,158 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/data_bias
+
+    Layout of the Data Split & Bias simulation (population, sample, test share and k).
+    It is rendered from JavaScript by the filter_aisim/sims/data_bias module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Data Split & Bias",
+            "badge": "Data & Fairness",
+            "story": "A model (k-NN) decides from two sensor readings whether a part is good or defective. Parts come from two factories: ● A (old line) and ■ B (new line), where the rule is slightly different.",
+            "data": "Data collection",
+            "model": "Model",
+            "resample": "🎲 New sample",
+            "metrics": "Accuracy",
+            "legend": "Filled mark = training, hollow = test. Red = defective, blue = good. Dashed line = the true rule, background = the model's decision.",
+            "adviceStart": "Move the share of factory B and compare the test-set accuracy with the real-world accuracy per factory."
+        },
+        "populations": [
+            {
+                "value": "shifted",
+                "label": "🏭 B behaves differently",
+                "selected": true
+            },
+            {
+                "value": "similar",
+                "label": "🏭 B behaves similarly",
+                "selected": false
+            }
+        ],
+        "datasliders": [
+            {
+                "id": "aisim-db-n",
+                "label": "Sample size",
+                "value": 200,
+                "text": "200",
+                "min": 40,
+                "max": 400,
+                "step": 20
+            },
+            {
+                "id": "aisim-db-share",
+                "label": "Share of factory B in the sample",
+                "value": 5,
+                "text": "5%",
+                "min": 0,
+                "max": 50,
+                "step": 5
+            },
+            {
+                "id": "aisim-db-test",
+                "label": "Held out for testing",
+                "value": 25,
+                "text": "25%",
+                "min": 10,
+                "max": 50,
+                "step": 5
+            }
+        ],
+        "modelsliders": [
+            {
+                "id": "aisim-db-k",
+                "label": "Number of neighbours k",
+                "value": 5,
+                "text": "5",
+                "min": 1,
+                "max": 25,
+                "step": 2
+            }
+        ],
+        "stats": [
+            {
+                "id": "counts",
+                "label": "Training / test:"
+            },
+            {
+                "id": "gap",
+                "label": "Gap A − B:"
+            }
+        ]
+    }
+}}
+<div class="aisim-container aisim-db">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-db-population">
+            {{#populations}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/populations}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-ql-legend">{{t.story}}</div>
+                <div class="aisim-canvas-box" style="padding:0; overflow:hidden; min-height:0;">
+                    <canvas class="aisim-canvas" id="aisim-db-canvas" style="height:320px;"></canvas>
+                </div>
+                <div class="aisim-ql-legend">{{t.legend}}</div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-db-advice">{{t.adviceStart}}</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.data}}</div>
+                    {{#datasliders}}
+                    {{> filter_aisim/slider }}
+                    {{/datasliders}}
+                    <div class="aisim-card-title" style="margin-top:0.75rem;">{{t.model}}</div>
+                    {{#modelsliders}}
+                    {{> filter_aisim/slider }}
+                    {{/modelsliders}}
+                    <div class="aisim-controls">
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-db-resample">{{t.resample}}</button>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <canvas class="aisim-canvas" id="aisim-db-bars" style="height:150px; cursor:default;"></canvas>
+                    {{#stats}}
+                    <div class="aisim-stat-row"><span>{{label}}</span>
+                        <span class="aisim-stat-val" id="aisim-db-{{id}}">–</span></div>
+                    {{/stats}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

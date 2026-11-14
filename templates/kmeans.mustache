@@ -1,0 +1,150 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/kmeans
+
+    Layout of the K-Means Clustering simulation (K, iteration state and elbow chart).
+    It is rendered from JavaScript by the filter_aisim/sims/kmeans module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "K-Means Clustering Lab",
+            "badge": "Chapter 4.5",
+            "kLabel": "Clusters (K):",
+            "stepBtn": "⏭ Next Step",
+            "runBtn": "▶ Run",
+            "reseedBtn": "🎲 Random Centroids",
+            "resetBtn": "↺ Reset",
+            "iteration": "Iteration / Phase:",
+            "phaseAssign": "1. Assign points to centroids",
+            "inertiaLabel": "Inertia (WCSS):",
+            "elbowTitle": "Elbow Plot (WCSS vs K)",
+            "addPointNotice": "Unsupervised: points have no labels. Click canvas to add custom points.",
+            "state": "Algorithm state",
+            "phase": "Phase:",
+            "inertiaAxis": "Inertia (WCSS)"
+        },
+        "datasets": [
+            {
+                "value": "blobs3",
+                "label": "🫧 3 Natural Clusters",
+                "selected": false
+            },
+            {
+                "value": "blobs4",
+                "label": "🧭 4 Sensor Regimes",
+                "selected": true
+            },
+            {
+                "value": "uniform",
+                "label": "🎲 Uniform Random Points",
+                "selected": false
+            }
+        ],
+        "k": 4
+    }
+}}
+<div class="aisim-container aisim-kmeans">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <div>
+            <select class="aisim-select" id="aisim-km-dataset">
+                {{#datasets}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/datasets}}
+            </select>
+        </div>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-controls">
+            <button class="aisim-btn aisim-btn-primary" id="aisim-km-btn-run">{{t.runBtn}}</button>
+            <button class="aisim-btn aisim-btn-secondary" id="aisim-km-btn-step">{{t.stepBtn}}</button>
+            <button class="aisim-btn aisim-btn-secondary" id="aisim-km-btn-reseed">{{t.reseedBtn}}</button>
+            <button class="aisim-btn aisim-btn-danger" id="aisim-km-btn-reset">{{t.resetBtn}}</button>
+        </div>
+
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box" style="padding:0; overflow:hidden;">
+                    <canvas class="aisim-canvas" id="aisim-km-canvas"
+                            style="height:320px; cursor:crosshair;"></canvas>
+                </div>
+
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-km-advice">
+                        {{t.addPointNotice}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.kLabel}}</div>
+                    <div class="aisim-slider-group">
+                        <label>K = <span id="val-km-k">{{k}}</span></label>
+                        <input type="range" class="aisim-slider" id="slider-km-k"
+                               min="2" max="6" step="1" value="{{k}}">
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.state}}</div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.iteration}}</span>
+                        <span class="aisim-stat-val" id="val-km-iter">0</span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.phase}}</span>
+                        <span class="aisim-stat-val" id="val-km-phase" style="font-size:0.8rem;">
+                            {{t.phaseAssign}}
+                        </span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.inertiaLabel}}</span>
+                        <span class="aisim-stat-val" id="val-km-inertia">0.00</span>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.elbowTitle}}</div>
+                    <canvas class="aisim-mini-chart" id="aisim-km-elbow-canvas"></canvas>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem;
+                                color:#64748b; margin-top:4px;">
+                        <span>K = 1</span>
+                        <span>{{t.inertiaAxis}}</span>
+                        <span>K = 6</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aisim-status-bar" id="aisim-km-status">
+            {{t.addPointNotice}}
+        </div>
+    </div>
+</div>

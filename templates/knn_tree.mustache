@@ -1,0 +1,175 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/knn_tree
+
+    Layout of the k-NN / Decision Tree simulation (model tabs, class buttons, k and tree depth).
+    It is rendered from JavaScript by the filter_aisim/sims/knn_tree module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Decision Boundaries (k-NN & Decision Tree)",
+            "badge": "Chapters 3.7 & 3.8",
+            "knnModel": "k-Nearest Neighbors (k-NN)",
+            "treeModel": "Decision Tree",
+            "kParam": "Number of Neighbors (k):",
+            "depthParam": "Max Tree Depth:",
+            "classAPts": "Class A (Blue)",
+            "classBPts": "Class B (Red)",
+            "activeClassLabel": "Add point as:",
+            "accuracy": "Training Accuracy:",
+            "boundaryNotice": "Boundary Type:",
+            "kHint": "k=1 creates jagged Voronoi cells (noisy). Larger k smooths boundary.",
+            "depth": "Depth",
+            "depthHint": "Depth 1 = single cut. Depth 4-5 creates fine rectangular boxes (overfitting).",
+            "metrics": "Metrics",
+            "resetLabel": "Reset to default template"
+        },
+        "datasets": [
+            {
+                "value": "moons",
+                "label": "🌙 Two Moons",
+                "selected": true
+            },
+            {
+                "value": "circles",
+                "label": "⭕ Concentric Circles",
+                "selected": false
+            },
+            {
+                "value": "blobs",
+                "label": "🫧 Two Blobs",
+                "selected": false
+            }
+        ],
+        "isknn": true,
+        "classabtn": "aisim-btn-primary",
+        "classbbtn": "aisim-btn-secondary",
+        "notice": "k-NN creates smooth or jagged boundaries based on Euclidean distance.",
+        "knndisplay": "block",
+        "treedisplay": "none",
+        "boundary": "Smooth (Voronoi/k-NN)",
+        "k": 5,
+        "maxdepth": 3
+    }
+}}
+<div class="aisim-container aisim-knntree">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <select class="aisim-select" id="aisim-kt-dataset">
+                {{#datasets}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/datasets}}
+            </select>
+        </div>
+    </div>
+
+    <div class="aisim-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div class="sim-tabs">
+                <button class="tab-btn{{#isknn}} active{{/isknn}}" id="btn-tab-knn">
+                    🔵 {{t.knnModel}}
+                </button>
+                <button class="tab-btn{{^isknn}} active{{/isknn}}" id="btn-tab-tree">
+                    🌲 {{t.treeModel}}
+                </button>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
+                <span style="font-weight:600;">{{t.activeClassLabel}}</span>
+                <button class="aisim-btn {{classabtn}}" id="btn-cls-a" style="padding:3px 10px;">
+                    ● {{t.classAPts}}
+                </button>
+                <button class="aisim-btn {{classbbtn}}" id="btn-cls-b" style="padding:3px 10px;">
+                    ● {{t.classBPts}}
+                </button>
+            </div>
+        </div>
+
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box" style="padding:0; overflow:hidden;">
+                    <canvas class="aisim-canvas" id="aisim-kt-canvas"
+                            style="height:320px; cursor:crosshair;"></canvas>
+                </div>
+
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-kt-advice">
+                        {{notice}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card" id="card-param-knn" style="display:{{knndisplay}};">
+                    <div class="aisim-card-title">{{t.kParam}}</div>
+                    <div class="aisim-slider-group">
+                        <label>k = <span id="val-k">{{k}}</span></label>
+                        <input type="range" class="aisim-slider" id="slider-k"
+                               min="1" max="15" step="2" value="{{k}}">
+                    </div>
+                    <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
+                        {{t.kHint}}
+                    </div>
+                </div>
+
+                <div class="aisim-card" id="card-param-tree" style="display:{{treedisplay}};">
+                    <div class="aisim-card-title">{{t.depthParam}}</div>
+                    <div class="aisim-slider-group">
+                        <label>{{t.depth}} = <span id="val-depth">{{maxdepth}}</span></label>
+                        <input type="range" class="aisim-slider" id="slider-depth"
+                               min="1" max="5" step="1" value="{{maxdepth}}">
+                    </div>
+                    <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
+                        {{t.depthHint}}
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.accuracy}}</span>
+                        <span class="aisim-stat-val" id="val-kt-acc">100%</span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span>{{t.boundaryNotice}}</span>
+                        <span class="aisim-stat-val" id="val-kt-btype">
+                            {{boundary}}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="aisim-controls" style="margin-top:0.5rem;">
+                    <button class="aisim-btn aisim-btn-secondary" id="btn-kt-clear"
+                            style="width:100%; justify-content:center;">
+                        ↺ {{t.resetLabel}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

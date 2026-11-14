@@ -1,0 +1,303 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/convolution
+
+    Layout of the Convolution (image filters) simulation (images, 3x3 kernel, target filter).
+    It is rendered from JavaScript by the filter_aisim/sims/convolution module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Convolution & Image Filters",
+            "badge": "Computer Vision",
+            "kernel": "3×3 kernel (weights)",
+            "preset": "Ready-made filter:",
+            "divisor": "Divisor",
+            "abs": "Absolute value |x| (edges in both directions)",
+            "targetSelect": "Target:",
+            "metrics": "Metrics",
+            "sum": "Sum of weights / divisor:",
+            "match": "Match with target (R²):",
+            "calc": "Calculation for the selected pixel",
+            "calcHint": "Tap a pixel on the input image or the output.",
+            "adviceFree": "Pick a ready-made filter or type your own weights. Every output pixel is the sum of the 9 surrounding pixels multiplied by the kernel weights."
+        },
+        "images": [
+            {
+                "value": "shapes",
+                "label": "🔷 Shapes",
+                "selected": true
+            },
+            {
+                "value": "stripes",
+                "label": "🦓 Stripes",
+                "selected": false
+            },
+            {
+                "value": "face",
+                "label": "🙂 Smiley",
+                "selected": false
+            },
+            {
+                "value": "noisy",
+                "label": "📺 Shapes with noise",
+                "selected": false
+            }
+        ],
+        "imageboxes": [
+            {
+                "id": "aisim-conv-in",
+                "label": "Input image"
+            },
+            {
+                "id": "aisim-conv-out",
+                "label": "Filter output"
+            }
+        ],
+        "showpresets": true,
+        "presets": [
+            {
+                "value": "",
+                "label": "— custom kernel —",
+                "selected": false
+            },
+            {
+                "value": "identity",
+                "label": "Identity (no change)",
+                "selected": true
+            },
+            {
+                "value": "box",
+                "label": "Blur (average)",
+                "selected": false
+            },
+            {
+                "value": "gaussian",
+                "label": "Gaussian blur",
+                "selected": false
+            },
+            {
+                "value": "sharpen",
+                "label": "Sharpen",
+                "selected": false
+            },
+            {
+                "value": "sobelx",
+                "label": "Sobel – vertical edges",
+                "selected": false
+            },
+            {
+                "value": "sobely",
+                "label": "Sobel – horizontal edges",
+                "selected": false
+            },
+            {
+                "value": "laplacian",
+                "label": "Laplacian – all edges",
+                "selected": false
+            },
+            {
+                "value": "emboss",
+                "label": "Emboss",
+                "selected": false
+            }
+        ],
+        "cells": [
+            {
+                "i": 0,
+                "value": 0,
+                "name": "w11"
+            },
+            {
+                "i": 1,
+                "value": 0,
+                "name": "w12"
+            },
+            {
+                "i": 2,
+                "value": 0,
+                "name": "w13"
+            },
+            {
+                "i": 3,
+                "value": 0,
+                "name": "w21"
+            },
+            {
+                "i": 4,
+                "value": 1,
+                "name": "w22"
+            },
+            {
+                "i": 5,
+                "value": 0,
+                "name": "w23"
+            },
+            {
+                "i": 6,
+                "value": 0,
+                "name": "w31"
+            },
+            {
+                "i": 7,
+                "value": 0,
+                "name": "w32"
+            },
+            {
+                "i": 8,
+                "value": 0,
+                "name": "w33"
+            }
+        ],
+        "divisor": 1,
+        "abs": false,
+        "targetfixed": false,
+        "targets": [
+            {
+                "value": "",
+                "label": "— no target (free play) —",
+                "selected": true
+            },
+            {
+                "value": "box",
+                "label": "Blur (average)",
+                "selected": false
+            },
+            {
+                "value": "gaussian",
+                "label": "Gaussian blur",
+                "selected": false
+            },
+            {
+                "value": "sharpen",
+                "label": "Sharpen",
+                "selected": false
+            },
+            {
+                "value": "sobelx",
+                "label": "Sobel – vertical edges",
+                "selected": false
+            },
+            {
+                "value": "sobely",
+                "label": "Sobel – horizontal edges",
+                "selected": false
+            },
+            {
+                "value": "laplacian",
+                "label": "Laplacian – all edges",
+                "selected": false
+            },
+            {
+                "value": "emboss",
+                "label": "Emboss",
+                "selected": false
+            }
+        ],
+        "matchdisplay": "none"
+    }
+}}
+<div class="aisim-container aisim-conv">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-conv-image">
+            {{#images}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/images}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-conv-images">
+                    {{#imageboxes}}
+                    <div class="aisim-conv-imgbox">
+                        <div class="aisim-card-title">{{label}}</div>
+                        <canvas class="aisim-canvas aisim-conv-canvas" id="{{id}}"></canvas>
+                    </div>
+                    {{/imageboxes}}
+                </div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-conv-advice">{{t.adviceFree}}</div>
+                </div>
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.calc}}</div>
+                    <div class="aisim-conv-calc" id="aisim-conv-calc">{{t.calcHint}}</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.kernel}}</div>
+                    <div class="aisim-slider-group" {{^showpresets}}style="display:none;"{{/showpresets}}>
+                        <label for="aisim-conv-preset">{{t.preset}}</label>
+                        <select class="aisim-select" id="aisim-conv-preset" style="width:100%;">
+                            {{#presets}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/presets}}
+                        </select>
+                    </div>
+                    <div class="aisim-conv-kernel">
+                        {{#cells}}
+                        <input type="number" class="aisim-conv-cell" data-i="{{i}}" min="-9" max="9" step="1"
+                               value="{{value}}" inputmode="numeric" aria-label="{{name}}">
+                        {{/cells}}
+                    </div>
+                    <div class="aisim-conv-row">
+                        <label for="aisim-conv-divisor">{{t.divisor}} ÷</label>
+                        <input type="number" class="aisim-conv-cell" id="aisim-conv-divisor"
+                               min="1" max="32" step="1" value="{{divisor}}" inputmode="numeric">
+                    </div>
+                    <label class="aisim-conv-row aisim-conv-check">
+                        <input type="checkbox" id="aisim-conv-abs" {{#abs}}checked{{/abs}}>
+                        <span>{{t.abs}}</span>
+                    </label>
+                </div>
+
+                <div class="aisim-card" {{#targetfixed}}style="display:none;"{{/targetfixed}}>
+                    <div class="aisim-slider-group">
+                        <label for="aisim-conv-targetsel">{{t.targetSelect}}</label>
+                        <select class="aisim-select" id="aisim-conv-targetsel" style="width:100%;">
+                            {{#targets}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/targets}}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span>{{t.sum}}</span>
+                        <span class="aisim-stat-val" id="aisim-conv-sum">1</span></div>
+                    <div class="aisim-stat-row" id="aisim-conv-match-row" style="display:{{matchdisplay}};"><span>{{t.match}}</span>
+                        <span class="aisim-stat-val" id="aisim-conv-match">–</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

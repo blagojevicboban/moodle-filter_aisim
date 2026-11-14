@@ -1,10 +1,27 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * K-Means Clustering interactive simulation engine.
  *
  * @module filter_aisim/sims/kmeans
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 /**
  * Find the center closest to a point (squared Euclidean distance).
@@ -75,9 +92,10 @@ export class KMeansSim {
         this.colors = ['#2563eb', '#dc2626', '#16a34a', '#d97706', '#7c3aed', '#0891b2'];
 
         this.initData();
-        this.renderLayout();
-        this.bindEvents();
-        this.update();
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            this.update();
+        });
     }
 
     /**
@@ -166,98 +184,18 @@ export class KMeansSim {
         this.phase = 'assign';
     }
 
-    renderLayout() {
-        const isB3 = this.datasetKey === 'blobs3' ? 'selected' : '';
-        const isB4 = this.datasetKey === 'blobs4' ? 'selected' : '';
-        const isUn = this.datasetKey === 'uniform' ? 'selected' : '';
-
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-kmeans">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <div>
-                        <select class="aisim-select" id="aisim-km-dataset">
-                            <option value="blobs3" ${isB3}>${this.t.datasets.blobs3}</option>
-                            <option value="blobs4" ${isB4}>${this.t.datasets.blobs4}</option>
-                            <option value="uniform" ${isUn}>${this.t.datasets.uniform}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-controls">
-                        <button class="aisim-btn aisim-btn-primary" id="aisim-km-btn-run">${this.t.runBtn}</button>
-                        <button class="aisim-btn aisim-btn-secondary" id="aisim-km-btn-step">${this.t.stepBtn}</button>
-                        <button class="aisim-btn aisim-btn-secondary" id="aisim-km-btn-reseed">${this.t.reseedBtn}</button>
-                        <button class="aisim-btn aisim-btn-danger" id="aisim-km-btn-reset">${this.t.resetBtn}</button>
-                    </div>
-
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-canvas-box" style="padding:0; overflow:hidden;">
-                                <canvas class="aisim-canvas" id="aisim-km-canvas"
-                                        style="height:320px; cursor:crosshair;"></canvas>
-                            </div>
-
-                            <div class="aisim-card aisim-advice-card">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-km-advice">
-                                    ${this.t.addPointNotice}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.kLabel}</div>
-                                <div class="aisim-slider-group">
-                                    <label>K = <span id="val-km-k">${this.k}</span></label>
-                                    <input type="range" class="aisim-slider" id="slider-km-k"
-                                           min="2" max="6" step="1" value="${this.k}">
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.str('km_state')}</div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.iteration}</span>
-                                    <span class="aisim-stat-val" id="val-km-iter">0</span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.str('km_phase')}</span>
-                                    <span class="aisim-stat-val" id="val-km-phase" style="font-size:0.8rem;">
-                                        ${this.t.phaseAssign}
-                                    </span>
-                                </div>
-                                <div class="aisim-stat-row">
-                                    <span>${this.t.inertiaLabel}</span>
-                                    <span class="aisim-stat-val" id="val-km-inertia">0.00</span>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.elbowTitle}</div>
-                                <canvas class="aisim-mini-chart" id="aisim-km-elbow-canvas"></canvas>
-                                <div style="display:flex; justify-content:space-between; font-size:0.75rem;
-                                            color:#64748b; margin-top:4px;">
-                                    <span>K = 1</span>
-                                    <span>${this.str('km_inertia_axis')}</span>
-                                    <span>K = 6</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="aisim-status-bar" id="aisim-km-status">
-                        ${this.t.addPointNotice}
-                    </div>
-                </div>
-            </div>
-        `;
-
+    async renderLayout() {
+        const context = {
+            t: {
+                ...this.t,
+                state: this.str('km_state'),
+                phase: this.str('km_phase'),
+                inertiaAxis: this.str('km_inertia_axis'),
+            },
+            datasets: selectOptions(['blobs3', 'blobs4', 'uniform'].map((k) => [k, this.t.datasets[k]]), this.datasetKey),
+            k: this.k,
+        };
+        await renderTemplate(this.container, 'kmeans', context);
         this.canvas = this.container.querySelector('#aisim-km-canvas');
         this.elbowCanvas = this.container.querySelector('#aisim-km-elbow-canvas');
         this.ctx = this.canvas.getContext('2d');

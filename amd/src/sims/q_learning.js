@@ -1,3 +1,18 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Reinforcement learning (Q-learning): an agent learns to reach the goal in a small grid world.
  *
@@ -5,9 +20,11 @@
  * (a quiz review re-trains to the saved number of episodes and shows the student's own policy).
  *
  * @module filter_aisim/sims/q_learning
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions, showSteps} from 'filter_aisim/sims/layout';
 
 /** Maps: S start, G goal, T small treasure, # wall, C cliff. */
 const MAPS = {
@@ -117,11 +134,12 @@ export class QLearningSim {
 
         this.initWorld();
         this.reset();
-        this.renderLayout();
-        this.bindEvents();
-        // Re-train to a saved state (quiz review, shared links): same seed and settings give the same Q-table.
-        this.trainEpisodes(Math.min(MAX_EPISODES, Math.max(0, parseInt(options.episodes, 10) || 0)));
-        this.update(true);
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            // Re-train to a saved state (quiz review, shared links): same seed and settings give the same Q-table.
+            this.trainEpisodes(Math.min(MAX_EPISODES, Math.max(0, parseInt(options.episodes, 10) || 0)));
+            this.update(true);
+        });
     }
 
     /**
@@ -287,78 +305,19 @@ export class QLearningSim {
         return 0;
     }
 
-    renderLayout() {
-        const opt = (value, label, current) => `<option value="${value}" ${value === current ? 'selected' : ''}>${label}</option>`;
-        const slider = (id, label, value, min, max, step) => `
-            <div class="aisim-slider-group">
-                <label for="aisim-ql-${id}">${label} = <span id="aisim-ql-${id}-val">${value.toFixed(2)}</span></label>
-                <input type="range" class="aisim-slider" id="aisim-ql-${id}"
-                       min="${min}" max="${max}" step="${step}" value="${value}">
-            </div>`;
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-ql">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <select class="aisim-select" id="aisim-ql-map">
-                        ${Object.keys(MAPS).map((k) => opt(k, this.t.maps[k], this.mapKey)).join('')}
-                    </select>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-canvas-box" style="padding:0; overflow:hidden; min-height:0;">
-                                <canvas class="aisim-canvas" id="aisim-ql-canvas" style="cursor:pointer;"></canvas>
-                            </div>
-                            <div class="aisim-ql-legend">${this.t.legend}</div>
-                            <div class="aisim-card aisim-advice-card">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-ql-advice">${this.t.adviceStart}</div>
-                            </div>
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.cell}</div>
-                                <div class="aisim-conv-calc" id="aisim-ql-cell">${this.t.cellHint}</div>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.params}</div>
-                                ${slider('alpha', this.t.alpha, this.alpha, 0.05, 1, 0.05)}
-                                ${slider('gamma', this.t.gamma, this.gamma, 0, 1, 0.05)}
-                                ${slider('epsilon', this.t.epsilon, this.epsilon, 0, 1, 0.05)}
-                                <div class="aisim-controls">
-                                    <button class="aisim-btn aisim-btn-primary" id="aisim-ql-run">${this.t.train}</button>
-                                    <button class="aisim-btn aisim-btn-secondary" id="aisim-ql-one">${this.t.one}</button>
-                                    <button class="aisim-btn aisim-btn-secondary" id="aisim-ql-fifty">${this.t.fifty}</button>
-                                    <button class="aisim-btn aisim-btn-danger" id="aisim-ql-reset">${this.t.reset}</button>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.metrics}</div>
-                                <div class="aisim-stat-row"><span>${this.t.episode}</span>
-                                    <span class="aisim-stat-val" id="aisim-ql-episode">0</span></div>
-                                <div class="aisim-stat-row"><span>${this.t.avgReward}</span>
-                                    <span class="aisim-stat-val" id="aisim-ql-avg">–</span></div>
-                                <div class="aisim-stat-row"><span>${this.t.path}</span>
-                                    <span class="aisim-stat-val" id="aisim-ql-path">–</span></div>
-                                <div class="aisim-stat-row"><span>${this.t.optimal}</span>
-                                    <span class="aisim-stat-val" id="aisim-ql-optimal">–</span></div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.rewardCurve}</div>
-                                <canvas class="aisim-canvas" id="aisim-ql-curve" style="height:110px;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+    async renderLayout() {
+        const slider = (id, label, value, min, max, step) =>
+            ({id: 'aisim-ql-' + id, label, value, text: value.toFixed(2), min, max, step});
+        const context = {
+            t: this.t,
+            maps: selectOptions(Object.keys(MAPS).map((k) => [k, this.t.maps[k]]), this.mapKey),
+            sliders: [
+                slider('alpha', this.t.alpha, this.alpha, 0.05, 1, 0.05),
+                slider('gamma', this.t.gamma, this.gamma, 0, 1, 0.05),
+                slider('epsilon', this.t.epsilon, this.epsilon, 0, 1, 0.05),
+            ],
+        };
+        await renderTemplate(this.container, 'q_learning', context);
         this.canvas = this.container.querySelector('#aisim-ql-canvas');
         this.curve = this.container.querySelector('#aisim-ql-curve');
         this.setupDPI();
@@ -537,11 +496,8 @@ export class QLearningSim {
         const {r, c} = this.selected;
         const qv = this.Q[r * this.cols + c];
         const best = this.greedy(this.selected);
-        box.innerHTML = `<div><strong>${this.str('ql_cell_name')} (${r + 1}, ${c + 1})</strong></div>` +
-            qv.map((v, a) => {
-                const star = a === best && v !== 0 ? ' ★' : '';
-                return `<div class="aisim-conv-step">${ARROWS[a]} Q = ${v.toFixed(3)}${star}</div>`;
-            }).join('');
+        showSteps(box, `${this.str('ql_cell_name')} (${r + 1}, ${c + 1})`,
+            qv.map((v, a) => `${ARROWS[a]} Q = ${v.toFixed(3)}${a === best && v !== 0 ? ' ★' : ''}`));
     }
 
     /**

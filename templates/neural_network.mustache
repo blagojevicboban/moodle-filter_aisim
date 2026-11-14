@@ -1,0 +1,196 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/neural_network
+
+    Layout of the Neural Network simulation (architecture, training controls, loss curve).
+    It is rendered from JavaScript by the filter_aisim/sims/neural_network module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Perceptron & Neural Network",
+            "badge": "Neural Networks",
+            "architecture": "Network Architecture",
+            "layers": "Hidden layers:",
+            "neurons": "Neurons per layer",
+            "activation": "Activation:",
+            "training": "Training",
+            "lr": "Learning rate",
+            "train": "▶ Train",
+            "step": "+10 epochs",
+            "reset": "↺ New weights",
+            "metrics": "Metrics",
+            "epoch": "Epoch:",
+            "loss": "Loss (log-loss):",
+            "accuracy": "Accuracy:",
+            "neuronsTotal": "Hidden neurons:",
+            "network": "Network (line width = weight strength)",
+            "lossCurve": "Loss curve",
+            "adviceStart": "Press “Train” and watch the network move its decision boundary."
+        },
+        "datasets": [
+            {
+                "value": "linear",
+                "label": "📏 Linearly separable",
+                "selected": false
+            },
+            {
+                "value": "xor",
+                "label": "✖️ XOR (crossed)",
+                "selected": true
+            },
+            {
+                "value": "circles",
+                "label": "⭕ Circle in a circle",
+                "selected": false
+            }
+        ],
+        "layers": [
+            {
+                "value": "0",
+                "label": "0 – perceptron",
+                "selected": true
+            },
+            {
+                "value": "1",
+                "label": "1",
+                "selected": false
+            },
+            {
+                "value": "2",
+                "label": "2",
+                "selected": false
+            }
+        ],
+        "activations": [
+            {
+                "value": "sigmoid",
+                "label": "sigmoid",
+                "selected": false
+            },
+            {
+                "value": "tanh",
+                "label": "tanh",
+                "selected": true
+            },
+            {
+                "value": "relu",
+                "label": "ReLU",
+                "selected": false
+            }
+        ],
+        "neurons": 4,
+        "neuronsdisplay": "none",
+        "lr": 0.3,
+        "lrtext": "0.30"
+    }
+}}
+<div class="aisim-container aisim-nn">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-nn-dataset">
+            {{#datasets}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/datasets}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box" style="padding:0; overflow:hidden;">
+                    <canvas class="aisim-canvas" id="aisim-nn-canvas" style="height:320px;"></canvas>
+                </div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-nn-advice">{{t.adviceStart}}</div>
+                </div>
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.network}}</div>
+                    <canvas class="aisim-canvas" id="aisim-nn-graph" style="height:170px;"></canvas>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.architecture}}</div>
+                    <div class="aisim-slider-group">
+                        <label>{{t.layers}}</label>
+                        <select class="aisim-select" id="aisim-nn-layers" style="width:100%;">
+                            {{#layers}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/layers}}
+                        </select>
+                    </div>
+                    <div class="aisim-slider-group" id="aisim-nn-neurons-group" style="display:{{neuronsdisplay}};">
+                        <label>{{t.neurons}} = <span id="aisim-nn-neurons-val">{{neurons}}</span></label>
+                        <input type="range" class="aisim-slider" id="aisim-nn-neurons"
+                               min="1" max="8" step="1" value="{{neurons}}">
+                    </div>
+                    <div class="aisim-slider-group">
+                        <label>{{t.activation}}</label>
+                        <select class="aisim-select" id="aisim-nn-activation" style="width:100%;">
+                            {{#activations}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/activations}}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.training}}</div>
+                    <div class="aisim-slider-group">
+                        <label>{{t.lr}} α = <span id="aisim-nn-lr-val">{{lrtext}}</span></label>
+                        <input type="range" class="aisim-slider" id="aisim-nn-lr"
+                               min="0.01" max="3" step="0.01" value="{{lr}}">
+                    </div>
+                    <div class="aisim-controls">
+                        <button class="aisim-btn aisim-btn-primary" id="aisim-nn-run">{{t.train}}</button>
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-nn-step">{{t.step}}</button>
+                        <button class="aisim-btn aisim-btn-danger" id="aisim-nn-reset">{{t.reset}}</button>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span>{{t.epoch}}</span>
+                        <span class="aisim-stat-val" id="aisim-nn-epoch">0</span></div>
+                    <div class="aisim-stat-row"><span>{{t.loss}}</span>
+                        <span class="aisim-stat-val" id="aisim-nn-loss">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.accuracy}}</span>
+                        <span class="aisim-stat-val" id="aisim-nn-acc">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.neuronsTotal}}</span>
+                        <span class="aisim-stat-val" id="aisim-nn-hidden">0</span></div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.lossCurve}}</div>
+                    <canvas class="aisim-canvas" id="aisim-nn-curve" style="height:110px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,211 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/confusion_matrix
+
+    Layout of the Confusion Matrix simulation (threshold, matrix, metrics and ROC curve).
+    It is rendered from JavaScript by the filter_aisim/sims/confusion_matrix module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Confusion Matrix & Classification Threshold",
+            "badge": "Chapter 3.5",
+            "thresholdLabel": "Decision Threshold (θ):",
+            "probDistTitle": "Model Probability Distribution P(y=1|x)",
+            "matrixTitle": "Confusion Matrix (2 × 2)",
+            "metricsTitle": "Performance Metrics",
+            "rocTitle": "ROC Curve (AUC)",
+            "actualPos": "Actual POSITIVE (1)",
+            "actualNeg": "Actual NEGATIVE (0)",
+            "predPos": "Predicted (1)",
+            "predNeg": "Predicted (0)",
+            "tp": "TP (True Pos.)",
+            "fn": "FN (False Neg.)",
+            "fp": "FP (False Pos.)",
+            "tn": "TN (True Neg.)",
+            "accuracy": "Accuracy:",
+            "precision": "Precision:",
+            "recall": "Recall (Sensitivity):",
+            "f1": "F1-Score:",
+            "dragHint": "Drag slider or click curve:",
+            "thresholdShort": "Threshold θ"
+        },
+        "scenarios": [
+            {
+                "value": "quality",
+                "label": "🏭 Industrial Quality Control",
+                "selected": true
+            },
+            {
+                "value": "medical",
+                "label": "🏥 Medical Diagnostics (Screening)",
+                "selected": false
+            },
+            {
+                "value": "spam",
+                "label": "✉️ Spam / Security Filter",
+                "selected": false
+            }
+        ],
+        "threshold": 0.5,
+        "thresholdtext": "0.50",
+        "neglabel": "Good Part",
+        "poslabel": "Defective Part",
+        "auctext": "0.986"
+    }
+}}
+<div class="aisim-container aisim-confmat">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <div class="aisim-scenario-select">
+            <select class="aisim-select" id="aisim-cm-scenario">
+                {{#scenarios}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/scenarios}}
+            </select>
+        </div>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-slider-card">
+            <div class="aisim-th-header">
+                <label for="aisim-cm-th">
+                    <strong>{{t.thresholdLabel}}</strong>
+                    <span class="aisim-th-pill" id="aisim-cm-th-val">{{thresholdtext}}</span>
+                </label>
+                <span class="aisim-th-sub">
+                    {{t.dragHint}}
+                </span>
+            </div>
+            <input type="range" class="aisim-slider aisim-slider-large" id="aisim-cm-th"
+                   min="0.05" max="0.95" step="0.01" value="{{threshold}}">
+        </div>
+
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.probDistTitle}}</span>
+                        <div class="aisim-legend">
+                            <span class="aisim-legend-item">
+                                <span class="aisim-dot aisim-dot-neg"></span> {{neglabel}} (0)
+                            </span>
+                            <span class="aisim-legend-item">
+                                <span class="aisim-dot aisim-dot-pos"></span> {{poslabel}} (1)
+                            </span>
+                            <span class="aisim-legend-item">
+                                <span class="aisim-line-th"></span> {{t.thresholdShort}}
+                            </span>
+                        </div>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-cm-dist-canvas"></canvas>
+                </div>
+
+                <div class="aisim-card aisim-advice-card" id="aisim-cm-advice">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-cm-advice-text">...</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.matrixTitle}}</div>
+                    <div class="aisim-matrix-grid">
+                        <div class="aisim-matrix-corner"></div>
+                        <div class="aisim-matrix-head">{{t.predPos}}</div>
+                        <div class="aisim-matrix-head">{{t.predNeg}}</div>
+
+                        <div class="aisim-matrix-rowhead">{{t.actualPos}}</div>
+                        <div class="aisim-cell aisim-cell-tp" id="aisim-cell-tp">
+                            <div class="aisim-cell-lbl">{{t.tp}}</div>
+                            <div class="aisim-cell-val" id="val-tp">0</div>
+                        </div>
+                        <div class="aisim-cell aisim-cell-fn" id="aisim-cell-fn">
+                            <div class="aisim-cell-lbl">{{t.fn}}</div>
+                            <div class="aisim-cell-val" id="val-fn">0</div>
+                        </div>
+
+                        <div class="aisim-matrix-rowhead">{{t.actualNeg}}</div>
+                        <div class="aisim-cell aisim-cell-fp" id="aisim-cell-fp">
+                            <div class="aisim-cell-lbl">{{t.fp}}</div>
+                            <div class="aisim-cell-val" id="val-fp">0</div>
+                        </div>
+                        <div class="aisim-cell aisim-cell-tn" id="aisim-cell-tn">
+                            <div class="aisim-cell-lbl">{{t.tn}}</div>
+                            <div class="aisim-cell-val" id="val-tn">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metricsTitle}}</div>
+                    <div class="aisim-metric-row">
+                        <div class="aisim-metric-header">
+                            <span>{{t.accuracy}}</span>
+                            <strong id="val-acc">0%</strong>
+                        </div>
+                        <div class="aisim-prog-bar"><div class="aisim-prog-fill" id="bar-acc"></div></div>
+                    </div>
+                    <div class="aisim-metric-row">
+                        <div class="aisim-metric-header">
+                            <span>{{t.precision}}</span>
+                            <strong id="val-prec">0%</strong>
+                        </div>
+                        <div class="aisim-prog-bar">
+                            <div class="aisim-prog-fill aisim-fill-prec" id="bar-prec"></div>
+                        </div>
+                    </div>
+                    <div class="aisim-metric-row">
+                        <div class="aisim-metric-header">
+                            <span>{{t.recall}}</span>
+                            <strong id="val-rec">0%</strong>
+                        </div>
+                        <div class="aisim-prog-bar">
+                            <div class="aisim-prog-fill aisim-fill-rec" id="bar-rec"></div>
+                        </div>
+                    </div>
+                    <div class="aisim-metric-row">
+                        <div class="aisim-metric-header">
+                            <span>{{t.f1}}</span>
+                            <strong id="val-f1">0%</strong>
+                        </div>
+                        <div class="aisim-prog-bar">
+                            <div class="aisim-prog-fill aisim-fill-f1" id="bar-f1"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">
+                        <span>{{t.rocTitle}}</span>
+                        <span class="aisim-auc-badge">AUC = {{auctext}}</span>
+                    </div>
+                    <canvas class="aisim-mini-chart" id="aisim-cm-roc-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

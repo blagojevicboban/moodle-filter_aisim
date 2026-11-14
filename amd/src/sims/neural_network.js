@@ -1,3 +1,18 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Perceptron & Neural Network: interactive training of a small multilayer network on 2D data.
  *
@@ -5,9 +20,11 @@
  * (a quiz review re-trains to the saved number of epochs and shows the student's own boundary).
  *
  * @module filter_aisim/sims/neural_network
- * @copyright 2026 Boban Blagojevic
+ * @copyright 2026 Boban Blagojević
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+import {renderTemplate, whenRendered, selectOptions} from 'filter_aisim/sims/layout';
 
 const ACTIVATIONS = {
     sigmoid: {
@@ -95,12 +112,13 @@ export class NeuralNetworkSim {
 
         this.initData();
         this.initNetwork();
-        this.renderLayout();
-        this.bindEvents();
-        // Re-train to a saved state (quiz review, shared links): same seed and settings give the same network.
-        const epochs = Math.min(MAX_EPOCHS, Math.max(0, parseInt(options.epochs, 10) || 0));
-        this.trainEpochs(epochs);
-        this.update(true);
+        whenRendered(this.renderLayout(), () => {
+            this.bindEvents();
+            // Re-train to a saved state (quiz review, shared links): same seed and settings give the same network.
+            const epochs = Math.min(MAX_EPOCHS, Math.max(0, parseInt(options.epochs, 10) || 0));
+            this.trainEpochs(epochs);
+            this.update(true);
+        });
     }
 
     /**
@@ -278,104 +296,22 @@ export class NeuralNetworkSim {
         return {loss: loss / n, accuracy: correct / n};
     }
 
-    renderLayout() {
-        const opt = (value, label, current) => `<option value="${value}" ${value === current ? 'selected' : ''}>${label}</option>`;
-        this.container.innerHTML = `
-            <div class="aisim-container aisim-nn">
-                <div class="aisim-header">
-                    <div class="aisim-title">
-                        <span>${this.t.title}</span>
-                        <span class="aisim-badge">${this.t.badge}</span>
-                    </div>
-                    <select class="aisim-select" id="aisim-nn-dataset">
-                        ${opt('linear', this.t.datasets.linear, this.datasetKey)}
-                        ${opt('xor', this.t.datasets.xor, this.datasetKey)}
-                        ${opt('circles', this.t.datasets.circles, this.datasetKey)}
-                    </select>
-                </div>
-
-                <div class="aisim-body">
-                    <div class="aisim-grid">
-                        <div class="aisim-col-left">
-                            <div class="aisim-canvas-box" style="padding:0; overflow:hidden;">
-                                <canvas class="aisim-canvas" id="aisim-nn-canvas" style="height:320px;"></canvas>
-                            </div>
-                            <div class="aisim-card aisim-advice-card">
-                                <div class="aisim-advice-icon">💡</div>
-                                <div class="aisim-advice-text" id="aisim-nn-advice">${this.t.adviceStart}</div>
-                            </div>
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.network}</div>
-                                <canvas class="aisim-canvas" id="aisim-nn-graph" style="height:170px;"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="aisim-col-right">
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.architecture}</div>
-                                <div class="aisim-slider-group">
-                                    <label>${this.t.layers}</label>
-                                    <select class="aisim-select" id="aisim-nn-layers" style="width:100%;">
-                                        ${opt('0', this.t.layers0, String(this.layers))}
-                                        ${opt('1', '1', String(this.layers))}
-                                        ${opt('2', '2', String(this.layers))}
-                                    </select>
-                                </div>
-                                <div class="aisim-slider-group" id="aisim-nn-neurons-group">
-                                    <label>${this.t.neurons} = <span id="aisim-nn-neurons-val">${this.neurons}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-nn-neurons"
-                                           min="1" max="8" step="1" value="${this.neurons}">
-                                </div>
-                                <div class="aisim-slider-group">
-                                    <label>${this.t.activation}</label>
-                                    <select class="aisim-select" id="aisim-nn-activation" style="width:100%;">
-                                        ${opt('sigmoid', 'sigmoid', this.activation)}
-                                        ${opt('tanh', 'tanh', this.activation)}
-                                        ${opt('relu', 'ReLU', this.activation)}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.training}</div>
-                                <div class="aisim-slider-group">
-                                    <label>${this.t.lr} α = <span id="aisim-nn-lr-val">${this.lr.toFixed(2)}</span></label>
-                                    <input type="range" class="aisim-slider" id="aisim-nn-lr"
-                                           min="0.01" max="3" step="0.01" value="${this.lr}">
-                                </div>
-                                <div class="aisim-controls">
-                                    <button class="aisim-btn aisim-btn-primary" id="aisim-nn-run">${this.t.train}</button>
-                                    <button class="aisim-btn aisim-btn-secondary" id="aisim-nn-step">${this.t.step}</button>
-                                    <button class="aisim-btn aisim-btn-danger" id="aisim-nn-reset">${this.t.reset}</button>
-                                </div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.metrics}</div>
-                                <div class="aisim-stat-row"><span>${this.t.epoch}</span>
-                                    <span class="aisim-stat-val" id="aisim-nn-epoch">0</span></div>
-                                <div class="aisim-stat-row"><span>${this.t.loss}</span>
-                                    <span class="aisim-stat-val" id="aisim-nn-loss">–</span></div>
-                                <div class="aisim-stat-row"><span>${this.t.accuracy}</span>
-                                    <span class="aisim-stat-val" id="aisim-nn-acc">–</span></div>
-                                <div class="aisim-stat-row"><span>${this.t.neuronsTotal}</span>
-                                    <span class="aisim-stat-val" id="aisim-nn-hidden">0</span></div>
-                            </div>
-
-                            <div class="aisim-card">
-                                <div class="aisim-card-title">${this.t.lossCurve}</div>
-                                <canvas class="aisim-canvas" id="aisim-nn-curve" style="height:110px;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+    async renderLayout() {
+        const context = {
+            t: this.t,
+            datasets: selectOptions(['linear', 'xor', 'circles'].map((k) => [k, this.t.datasets[k]]), this.datasetKey),
+            layers: selectOptions([['0', this.t.layers0], ['1', '1'], ['2', '2']], this.layers),
+            activations: selectOptions([['sigmoid', 'sigmoid'], ['tanh', 'tanh'], ['relu', 'ReLU']], this.activation),
+            neurons: this.neurons,
+            neuronsdisplay: this.layers ? 'block' : 'none',
+            lr: this.lr,
+            lrtext: this.lr.toFixed(2),
+        };
+        await renderTemplate(this.container, 'neural_network', context);
         this.canvas = this.container.querySelector('#aisim-nn-canvas');
         this.graph = this.container.querySelector('#aisim-nn-graph');
         this.curve = this.container.querySelector('#aisim-nn-curve');
         this.setupDPI();
-        this.container.querySelector('#aisim-nn-neurons-group').style.display = this.layers ? 'block' : 'none';
     }
 
     setupDPI() {

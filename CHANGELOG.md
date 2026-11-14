@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.1] - 2026-11-14
+
+### Changed
+- The layouts of the nine simulations are Mustache templates (`templates/`) rendered with `core/templates`
+  instead of HTML strings in JavaScript; the shared slider is a partial. The rendered markup is unchanged
+  (reviewer issue #3).
+- The pixel and cell calculation boxes of Convolution and Q-Learning are built as DOM nodes, without `innerHTML`.
+- CI also runs the Mustache linter.
+
+### Fixed
+- Full Moodle GPL boilerplate header in all AMD source files (reviewer issue #2).
+
 ## [0.10.0] - 2026-10-31
 
 ### Changed

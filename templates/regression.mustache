@@ -1,0 +1,167 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/regression
+
+    Layout of the Polynomial Regression simulation (degree, regularisation, train and test error).
+    It is rendered from JavaScript by the filter_aisim/sims/regression module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * other values - current settings of the simulation (select options as {value, label, selected})
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Polynomial Regression & Overfitting",
+            "badge": "Chapters 3.3 & 3.10",
+            "degreeLabel": "Polynomial Degree (d):",
+            "regLabel": "Regularization (λ):",
+            "trainPts": "Training Points",
+            "testPts": "Validation Points",
+            "polyCurve": "Polynomial ŷ(x)",
+            "trainError": "Training MSE:",
+            "testError": "Validation MSE:",
+            "complexityPlotTitle": "Model Complexity vs Error (U-Curve)",
+            "degreeHint": "1 = Linear ... 9 = Overfitting",
+            "fitTitle": "Model fit ŷ(x)",
+            "regHint": "L2 (Ridge) penalizes large weights, smoothing out overfitting.",
+            "errorTitle": "Error (MSE)",
+            "degreeAxis": "Degree: 1",
+            "trainShort": "Train",
+            "testShort": "Validation"
+        },
+        "datasets": [
+            {
+                "value": "sine",
+                "label": "🌊 Sine Wave with Noise",
+                "selected": false
+            },
+            {
+                "value": "quadratic",
+                "label": "📈 Quadratic Trend",
+                "selected": false
+            },
+            {
+                "value": "engine",
+                "label": "⚙️ Engine RPM vs Fuel Consumption",
+                "selected": true
+            }
+        ],
+        "degree": 5,
+        "lambda": 0.1,
+        "lambdatext": "0.100"
+    }
+}}
+<div class="aisim-container aisim-regression">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <div class="aisim-dataset-select">
+            <select class="aisim-select" id="aisim-reg-dataset">
+                {{#datasets}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/datasets}}
+            </select>
+        </div>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-slider-card">
+            <div class="aisim-th-header">
+                <label for="aisim-reg-degree">
+                    <strong>{{t.degreeLabel}}</strong>
+                    <span class="aisim-th-pill" id="aisim-reg-degree-val">d = {{degree}}</span>
+                </label>
+                <span class="aisim-th-sub">
+                    {{t.degreeHint}}
+                </span>
+            </div>
+            <input type="range" class="aisim-slider aisim-slider-large" id="aisim-reg-degree"
+                   min="1" max="9" step="1" value="{{degree}}">
+        </div>
+
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.fitTitle}}</span>
+                        <div class="aisim-legend">
+                            <span class="aisim-legend-item">
+                                <span class="aisim-dot aisim-dot-neg"></span> {{t.trainPts}}
+                            </span>
+                            <span class="aisim-legend-item">
+                                <span class="aisim-dot aisim-dot-pos"></span> {{t.testPts}}
+                            </span>
+                            <span class="aisim-legend-item">
+                                <span class="aisim-line-th" style="background:#2563eb; height:3px;"></span>
+                                {{t.polyCurve}}
+                            </span>
+                        </div>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-reg-canvas"></canvas>
+                </div>
+
+                <div class="aisim-card aisim-advice-card" id="aisim-reg-advice">
+                    <div class="aisim-advice-icon" id="aisim-reg-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-reg-advice-text">...</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.regLabel}}</div>
+                    <div class="aisim-slider-group">
+                        <label>λ = <span id="aisim-reg-lambda-val">{{lambdatext}}</span></label>
+                        <input type="range" class="aisim-slider" id="aisim-reg-lambda"
+                               min="0.0" max="0.5" step="0.01" value="{{lambda}}">
+                    </div>
+                    <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">
+                        {{t.regHint}}
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.errorTitle}}</div>
+                    <div class="aisim-stat-row">
+                        <span style="color:#2563eb; font-weight:600;">{{t.trainError}}</span>
+                        <span class="aisim-stat-val" id="val-train-mse">0.000</span>
+                    </div>
+                    <div class="aisim-stat-row">
+                        <span style="color:#ef4444; font-weight:600;">{{t.testError}}</span>
+                        <span class="aisim-stat-val" id="val-test-mse">0.000</span>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.complexityPlotTitle}}</div>
+                    <canvas class="aisim-mini-chart" id="aisim-reg-u-canvas"></canvas>
+                    <div class="aisim-u-legend"
+                         style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b;">
+                        <span>{{t.degreeAxis}}</span>
+                        <span style="color:#2563eb;">■ {{t.trainShort}}</span>
+                        <span style="color:#ef4444;">■ {{t.testShort}}</span>
+                        <span>9</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

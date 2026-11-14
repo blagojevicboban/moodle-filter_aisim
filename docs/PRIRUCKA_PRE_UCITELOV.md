@@ -6,7 +6,7 @@
 *Oficiálny portál:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulácie bez Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autori a technický tím projektu AI for VET*  
-*Verzia príručky: 1.1 (október 2026)*  
+*Verzia príručky: 1.2 (november 2026)*  
 *Kompatibilita: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. Výzva: Prečo AI v odbornom vzdelávaní?
    - 1.2. Pedagogický prístup: Od vizuálnej intuície k inžinierskemu porozumeniu
    - 1.3. Architektúra balíka pre Moodle (filter, typ otázky, editor TinyMCE)
-2. [Pedagogický sprievodca 9 simuláciami](#2-pedagogický-sprievodca-9-simuláciami)
+2. [Pedagogický sprievodca 10 simuláciami](#2-pedagogický-sprievodca-10-simuláciami)
    - 2.1. Modul 1: Gradientný zostup a optimalizácia modelu (`gradient_descent`)
    - 2.2. Modul 2: Matica zámen a rozhodovací prah (`confusion_matrix`)
    - 2.3. Modul 3: Polynomiálna regresia a regularizácia (`regression`)
@@ -26,6 +26,7 @@
    - 2.7. Modul 7: Konvolúcia a obrazové filtre (`convolution`)
    - 2.8. Modul 8: Posilňované učenie – Q-learning (`q_learning`)
    - 2.9. Modul 9: Rozdelenie dát a skreslenie (`data_bias`)
+   - 2.10. Modul 10: Logistická regresia (`logistic`)
 3. [Technický návod pre učiteľov](#3-technický-návod-pre-učiteľov)
    - 3.1. Vkladanie simulácií vizuálnym editorom TinyMCE (`tiny_aisim`)
    - 3.2. Tvorba automaticky hodnotených úloh (`qtype_aisim`)
@@ -63,7 +64,7 @@ Balík **AI for VET** prináša **interaktívne bádateľské učenie (Active In
 
 ### 1.3. Architektúra balíka pre Moodle
 Balík tvoria tri spolupracujúce pluginy:
-- **`moodle-filter_aisim`** (textový filter a simulácie): zobrazí 9 interaktívnych simulácií všade, kde sa v obsahu objaví značka `data-aisim`.
+- **`moodle-filter_aisim`** (textový filter a simulácie): zobrazí 10 interaktívnych simulácií všade, kde sa v obsahu objaví značka `data-aisim`.
 - **`moodle-qtype_aisim`** (typ otázky a automatické hodnotenie): vkladá interaktívne úlohy do testov Moodle a po odovzdaní vyhodnotí dosiahnuté hodnoty.
 - **`moodle-tiny_aisim`** (plugin editora TinyMCE): dialóg, v ktorom učiteľ vloží, nastaví a dvojklikom upraví simuláciu bez písania HTML.
 
@@ -71,9 +72,9 @@ Simulácie sa zobrazujú v jazyku používateľa v Moodle: obsahujú angličtinu
 
 ---
 
-## 2. Pedagogický sprievodca 9 simuláciami
+## 2. Pedagogický sprievodca 10 simuláciami
 
-Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva základy (optimalizácia, hodnotenie modelu, preučenie, klasifikácia, zhlukovanie), moduly 6–9 na ne nadväzujú neurónovými sieťami, spracovaním obrazu, učením z odmien a zodpovednou prácou s dátami.
+Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva základy (optimalizácia, hodnotenie modelu, preučenie, klasifikácia, zhlukovanie), moduly 6–9 na ne nadväzujú neurónovými sieťami, spracovaním obrazu, učením z odmien a zodpovednou prácou s dátami. Modul 10, logistická regresia, je mostom medzi regresiou a neurónovými sieťami: dá sa zaradiť hneď po matici zámen alebo pred perceptrón.
 
 ### 2.1. Modul 1: Gradientný zostup a optimalizácia modelu (`gradient_descent`)
 - **Kľúčové pojmy:** nákladová funkcia J(w), rýchlosť učenia α, konvexné a nekonvexné funkcie, lokálne minimá.
@@ -195,12 +196,28 @@ Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva zá
 
 ---
 
+### 2.10. Modul 10: Logistická regresia (`logistic`)
+- **Kľúčové pojmy:** Binárna klasifikácia, vážený súčet z = w₁·x₁ + w₂·x₂ + b, sigmoida σ(z), pravdepodobnosť, rozhodovacia hranica, rozhodovací prah θ, log-strata, gradientný zostup, presnosť a záchyt, hranice lineárneho modelu.
+- **Pedagogická metafora:** Majster rozhoduje, či sa stroj pokazí, podľa dvoch ukazovateľov: vibrácií a teploty. Každý ukazovateľ má svoju dôležitosť (váhy) a majster má aj vlastnú mieru opatrnosti (posun, *bias*). Sigmoida premení „súčet obáv“ na pravdepodobnosť medzi 0 a 1 a prah θ je chvíľa, keď majster zastaví linku.
+- **Praktické využitie:** Prediktívna údržba (porucha podľa hodnôt senzorov), predpoveď výsledku skúšky, hodnotenie úverov, medicínsky skríning. Logistická regresia je v priemysle často prvým modelom, lebo každú váhu možno prečítať a vysvetliť.
+- **Čo žiaci v simulácii pozorujú:**
+  1. *Ručné posúvanie w₁, w₂ a b:* Váhy otáčajú hranicu, posun ju posúva. Všetky body, kde σ(z) = θ, ležia na jednej priamke.
+  2. *Trénovať:* Gradientný zostup sám otočí priamku k dátam; krivka straty rýchlo klesne a potom sa vyrovná.
+  3. *Ťuknutie na bod:* Výpočet ukáže z, σ(z), porovnanie s θ a predpoveď – model je len vzorec.
+  4. *Posúvanie θ:* Nízky prah zachytí každú poruchu (záchyt 100 %), ale spôsobí falošné poplachy; vysoký prah dá istejšie, ale zriedkavejšie poplachy. Váhy sa nemenia – mení sa len rozhodnutie.
+  5. *Dáta o skúške:* Triedy sa prekrývajú, takže žiadna priamka nie je dokonalá (asi 80–82 %); lepší model potrebuje lepšie dáta, nie dlhší tréning.
+  6. *Prstenec:* Priamka nedokáže oddeliť prstenec (najviac asi 68 %). To je motivácia pre nové príznaky (x₁² + x₂²) a pre skrytú vrstvu neurónovej siete (Modul 6).
+- **Typická úloha v teste:**
+  > *„Prehliadnutá porucha zastaví celú výrobnú linku. Model je už natrénovaný: posúvajte len prah θ tak, aby zachytil každú poruchu (záchyt 100 %) s presnosťou aspoň 85 %.“*
+
+---
+
 ## 3. Technický návod pre učiteľov
 
 ### 3.1. Vkladanie simulácií vizuálnym editorom TinyMCE (`tiny_aisim`)
 1. V paneli nástrojov editora TinyMCE kliknite na **ikonu AI simulácie** (alebo v ponuke zvoľte *Vložiť > AI Simulation...*).
 2. Nastavte parametre:
-   - Zvoľte jednu z 9 simulácií.
+   - Zvoľte jednu z 10 simulácií.
    - Nastavte scenár, prah, rýchlosť učenia, stupeň, počet zhlukov, architektúru siete, obrázok a filter, mapu agenta alebo podiel skupiny v dátach.
    - Zaškrtnite **Len na čítanie**, ak chcete, aby žiaci simuláciu len pozorovali.
    - V spodnej časti dialógu vidíte živý náhľad.
@@ -223,17 +240,17 @@ Simulácie idú od jednoduchších k náročnejším. Prvých päť pokrýva zá
 ---
 
 ### 3.3. Import hotovej banky otázok (Moodle XML)
-Repozitár `moodle-qtype_aisim` obsahuje 27 hotových úloh – po tri pre každú z 9 simulácií (základná, stredná a pokročilá úroveň):
+Repozitár `moodle-qtype_aisim` obsahuje 30 hotových úloh – po tri pre každú z 10 simulácií (základná, stredná a pokročilá úroveň):
 1. Stiahnite [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. V kurze otvorte **Banka otázok > Import**.
 3. Zvoľte **formát Moodle XML**.
 4. Nahrajte `questions_aiforvet.xml` a kliknite na **Importovať**.
-5. Vytvorí sa kategória *„AI za VET - Baza simulacionih zadataka (27 pitanja)“* so všetkými otázkami pripravenými do testu. (Texty otázok sú v srbčine; upravte ich podľa potreby.)
+5. Vytvorí sa kategória *„AI za VET - Baza simulacionih zadataka (30 pitanja)“* so všetkými otázkami pripravenými do testu. (Texty otázok sú v srbčine; upravte ich podľa potreby.)
 
 ---
 
 ### 3.4. AISim Lab: simulácie bez Moodle
-Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) bežia všetkých 9 simulácií samostatne – bez účtu a bez zberu údajov – po slovensky, anglicky, srbsky a portugalsky. Každá simulácia má krátke vysvetlenie a tri výzvy.
+Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) beží všetkých 10 simulácií samostatne – bez účtu a bez zberu údajov – po slovensky, anglicky, srbsky a portugalsky. Každá simulácia má krátke vysvetlenie a tri výzvy.
 - **Domáca úloha a mobily:** žiaci môžu cvičiť mimo Moodle; postup vo výzvach sa ukladá len v ich prehliadači.
 - **„Kopírovať odkaz na toto nastavenie“:** vytvorí odkaz presne na tento stav simulácie – vhodné pre projektor alebo správu žiakom.
 - **„Vložiť do Moodle“:** dá hotový HTML kód tohto nastavenia na vloženie do ľubovoľného textu v Moodle (potrebný je `filter_aisim`).
@@ -272,6 +289,7 @@ Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) bežia všetkých 9 simulácií s
 | Hodina / téma | Simulácie | Kľúčová myšlienka |
 | :--- | :--- | :--- |
 | 1. Ako sa model učí | Gradientný zostup | Učenie = zmenšovanie chyby po malých krokoch |
+| 1b. Od skóre k rozhodnutiu | Logistická regresia | Pravdepodobnosť, priama hranica a prah zvolený podľa ceny každej chyby |
 | 2. Ako model meriame | Matica zámen, Rozdelenie dát a skreslenie | Správnosť nestačí; test musí byť férový a reprezentatívny |
 | 3. Zložitosť modelu | Polynomiálna regresia, k-NN a rozhodovací strom | Príliš jednoduchý verzus preučený model |
 | 4. Učenie bez odpovedí | K-Means | Zoskupovanie bez označení |
@@ -293,6 +311,7 @@ Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) bežia všetkých 9 simulácií s
 | **Konvolúcia** | jadro 3×3, deliteľ, \|x\| | y = Σ (váha · pixel) / deliteľ | Zhoda s cieľom (R²) ≥ 95 % |
 | **Q-learning** | α, γ, ε, počet epizód | Q(s,a) ← Q(s,a) + α · (r + γ · max Q(s′,·) − Q(s,a)) | Najkratšia cesta (napr. 10 krokov) za ≤ 200 epizód |
 | **Rozdelenie dát a skreslenie** | veľkosť vzorky, podiel skupiny B, test %, k | správnosť najslabšej skupiny = min(správnosť A, správnosť B) | Obe továrne ≥ 88 % s ≤ 120 vzorkami |
+| **Logistická regresia** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; trieda 1, ak σ(z) ≥ θ | Správnosť ≥ 95 % (machine); záchyt 100 % pri presnosti ≥ 85 % |
 
 #### Význam polí „Cieľová metrika“ v otázkach (`qtype_aisim`)
 | Simulácia | Cieľová metrika 1 | Cieľová metrika 2 | Polovica bodov |
@@ -306,6 +325,7 @@ Na [sim.aiforvet.eu](https://sim.aiforvet.eu/) bežia všetkých 9 simulácií s
 | Konvolúcia | minimálna zhoda (R²) | – | zhoda do cieľa − tolerancie |
 | Q-learning | najviac krokov do cieľa | najviac epizód tréningu (0 = bez obmedzenia) | agent dôjde do cieľa, ale dlhšou cestou alebo po viacerých epizódach |
 | Rozdelenie dát a skreslenie | minimálna správnosť najslabšej továrne | najväčší počet vzoriek (0 = bez obmedzenia) | správnosť splnená, ale s priveľa vzorkami |
+| Logistická regresia | minimálna správnosť | minimálny záchyt (0 = bez obmedzenia); pole Tolerancia určuje minimálnu presnosť | správnosť splnená, ale záchyt alebo presnosť nie |
 
 ---
 

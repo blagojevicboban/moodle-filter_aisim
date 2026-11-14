@@ -6,7 +6,7 @@
 *Official Portal:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulations without Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Authors and Technical Development Team of AI for VET*  
-*Guide Version: 1.1 (October 2026)*  
+*Guide Version: 1.2 (November 2026)*  
 *Compatibility: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. The Challenge: Why AI in Vocational Education and Training (VET)?
    - 1.2. Pedagogical Methodology: From Visual Intuition to Engineering Proficiency
    - 1.3. Architecture of the Moodle AI Suite (Filter, Quiz Question Type, TinyMCE Editor)
-2. [Pedagogical Guide across the 9 Simulations](#2-pedagogical-guide-across-the-9-simulations)
+2. [Pedagogical Guide across the 10 Simulations](#2-pedagogical-guide-across-the-10-simulations)
    - 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
    - 2.2. Module 2: Confusion Matrix & Decision Threshold (`confusion_matrix`)
    - 2.3. Module 3: Polynomial Regression & Regularization (`regression`)
@@ -26,6 +26,7 @@
    - 2.7. Module 7: Convolution & Image Filters (`convolution`)
    - 2.8. Module 8: Reinforcement Learning – Q-learning (`q_learning`)
    - 2.9. Module 9: Data Split & Bias (`data_bias`)
+   - 2.10. Module 10: Logistic Regression (`logistic`)
 3. [Technical Instructions for Educators](#3-technical-instructions-for-educators)
    - 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
    - 3.2. Authoring Auto-Graded Interactive Assessment Tasks (`qtype_aisim`)
@@ -63,7 +64,7 @@ The **AI for VET** plugin suite provides an **Interactive Inquiry-Based Learning
 
 ### 1.3. Architecture of the Moodle AI Suite
 The suite consists of three specialized plugins designed to operate seamlessly together:
-- **`moodle-filter_aisim`** (Text Filter & Simulation Engines): Renders the 9 interactive simulations whenever `data-aisim` tags appear in content.
+- **`moodle-filter_aisim`** (Text Filter & Simulation Engines): Renders the 10 interactive simulations whenever `data-aisim` tags appear in content.
 - **`moodle-qtype_aisim`** (Question Type & Auto-Grading): Embeds interactive tasks into Moodle Quizzes, evaluating student convergence criteria upon submission.
 - **`moodle-tiny_aisim`** (TinyMCE Visual Editor Plugin): Provides a native modal dialog for teachers to insert, configure, and double-click edit simulation cards without writing HTML.
 
@@ -71,9 +72,9 @@ The simulations follow the user's Moodle language: English, Serbian (Latin and C
 
 ---
 
-## 2. Pedagogical Guide across the 9 Simulations
+## 2. Pedagogical Guide across the 10 Simulations
 
-The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data.
+The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron.
 
 ### 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
 - **Key Concepts:** Cost function J(w), learning rate α, convex vs. non-convex landscapes, global vs. local minima.
@@ -193,12 +194,28 @@ The simulations go from simpler to more demanding. The first five cover the foun
 
 ---
 
+### 2.10. Module 10: Logistic Regression (`logistic`)
+- **Key Concepts:** Binary classification, weighted sum z = w₁·x₁ + w₂·x₂ + b, sigmoid σ(z), probability, decision boundary, decision threshold θ, log-loss, gradient descent, precision and recall, the limit of a linear model.
+- **Pedagogical Metaphor:** A foreman decides whether a machine will fail by looking at two gauges, vibration and temperature. Each gauge has its own importance (the weights), and the foreman has a personal level of caution (the bias). The sigmoid turns the "sum of worries" into a probability between 0 and 1, and the threshold θ is the moment the foreman stops the line.
+- **Practical Application:** Predictive maintenance (failure from sensor values), pass/fail prediction, credit scoring, medical screening. Logistic regression is often the first model tried in industry because each weight can be read and explained.
+- **Key Learning Observations:**
+  1. *Moving w₁, w₂ and b by hand:* The weights turn the boundary line, the bias shifts it. All points where σ(z) = θ lie on one straight line.
+  2. *Train:* Gradient descent turns the line toward the data on its own; the loss curve falls quickly and then flattens.
+  3. *Tapping a point:* The calculation box shows z, σ(z), the comparison with θ and the prediction – the model is just a formula.
+  4. *Moving θ:* A low threshold catches every failure (recall 100%) but raises false alarms; a high threshold gives surer but rarer alarms. The weights stay the same – only the decision changes.
+  5. *Exam data:* The classes overlap, so no line is perfect (about 80–82%); a better model needs better data, not more training.
+  6. *Ring data:* A straight line cannot separate a ring (at best about 68%). This is the motivation for new features (x₁² + x₂²) and for the hidden layer of a neural network (Module 6).
+- **Typical Quiz Task:**
+  > *"A missed failure stops the whole production line. The model is already trained: move only the threshold θ so that it catches every failure (recall 100%) with a precision of at least 85%."*
+
+---
+
 ## 3. Technical Instructions for Educators
 
 ### 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
 1. In the TinyMCE editor toolbar, click the **AI Simulation icon** (or choose *Insert > AI Simulation...*).
 2. Configure parameters:
-   - Select one of the 9 simulations.
+   - Select one of the 10 simulations.
    - Adjust the scenario, threshold, learning rate, degree, cluster count, network architecture, image and filter, agent map or the group share in the data.
    - Check **Read-only mode** if you wish to lock controls for guided observation.
    - Inspect the live simulation card preview at the bottom of the modal.
@@ -221,17 +238,17 @@ The simulations go from simpler to more demanding. The first five cover the foun
 ---
 
 ### 3.3. Importing the Ready-to-Use Question Bank (Moodle XML)
-The `moodle-qtype_aisim` repository contains 27 ready-made tasks – three for each of the 9 simulations (basic, intermediate and advanced level):
+The `moodle-qtype_aisim` repository contains 30 ready-made tasks – three for each of the 10 simulations (basic, intermediate and advanced level):
 1. Download [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. In your course, navigate to **Question bank > Import**.
 3. Select **Moodle XML format**.
 4. Upload `questions_aiforvet.xml` and click **Import**.
-5. The category *"AI za VET - Baza simulacionih zadataka (27 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
+5. The category *"AI za VET - Baza simulacionih zadataka (30 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
 
 ---
 
 ### 3.4. AISim Lab: the Simulations without Moodle
-At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 9 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
+At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 10 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
 - **Homework and phones:** Students can practise outside Moodle; challenge progress is kept only in their own browser.
 - **"Copy link to this setup":** Creates a link to exactly this state of the simulation – handy for the projector or for a message to students.
 - **"Embed in Moodle":** Gives ready-made HTML for that setup to paste into any Moodle text (needs `filter_aisim`).
@@ -270,6 +287,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 9 simulations run on their ow
 | Lesson / topic | Simulations | Key idea |
 | :--- | :--- | :--- |
 | 1. How a model learns | Gradient Descent | Learning = reducing the error in small steps |
+| 1b. From a score to a decision | Logistic Regression | A probability, a straight boundary and a threshold chosen by the cost of each error |
 | 2. How we measure a model | Confusion Matrix, Data Split & Bias | Accuracy is not enough; the test must be fair and representative |
 | 3. Model complexity | Polynomial Regression, k-NN & Decision Tree | Too simple vs. overfitted |
 | 4. Learning without answers | K-Means | Grouping without labels |
@@ -291,6 +309,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 9 simulations run on their ow
 | **Convolution** | 3×3 kernel, divisor, \|x\| | y = Σ (weight · pixel) / divisor | Match with the target (R²) ≥ 95% |
 | **Q-learning** | α, γ, ε, episodes | Q(s,a) ← Q(s,a) + α · (r + γ · max Q(s′,·) − Q(s,a)) | Shortest path (e.g. 10 steps) within ≤ 200 episodes |
 | **Data Split & Bias** | sample size, share of group B, test %, k | worst-group accuracy = min(accuracy A, accuracy B) | Both factories ≥ 88% with ≤ 120 samples |
+| **Logistic Regression** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; class 1 if σ(z) ≥ θ | Accuracy ≥ 95% (machine); recall 100% with precision ≥ 85% |
 
 #### Meaning of the "Target Metric" fields in questions (`qtype_aisim`)
 | Simulation | Target Metric 1 | Target Metric 2 | Half marks |
@@ -304,6 +323,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 9 simulations run on their ow
 | Convolution | minimum match (R²) | – | match down to target − tolerance |
 | Q-learning | maximum steps to the goal | maximum training episodes (0 = no limit) | the agent reaches the goal, but by a longer path or after more episodes |
 | Data Split & Bias | minimum accuracy of the weakest factory | maximum sample size (0 = no limit) | accuracy met, but with too many samples |
+| Logistic Regression | minimum accuracy | minimum recall (0 = no limit); the Tolerance field sets the minimum precision | accuracy met, but recall or precision missed |
 
 ---
 

@@ -83,6 +83,13 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 - Accuracy on training, on the test set and on a representative "real world" set per factory: a sample with almost
   no factory B looks excellent on its own test set and still fails for factory B.
 
+### 10. Logistic Regression (`data-aisim="logistic"`)
+- Two input variables, z = w1·x1 + w2·x2 + b, the sigmoid σ(z) and a decision threshold θ.
+- Weights and bias by hand or learned with gradient descent on the log-loss; the probability map shows the straight
+  decision boundary, the sigmoid chart places every point on the curve, a tap on a point shows its calculation.
+- Accuracy, precision, recall and the loss curve; datasets machine failure, exam result and a ring that no straight
+  line can separate.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -115,6 +122,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Data Split & Bias -->
 <div data-aisim="data-bias" data-population="shifted" data-n="200" data-share="5" data-test="25" data-k="5"></div>
+
+<!-- Logistic Regression (add data-readonly="1" to any simulation to lock its controls) -->
+<div data-aisim="logistic" data-dataset="machine" data-w1="0" data-w2="0" data-b="0" data-threshold="0.5" data-lr="0.5"></div>
 ```
 
 ---

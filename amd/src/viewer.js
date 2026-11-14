@@ -32,6 +32,7 @@ import {NeuralNetworkSim} from 'filter_aisim/sims/neural_network';
 import {ConvolutionSim} from 'filter_aisim/sims/convolution';
 import {QLearningSim} from 'filter_aisim/sims/q_learning';
 import {DataBiasSim} from 'filter_aisim/sims/data_bias';
+import {LogisticSim} from 'filter_aisim/sims/logistic';
 import {eventTypes} from 'core_filters/events';
 import Notification from 'core/notification';
 import {load as loadStrings} from 'filter_aisim/strings';
@@ -134,6 +135,15 @@ const dataBias = sim(DataBiasSim, (el) => ({
     seed: attr(el, 'seed', 1)
 }));
 
+const logistic = sim(LogisticSim, (el) => ({
+    dataset: attr(el, 'dataset', 'machine'),
+    w1: attr(el, 'w1', 0),
+    w2: attr(el, 'w2', 0),
+    b: attr(el, 'b', 0),
+    threshold: attr(el, 'threshold', 0.5),
+    lr: attr(el, 'lr', 0.5)
+}));
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -157,7 +167,10 @@ const SIMS = {
     'reinforcement-learning': qLearning,
     'data-bias': dataBias,
     'data_bias': dataBias,
-    'data-split': dataBias
+    'data-split': dataBias,
+    'logistic': logistic,
+    'logistic-regression': logistic,
+    'logistic_regression': logistic
 };
 
 /**
@@ -180,7 +193,8 @@ const mount = (root) => {
         if (Object.prototype.hasOwnProperty.call(SIMS, simType)) {
             const {Engine, options} = SIMS[simType];
             loadStrings(Engine.STRINGS)
-                .then((strings) => new Engine(el, {...options(el), strings}))
+                // The editor button marks a fixed example with data-readonly="1": the controls are locked.
+                .then((strings) => new Engine(el, {...options(el), readonly: attr(el, 'readonly', '0') === '1', strings}))
                 .catch(Notification.exception);
         }
     });

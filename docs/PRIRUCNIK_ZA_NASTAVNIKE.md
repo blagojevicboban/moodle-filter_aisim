@@ -6,7 +6,7 @@
 *Zvanični portal:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulacije bez Moodle-a:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autori i tehnički tim projekta AI for VET*  
-*Verzija priručnika: 1.1 (Oktobar 2026)*  
+*Verzija priručnika: 1.2 (Novembar 2026)*  
 *Kompatibilnost: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. Izazov: Zašto AI u srednjem stručnom obrazovanju?
    - 1.2. Pedagoški pristup: Od vizuelne intuicije do inženjerskog razumevanja
    - 1.3. Arhitektura Moodle AI paketa (Filter, Kviz, TinyMCE editor)
-2. [Pedagoški vodič kroz 9 simulacija](#2-pedagoški-vodič-kroz-9-simulacija)
+2. [Pedagoški vodič kroz 10 simulacija](#2-pedagoški-vodič-kroz-10-simulacija)
    - 2.1. Modul 1: Gradijentni spust i optimizacija modela (`gradient_descent`)
    - 2.2. Modul 2: Matrica konfuzije i prag odlučivanja (`confusion_matrix`)
    - 2.3. Modul 3: Polinomska regresija i regularizacija (`regression`)
@@ -26,6 +26,7 @@
    - 2.7. Modul 7: Konvolucija i filteri slike (`convolution`)
    - 2.8. Modul 8: Učenje potkrepljivanjem – Q-learning (`q_learning`)
    - 2.9. Modul 9: Podela podataka i pristrasnost (`data_bias`)
+   - 2.10. Modul 10: Logistička regresija (`logistic`)
 3. [Tehničko uputstvo za nastavnike](#3-tehničko-uputstvo-za-nastavnike)
    - 3.1. Korišćenje vizuelnog TinyMCE editora (`tiny_aisim`)
    - 3.2. Kreiranje zadataka sa automatskim ocenjivanjem (`qtype_aisim`)
@@ -71,7 +72,7 @@ Komplet se sastoji od tri međusobno povezane komponente:
 |  |     moodle-tiny_aisim    |  |  moodle-filter_aisim |  | moodle-qtype_aisim|  |
 |  |   (TinyMCE 6/7 Editor)   |  | (Rendering & Engine) |  |  (Kviz zadaci &   |  |
 |  |                          |  |                      |  | Auto-ocenjivanje) |  |
-|  | - Dugme u traci editora  |  | - 9 simulacija u     |  | - Ciljne metrike  |  |
+|  | - Dugme u traci editora  |  | - 10 simulacija u    |  | - Ciljne metrike  |  |
 |  | - Modalni dijalog        |  |   browseru           |  | - Tolerancije     |  |
 |  | - Odabir scenarija       |  | - 5 jezika           |  | - Automatski      |  |
 |  | - Dvoklik za izmenu      |  | - Režim samo-čitanje |  |   bodovi i saveti |  |
@@ -83,9 +84,9 @@ Simulacije prate jezik korisnika u Moodle-u: uključeni su engleski, srpski (lat
 
 ---
 
-## 2. Pedagoški vodič kroz 9 simulacija
+## 2. Pedagoški vodič kroz 10 simulacija
 
-Simulacije su poređane od jednostavnijih ka složenijim. Prvih pet pokriva osnove (optimizacija, ocenjivanje modela, prepodešavanje, klasifikacija, klasterovanje), a moduli 6–9 nadograđuju ih neuronskim mrežama, obradom slike, učenjem iz nagrada i pitanjem odgovornog rada sa podacima.
+Simulacije su poređane od jednostavnijih ka složenijim. Prvih pet pokriva osnove (optimizacija, ocenjivanje modela, prepodešavanje, klasifikacija, klasterovanje), a moduli 6–9 nadograđuju ih neuronskim mrežama, obradom slike, učenjem iz nagrada i pitanjem odgovornog rada sa podacima. Modul 10, logistička regresija, je most između regresije i neuronskih mreža: može se raditi odmah posle matrice konfuzije ili pre perceptrona.
 
 ### 2.1. Modul 1: Gradijentni spust i optimizacija modela (`gradient_descent`)
 - **Fokus:** Minimizacija funkcije troška J(w), stopa učenja α, konveksne vs. nekonveksne funkcije, lokalni minimumi.
@@ -277,13 +278,37 @@ Ako ispit sastavite samo od zadataka koje je učenik već video, odlična ocena 
 
 ---
 
+### 2.10. Modul 10: Logistička regresija (`logistic`)
+- **Fokus:** Binarna klasifikacija, otežana suma z = w₁·x₁ + w₂·x₂ + b, sigmoid σ(z), verovatnoća, granica odluke, prag odluke θ, log-gubitak, gradijentni spust, preciznost i opoziv, granice linearnog modela.
+
+#### Pedagoška metafora:
+Poslovođa odlučuje da li će mašina otkazati gledajući dva pokazivača: vibracije i temperaturu. Svaki pokazivač ima svoju važnost (težine), a poslovođa ima i svoju meru opreza (pomeraj, *bias*). Sigmoid pretvara "zbir briga" u verovatnoću između 0 i 1, a prag θ je trenutak u kome poslovođa zaustavlja liniju.
+
+#### Inženjerska primena:
+- Prediktivno održavanje (kvar na osnovu vrednosti senzora).
+- Predviđanje položenog ispita, odobravanje kredita, medicinski skrining.
+- Logistička regresija je često prvi model koji se proba u industriji, jer se svaka težina može pročitati i objasniti.
+
+#### Šta učenici uočavaju u simulaciji:
+1. **Ručno pomeranje w₁, w₂ i b:** Težine okreću granicu, pomeraj je pomera. Sve tačke u kojima je σ(z) = θ leže na jednoj pravoj.
+2. **Treniraj:** Gradijentni spust sam okreće liniju prema podacima; kriva gubitka brzo pada, pa se izravnava.
+3. **Dodir na tačku:** Kutija sa računom prikazuje z, σ(z), poređenje sa θ i predviđanje – model je samo formula.
+4. **Pomeranje θ:** Nizak prag hvata svaki kvar (opoziv 100%), ali daje lažne uzbune; visok prag daje sigurnije, ali ređe uzbune. Težine ostaju iste – menja se samo odluka.
+5. **Podaci o ispitu:** Klase se preklapaju, pa nijedna linija nije savršena (oko 80–82%); bolji model traži bolje podatke, a ne duži trening.
+6. **Prsten:** Prava linija ne može da razdvoji prsten (najviše oko 68%). To je motivacija za nove osobine (x₁² + x₂²) i za skriveni sloj neuronske mreže (Modul 6).
+
+#### Tipičan zadatak za kviz:
+> *"Propušten kvar zaustavlja celu proizvodnu liniju. Model je već istreniran: pomerajte samo prag θ tako da uhvati svaki kvar (opoziv 100%) uz preciznost od bar 85%."*
+
+---
+
 ## 3. Tehničko uputstvo za nastavnike
 
 ### 3.1. Korišćenje vizuelnog TinyMCE editora (`tiny_aisim`)
 Prilikom izrade lekcije (Page), knjige (Book), forum poruke ili opisa zadatka u Moodle-u:
 1. U liniji sa alatkama TinyMCE editora kliknite na **ikonu sa simbolom AI simulacije** (ili u meniju izaberite *Insert > AI Simulation...*).
 2. Otvara se modalni prozor sa opcijama:
-   - **Tip simulacije:** Izaberite jednu od 9 simulacija iz padajućeg menija.
+   - **Tip simulacije:** Izaberite jednu od 10 simulacija iz padajućeg menija.
    - **Specifični parametri:** Izaberite početni scenario, prag, stopu učenja, stepen polinoma, broj klastera, arhitekturu mreže, sliku i filter, mapu agenta ili udeo grupe u podacima.
    - **Režim samo za čitanje (Read-only):** Označite ovu opciju ukoliko želite da učenici mogu da posmatraju simulaciju, ali ne i da menjaju njene početne parametre.
    - **Pregled uživo (Preview):** Na dnu dijaloga odmah vidite kako će izgledati kartica simulacije.
@@ -312,17 +337,17 @@ Ako želite da u Moodle kviz ubacite pitanje sa AI simulacijom:
 ---
 
 ### 3.3. Uvoz gotove baze pitanja (Moodle XML)
-U repozitorijumu `moodle-qtype_aisim` nalazi se gotov paket od 27 zadataka – po tri za svaku od 9 simulacija (osnovni, srednji i napredni nivo):
+U repozitorijumu `moodle-qtype_aisim` nalazi se gotov paket od 30 zadataka – po tri za svaku od 10 simulacija (osnovni, srednji i napredni nivo):
 1. Preuzmite fajl [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. U vašem Moodle kursu kliknite na **Banka pitanja (Question bank) > Uvoz (Import)**.
 3. Kao format fajla izaberite **Moodle XML format**.
 4. Prevucite fajl `questions_aiforvet.xml` i kliknite na **Uvezi**.
-5. Moodle će uvesti novu kategoriju *"AI za VET - Baza simulacionih zadataka (27 pitanja)"* sa kompletno konfigurisanim pitanjima koja odmah možete dodati u bilo koji test.
+5. Moodle će uvesti novu kategoriju *"AI za VET - Baza simulacionih zadataka (30 pitanja)"* sa kompletno konfigurisanim pitanjima koja odmah možete dodati u bilo koji test.
 
 ---
 
 ### 3.4. AISim Lab: simulacije bez Moodle-a
-Na adresi [sim.aiforvet.eu](https://sim.aiforvet.eu/) svih 9 simulacija radi samostalno, bez naloga i bez prikupljanja podataka, na srpskom, engleskom, slovačkom i portugalskom. Svaka simulacija ima kratko objašnjenje i tri izazova.
+Na adresi [sim.aiforvet.eu](https://sim.aiforvet.eu/) svih 10 simulacija radi samostalno, bez naloga i bez prikupljanja podataka, na srpskom, engleskom, slovačkom i portugalskom. Svaka simulacija ima kratko objašnjenje i tri izazova.
 - **Domaći zadatak i rad na telefonu:** Učenici mogu da vežbaju van Moodle-a; napredak u izazovima čuva se samo u njihovom browseru.
 - **Dugme "Kopiraj link do ove postavke":** Pravi link do tačno određenog stanja simulacije – zgodno za projektor ili za poruku učenicima.
 - **Dugme "Ugradi u Moodle":** Daje gotov HTML kod za tu postavku koji se lepi u bilo koji Moodle tekst (potreban je `filter_aisim`).
@@ -382,6 +407,7 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 | Čas / tema | Simulacije | Ključna ideja |
 | :--- | :--- | :--- |
 | 1. Kako model uči | Gradijentni spust | Učenje = smanjivanje greške u malim koracima |
+| 1b. Od rezultata do odluke | Logistička regresija | Verovatnoća, prava granica i prag koji se bira prema ceni svake greške |
 | 2. Kako merimo model | Matrica konfuzije, Podela podataka i pristrasnost | Tačnost nije dovoljna; test mora biti pošten i reprezentativan |
 | 3. Složenost modela | Polinomska regresija, k-NN i Stablo | Prejednostavan vs. prepodešen model |
 | 4. Učenje bez odgovora | K-Means | Grupisanje bez labela |
@@ -403,6 +429,7 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 | **Konvolucija** | kernel 3×3, delilac, \|x\| | y = Σ (težina · piksel) / delilac | Podudaranje sa ciljem (R²) ≥ 95% |
 | **Q-learning** | α, γ, ε, broj epizoda | Q(s,a) ← Q(s,a) + α · (r + γ · max Q(s′,·) − Q(s,a)) | Najkraći put (npr. 10 koraka) za ≤ 200 epizoda |
 | **Podela podataka i pristrasnost** | veličina uzorka, udeo grupe B, test %, k | tačnost najslabije grupe = min(tačnost A, tačnost B) | Obe fabrike ≥ 88% uz ≤ 120 uzoraka |
+| **Logistička regresija** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; klasa 1 ako je σ(z) ≥ θ | Tačnost ≥ 95% (machine); opoziv 100% uz preciznost ≥ 85% |
 
 #### Značenje polja "Ciljna metrika" u pitanjima (`qtype_aisim`)
 | Simulacija | Ciljna metrika 1 | Ciljna metrika 2 | Pola poena |
@@ -416,6 +443,7 @@ Za postizanje maksimalnog učinka preporučuje se struktura od pet koraka:
 | Konvolucija | najmanje podudaranje (R²) | – | podudaranje do cilja − tolerancije |
 | Q-learning | najviše koraka do cilja | najviše epizoda treninga (0 = bez ograničenja) | agent stiže do cilja, ali duže ili posle više epizoda |
 | Podela podataka i pristrasnost | najmanja tačnost najslabije fabrike | najveći broj uzoraka (0 = bez ograničenja) | tačnost ispunjena, ali uz previše uzoraka |
+| Logistička regresija | najmanja tačnost | najmanji opoziv (0 = bez ograničenja); polje Tolerancija zadaje najmanju preciznost | tačnost ispunjena, ali opoziv ili preciznost nisu |
 
 ---
 

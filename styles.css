@@ -506,6 +506,14 @@
     font-size: 0.8rem;
 }
 
+/* Logistic regression */
+.aisim-log-formula {
+    margin: -4px 0 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
 /* Q-learning */
 .aisim-ql-legend {
     font-size: 0.8rem;

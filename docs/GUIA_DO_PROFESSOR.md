@@ -6,7 +6,7 @@
 *Portal oficial:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulações sem Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Autores e equipa técnica do projeto AI for VET*  
-*Versão do guia: 1.1 (outubro de 2026)*  
+*Versão do guia: 1.2 (novembro de 2026)*  
 *Compatibilidade: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. O desafio: porquê IA no ensino profissional?
    - 1.2. Abordagem pedagógica: da intuição visual à compreensão técnica
    - 1.3. Arquitetura do pacote para Moodle (filtro, tipo de pergunta, editor TinyMCE)
-2. [Guia pedagógico das 9 simulações](#2-guia-pedagógico-das-9-simulações)
+2. [Guia pedagógico das 10 simulações](#2-guia-pedagógico-das-10-simulações)
    - 2.1. Módulo 1: Descida do gradiente e otimização do modelo (`gradient_descent`)
    - 2.2. Módulo 2: Matriz de confusão e limiar de decisão (`confusion_matrix`)
    - 2.3. Módulo 3: Regressão polinomial e regularização (`regression`)
@@ -26,6 +26,7 @@
    - 2.7. Módulo 7: Convolução e filtros de imagem (`convolution`)
    - 2.8. Módulo 8: Aprendizagem por reforço – Q-learning (`q_learning`)
    - 2.9. Módulo 9: Divisão de dados e enviesamento (`data_bias`)
+   - 2.10. Módulo 10: Regressão logística (`logistic`)
 3. [Instruções técnicas para professores](#3-instruções-técnicas-para-professores)
    - 3.1. Inserir simulações com o editor visual TinyMCE (`tiny_aisim`)
    - 3.2. Criar tarefas com avaliação automática (`qtype_aisim`)
@@ -63,7 +64,7 @@ O pacote **AI for VET** propõe a **aprendizagem ativa por investigação (Activ
 
 ### 1.3. Arquitetura do pacote para Moodle
 O pacote é composto por três plugins que trabalham em conjunto:
-- **`moodle-filter_aisim`** (filtro de texto e simulações): mostra as 9 simulações interativas onde quer que surja a marca `data-aisim` no conteúdo.
+- **`moodle-filter_aisim`** (filtro de texto e simulações): mostra as 10 simulações interativas onde quer que surja a marca `data-aisim` no conteúdo.
 - **`moodle-qtype_aisim`** (tipo de pergunta e avaliação automática): coloca tarefas interativas nos testes do Moodle e avalia os valores alcançados após a submissão.
 - **`moodle-tiny_aisim`** (plugin do editor TinyMCE): uma caixa de diálogo em que o professor insere, configura e edita (com duplo clique) uma simulação sem escrever HTML.
 
@@ -71,9 +72,9 @@ As simulações seguem o idioma do utilizador no Moodle: incluem inglês, sérvi
 
 ---
 
-## 2. Guia pedagógico das 9 simulações
+## 2. Guia pedagógico das 10 simulações
 
-As simulações vão das mais simples às mais exigentes. As cinco primeiras cobrem os fundamentos (otimização, avaliação de modelos, sobreajuste, classificação, agrupamento); os módulos 6–9 acrescentam redes neuronais, processamento de imagem, aprendizagem por recompensas e o uso responsável dos dados.
+As simulações vão das mais simples às mais exigentes. As cinco primeiras cobrem os fundamentos (otimização, avaliação de modelos, sobreajuste, classificação, agrupamento); os módulos 6–9 acrescentam redes neuronais, processamento de imagem, aprendizagem por recompensas e o uso responsável dos dados. O módulo 10, regressão logística, é a ponte entre a regressão e as redes neuronais: pode ser trabalhado logo após a matriz de confusão ou antes do perceptrão.
 
 ### 2.1. Módulo 1: Descida do gradiente e otimização do modelo (`gradient_descent`)
 - **Conceitos-chave:** função de custo J(w), taxa de aprendizagem α, funções convexas e não convexas, mínimos locais.
@@ -195,12 +196,28 @@ As simulações vão das mais simples às mais exigentes. As cinco primeiras cob
 
 ---
 
+### 2.10. Módulo 10: Regressão logística (`logistic`)
+- **Conceitos-chave:** Classificação binária, soma ponderada z = w₁·x₁ + w₂·x₂ + b, sigmoide σ(z), probabilidade, fronteira de decisão, limiar de decisão θ, log-loss, descida do gradiente, precisão e sensibilidade, o limite de um modelo linear.
+- **Metáfora pedagógica:** Um encarregado decide se uma máquina vai avariar olhando para dois indicadores: vibração e temperatura. Cada indicador tem a sua importância (os pesos) e o encarregado tem a sua própria medida de prudência (o viés, *bias*). A sigmoide transforma a "soma das preocupações" numa probabilidade entre 0 e 1, e o limiar θ é o momento em que o encarregado para a linha.
+- **Aplicação prática:** Manutenção preditiva (avaria a partir dos valores dos sensores), previsão de aprovação num exame, avaliação de crédito, rastreio médico. A regressão logística é muitas vezes o primeiro modelo testado na indústria, porque cada peso pode ser lido e explicado.
+- **O que os alunos observam na simulação:**
+  1. *Mover w₁, w₂ e b à mão:* Os pesos rodam a fronteira, o viés desloca-a. Todos os pontos onde σ(z) = θ ficam numa só reta.
+  2. *Treinar:* A descida do gradiente roda sozinha a reta em direção aos dados; a curva de perda desce depressa e depois estabiliza.
+  3. *Tocar num ponto:* O cálculo mostra z, σ(z), a comparação com θ e a previsão – o modelo é apenas uma fórmula.
+  4. *Mover θ:* Um limiar baixo apanha todas as avarias (sensibilidade 100%), mas dá falsos alarmes; um limiar alto dá alarmes mais seguros, mas mais raros. Os pesos não mudam – só muda a decisão.
+  5. *Dados do exame:* As classes sobrepõem-se, por isso nenhuma reta é perfeita (cerca de 80–82%); um modelo melhor precisa de dados melhores, não de mais treino.
+  6. *Anel:* Uma reta não consegue separar um anel (no máximo cerca de 68%). É a motivação para novas variáveis (x₁² + x₂²) e para a camada oculta de uma rede neuronal (Módulo 6).
+- **Tarefa típica de teste:**
+  > *"Uma avaria que escapa para a linha de produção inteira. O modelo já está treinado: mova só o limiar θ para que apanhe todas as avarias (sensibilidade 100%) com uma precisão de pelo menos 85%."*
+
+---
+
 ## 3. Instruções técnicas para professores
 
 ### 3.1. Inserir simulações com o editor visual TinyMCE (`tiny_aisim`)
 1. Na barra de ferramentas do TinyMCE, clique no **ícone de simulação de IA** (ou escolha *Inserir > AI Simulation...*).
 2. Configure os parâmetros:
-   - Escolha uma das 9 simulações.
+   - Escolha uma das 10 simulações.
    - Ajuste o cenário, limiar, taxa de aprendizagem, grau, número de grupos, arquitetura da rede, imagem e filtro, mapa do agente ou quota do grupo nos dados.
    - Marque **Apenas leitura** se quiser que os alunos só observem a simulação.
    - Na parte inferior da caixa de diálogo vê uma pré-visualização ao vivo.
@@ -223,17 +240,17 @@ As simulações vão das mais simples às mais exigentes. As cinco primeiras cob
 ---
 
 ### 3.3. Importar o banco de perguntas pronto (Moodle XML)
-O repositório `moodle-qtype_aisim` contém 27 tarefas prontas – três para cada uma das 9 simulações (nível básico, intermédio e avançado):
+O repositório `moodle-qtype_aisim` contém 30 tarefas prontas – três para cada uma das 10 simulações (nível básico, intermédio e avançado):
 1. Descarregue [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. No seu curso, abra **Banco de perguntas > Importar**.
 3. Escolha o **formato Moodle XML**.
 4. Carregue `questions_aiforvet.xml` e clique em **Importar**.
-5. É criada a categoria *"AI za VET - Baza simulacionih zadataka (27 pitanja)"* com todas as perguntas prontas para um teste. (Os enunciados estão em sérvio; adapte-os conforme necessário.)
+5. É criada a categoria *"AI za VET - Baza simulacionih zadataka (30 pitanja)"* com todas as perguntas prontas para um teste. (Os enunciados estão em sérvio; adapte-os conforme necessário.)
 
 ---
 
 ### 3.4. AISim Lab: as simulações sem Moodle
-Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 9 simulações funcionam de forma independente – sem conta e sem recolha de dados – em português, inglês, sérvio e eslovaco. Cada simulação tem uma breve explicação e três desafios.
+Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 10 simulações funcionam de forma independente – sem conta e sem recolha de dados – em português, inglês, sérvio e eslovaco. Cada simulação tem uma breve explicação e três desafios.
 - **Trabalho de casa e telemóveis:** os alunos podem praticar fora do Moodle; o progresso nos desafios fica guardado só no próprio navegador.
 - **"Copiar ligação para esta configuração":** cria uma ligação para exatamente este estado da simulação – útil para o projetor ou para enviar aos alunos.
 - **"Incorporar no Moodle":** dá o código HTML pronto desta configuração para colar em qualquer texto do Moodle (requer `filter_aisim`).
@@ -272,6 +289,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 9 simulações funcionam de fo
 | Aula / tema | Simulações | Ideia-chave |
 | :--- | :--- | :--- |
 | 1. Como aprende um modelo | Descida do gradiente | Aprender = reduzir o erro em pequenos passos |
+| 1b. Da pontuação à decisão | Regressão logística | Uma probabilidade, uma fronteira reta e um limiar escolhido pelo custo de cada erro |
 | 2. Como medimos um modelo | Matriz de confusão, Divisão de dados e enviesamento | A exatidão não chega; o teste tem de ser justo e representativo |
 | 3. Complexidade do modelo | Regressão polinomial, k-NN e árvore de decisão | Demasiado simples vs. sobreajustado |
 | 4. Aprender sem respostas | K-Means | Agrupar sem rótulos |
@@ -293,6 +311,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 9 simulações funcionam de fo
 | **Convolução** | núcleo 3×3, divisor, \|x\| | y = Σ (peso · píxel) / divisor | Correspondência com o alvo (R²) ≥ 95% |
 | **Q-learning** | α, γ, ε, episódios | Q(s,a) ← Q(s,a) + α · (r + γ · max Q(s′,·) − Q(s,a)) | Caminho mais curto (p. ex. 10 passos) em ≤ 200 episódios |
 | **Divisão de dados e enviesamento** | tamanho da amostra, quota do grupo B, teste %, k | exatidão do pior grupo = min(exatidão A, exatidão B) | Ambas as fábricas ≥ 88% com ≤ 120 amostras |
+| **Regressão logística** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; classe 1 se σ(z) ≥ θ | Exatidão ≥ 95% (machine); sensibilidade 100% com precisão ≥ 85% |
 
 #### Significado dos campos "Métrica-alvo" nas perguntas (`qtype_aisim`)
 | Simulação | Métrica-alvo 1 | Métrica-alvo 2 | Metade da pontuação |
@@ -306,6 +325,7 @@ Em [sim.aiforvet.eu](https://sim.aiforvet.eu/) as 9 simulações funcionam de fo
 | Convolução | correspondência mínima (R²) | – | correspondência até alvo − tolerância |
 | Q-learning | máximo de passos até ao objetivo | máximo de episódios de treino (0 = sem limite) | o agente chega ao objetivo, mas por um caminho mais longo ou após mais episódios |
 | Divisão de dados e enviesamento | exatidão mínima da fábrica mais fraca | tamanho máximo da amostra (0 = sem limite) | exatidão cumprida, mas com demasiadas amostras |
+| Regressão logística | exatidão mínima | sensibilidade mínima (0 = sem limite); o campo Tolerância define a precisão mínima | exatidão cumprida, mas sensibilidade ou precisão não |
 
 ---
 

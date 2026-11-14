@@ -1,0 +1,190 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/logistic
+
+    Layout of the Logistic Regression simulation (weights, bias, threshold, gradient descent, metrics).
+    It is rendered from JavaScript by the filter_aisim/sims/logistic module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * datasets - select options as {value, label, selected}
+    * cls1, cls0 - names of the two classes of the dataset
+    * sliders - the weight and bias sliders, threshold and lr - one slider each (see filter_aisim/slider)
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Logistic Regression",
+            "badge": "Chapter 3.6",
+            "model": "Model",
+            "threshold": "Decision threshold",
+            "thresholdHint": "Class 1 when σ(z) ≥ θ.",
+            "training": "Training (gradient descent)",
+            "train": "▶ Train",
+            "step": "+10 epochs",
+            "reset": "↺ Reset weights",
+            "metrics": "Metrics",
+            "epoch": "Epoch:",
+            "loss": "Loss (log-loss):",
+            "accuracy": "Accuracy:",
+            "precision": "Precision:",
+            "recall": "Recall:",
+            "lossCurve": "Loss curve",
+            "mapTitle": "Probability map and decision boundary",
+            "sigmoidTitle": "Sigmoid function",
+            "boundary": "Decision boundary",
+            "calc": "Calculation for the selected point",
+            "calcHint": "Tap a point on the map.",
+            "adviceStart": "Move the weights or press Train."
+        },
+        "datasets": [
+            {
+                "value": "machine",
+                "label": "⚙️ Machine failure",
+                "selected": true
+            }
+        ],
+        "cls1": "Failure",
+        "cls0": "Normal",
+        "sliders": [
+            {
+                "id": "aisim-log-w1",
+                "label": "Weight w₁",
+                "value": 0,
+                "text": "0.00",
+                "min": -8,
+                "max": 8,
+                "step": 0.1
+            }
+        ],
+        "threshold": {
+            "id": "aisim-log-th",
+            "label": "θ",
+            "value": 0.5,
+            "text": "0.50",
+            "min": 0.05,
+            "max": 0.95,
+            "step": 0.05
+        },
+        "lr": {
+            "id": "aisim-log-lr",
+            "label": "Learning rate α",
+            "value": 0.5,
+            "text": "0.50",
+            "min": 0.05,
+            "max": 3,
+            "step": 0.05
+        }
+    }
+}}
+<div class="aisim-container aisim-logistic">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-log-dataset">
+            {{#datasets}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/datasets}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.mapTitle}}</span>
+                        <div class="aisim-legend">
+                            <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-pos"></span> {{cls1}}</span>
+                            <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-neg"></span> {{cls0}}</span>
+                            <span class="aisim-legend-item">
+                                <span class="aisim-line-th" style="background:#0f172a; height:3px;"></span> {{t.boundary}}
+                            </span>
+                        </div>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-log-canvas" style="height:320px; cursor:pointer;"></canvas>
+                </div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-log-advice">{{t.adviceStart}}</div>
+                </div>
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.sigmoidTitle}}</div>
+                    <div class="aisim-log-formula">σ(z) = 1 / (1 + e^(−z))</div>
+                    <canvas class="aisim-canvas" id="aisim-log-sigmoid" style="height:170px;"></canvas>
+                </div>
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.calc}}</div>
+                    <div class="aisim-conv-calc" id="aisim-log-calc">{{t.calcHint}}</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.model}}</div>
+                    <div class="aisim-log-formula">z = w₁·x₁ + w₂·x₂ + b</div>
+                    {{#sliders}}
+                    {{> filter_aisim/slider }}
+                    {{/sliders}}
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.threshold}}</div>
+                    {{#threshold}}
+                    {{> filter_aisim/slider }}
+                    {{/threshold}}
+                    <div style="font-size:0.78rem; color:#64748b; line-height:1.4;">{{t.thresholdHint}}</div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.training}}</div>
+                    {{#lr}}
+                    {{> filter_aisim/slider }}
+                    {{/lr}}
+                    <div class="aisim-controls">
+                        <button class="aisim-btn aisim-btn-primary" id="aisim-log-run">{{t.train}}</button>
+                        <button class="aisim-btn aisim-btn-secondary" id="aisim-log-step">{{t.step}}</button>
+                        <button class="aisim-btn aisim-btn-danger" id="aisim-log-reset">{{t.reset}}</button>
+                    </div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span>{{t.epoch}}</span>
+                        <span class="aisim-stat-val" id="aisim-log-epoch">0</span></div>
+                    <div class="aisim-stat-row"><span>{{t.loss}}</span>
+                        <span class="aisim-stat-val" id="aisim-log-loss">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.accuracy}}</span>
+                        <span class="aisim-stat-val" id="aisim-log-acc">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.precision}}</span>
+                        <span class="aisim-stat-val" id="aisim-log-prec">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.recall}}</span>
+                        <span class="aisim-stat-val" id="aisim-log-rec">–</span></div>
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.lossCurve}}</div>
+                    <canvas class="aisim-canvas" id="aisim-log-curve" style="height:110px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

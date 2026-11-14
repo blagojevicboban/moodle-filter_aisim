@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-11-14
+
+### Added
+- Logistic Regression simulation (`data-aisim="logistic"`, also `logistic-regression`): two input variables,
+  z = w1·x1 + w2·x2 + b, the sigmoid and a decision threshold θ. The weights are set by hand or learned with
+  gradient descent on the log-loss; the probability map shows the straight decision boundary, the sigmoid chart
+  places every point on the curve, and a tap on a point shows its calculation. Accuracy, precision, recall and the
+  loss curve. Three datasets: machine failure, exam result (overlapping classes) and a ring that no straight line
+  can separate. Book chapter 3.6.
+- Teacher guide 1.2 (`docs/`): Logistic Regression module in all four editions.
+
+### Fixed
+- `data-readonly="1"`, set by the editor button's read-only option, now locks the controls of every simulation;
+  the filter did not pass it to the simulations before.
+
 ## [0.10.1] - 2026-11-14
 
 ### Changed

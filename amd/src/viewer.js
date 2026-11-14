@@ -34,6 +34,7 @@ import {QLearningSim} from 'filter_aisim/sims/q_learning';
 import {DataBiasSim} from 'filter_aisim/sims/data_bias';
 import {LogisticSim} from 'filter_aisim/sims/logistic';
 import {CrossValidationSim} from 'filter_aisim/sims/cross_validation';
+import {DataPrepSim} from 'filter_aisim/sims/data_prep';
 import {eventTypes} from 'core_filters/events';
 import Notification from 'core/notification';
 import {load as loadStrings} from 'filter_aisim/strings';
@@ -154,6 +155,14 @@ const crossValidation = sim(CrossValidationSim, (el) => ({
     tested: attr(el, 'tested', '0')
 }));
 
+const dataPrep = sim(DataPrepSim, (el) => ({
+    dataset: attr(el, 'dataset', 'machine'),
+    missing: attr(el, 'missing', 'zero'),
+    outliers: attr(el, 'outliers', 'keep'),
+    scaling: attr(el, 'scaling', 'none'),
+    k: attr(el, 'k', 5)
+}));
+
 /** Simulation factories by data-aisim value (several aliases per simulation). */
 const SIMS = {
     'gradient-descent': gradientDescent,
@@ -185,7 +194,10 @@ const SIMS = {
     'logistic_regression': logistic,
     'cross-validation': crossValidation,
     'cross_validation': crossValidation,
-    'k-fold': crossValidation
+    'k-fold': crossValidation,
+    'data-prep': dataPrep,
+    'data_prep': dataPrep,
+    'eda': dataPrep
 };
 
 /**

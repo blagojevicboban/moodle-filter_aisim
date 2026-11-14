@@ -6,7 +6,7 @@
 *Official Portal:* [https://aiforvet.eu/](https://aiforvet.eu/)  
 *Simulations without Moodle:* [https://sim.aiforvet.eu/](https://sim.aiforvet.eu/)  
 *Authors and Technical Development Team of AI for VET*  
-*Guide Version: 1.3 (November 2026)*  
+*Guide Version: 1.4 (November 2026)*  
 *Compatibility: Moodle 4.5 LTS, 5.0, 5.1, 5.2, 5.3+*
 
 ---
@@ -16,7 +16,7 @@
    - 1.1. The Challenge: Why AI in Vocational Education and Training (VET)?
    - 1.2. Pedagogical Methodology: From Visual Intuition to Engineering Proficiency
    - 1.3. Architecture of the Moodle AI Suite (Filter, Quiz Question Type, TinyMCE Editor)
-2. [Pedagogical Guide across the 11 Simulations](#2-pedagogical-guide-across-the-11-simulations)
+2. [Pedagogical Guide across the 12 Simulations](#2-pedagogical-guide-across-the-12-simulations)
    - 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
    - 2.2. Module 2: Confusion Matrix & Decision Threshold (`confusion_matrix`)
    - 2.3. Module 3: Polynomial Regression & Regularization (`regression`)
@@ -28,6 +28,7 @@
    - 2.9. Module 9: Data Split & Bias (`data_bias`)
    - 2.10. Module 10: Logistic Regression (`logistic`)
    - 2.11. Module 11: Cross-Validation & Hyperparameters (`cross_validation`)
+   - 2.12. Module 12: Data Preparation & EDA (`data_prep`)
 3. [Technical Instructions for Educators](#3-technical-instructions-for-educators)
    - 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
    - 3.2. Authoring Auto-Graded Interactive Assessment Tasks (`qtype_aisim`)
@@ -73,9 +74,9 @@ The simulations follow the user's Moodle language: English, Serbian (Latin and C
 
 ---
 
-## 2. Pedagogical Guide across the 11 Simulations
+## 2. Pedagogical Guide across the 12 Simulations
 
-The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron. Module 11, cross-validation, belongs with polynomial regression: it shows how a hyperparameter is chosen honestly.
+The simulations go from simpler to more demanding. The first five cover the foundations (optimization, model evaluation, overfitting, classification, clustering); modules 6–9 build on them with neural networks, image processing, learning from rewards and the responsible use of data. Module 10, logistic regression, is the bridge between regression and neural networks: it can be used right after the confusion matrix or before the perceptron. Module 11, cross-validation, belongs with polynomial regression: it shows how a hyperparameter is chosen honestly. Module 12, data preparation, fits at the very beginning: before any model, look at the data.
 
 ### 2.1. Module 1: Gradient Descent & Model Optimization (`gradient_descent`)
 - **Key Concepts:** Cost function J(w), learning rate α, convex vs. non-convex landscapes, global vs. local minima.
@@ -226,12 +227,27 @@ The simulations go from simpler to more demanding. The first five cover the foun
 
 ---
 
+### 2.12. Module 12: Data Preparation & EDA (`data_prep`)
+- **Key Concepts:** Exploratory data analysis (minimum, maximum, mean, median, histogram), missing values (drop, replace with 0, the mean or the median), outliers caused by mistakes, scaling (min-max, z-score), a pipeline learned on the training data and applied to new data.
+- **Pedagogical Metaphor:** A cook checks the ingredients before cooking: a rotten egg (an impossible reading), a missing ingredient (a missing value) and a recipe that mixes grams and kilograms (different scales) spoil the dish, however good the recipe (the model) is.
+- **Practical Application:** Sensor data with gaps and unit mistakes, patient records with missing tests, any table that mixes large and small numbers. In practice most of the time in a machine learning project goes into this step.
+- **Key Learning Observations:**
+  1. *The table and the histograms:* The maximum speed of 45,000 rpm is impossible – a unit mistake. With "Replace with 0" the minimum vibration becomes 0 and the mean falls: invented measurements are visible in the statistics.
+  2. *No scaling:* In the view "What the k-NN model sees" (the same scale on both axes) all points lie on a flat line – the variable with large numbers decides alone, and the accuracy is about 50%.
+  3. *Min-max with outliers:* A few extreme values stretch the scale and squeeze the normal values into a narrow band; removing the outliers (or using z-score) helps.
+  4. *Missing values:* Dropping rows loses data, more of it from the class whose sensor fails more often; replacing with the median keeps every row without inventing extreme values.
+  5. *One pipeline for all data:* The minimum, maximum, mean or median are learned on the training data and applied unchanged to every new example.
+- **Typical Quiz Task:**
+  > *"The model guesses almost at random. Look at the statistics and at what k-NN sees, and prepare the data so that the accuracy on the test data reaches at least 85%."*
+
+---
+
 ## 3. Technical Instructions for Educators
 
 ### 3.1. Inserting Simulations with the TinyMCE Visual Editor (`tiny_aisim`)
 1. In the TinyMCE editor toolbar, click the **AI Simulation icon** (or choose *Insert > AI Simulation...*).
 2. Configure parameters:
-   - Select one of the 11 simulations.
+   - Select one of the 12 simulations.
    - Adjust the scenario, threshold, learning rate, degree, cluster count, network architecture, image and filter, agent map or the group share in the data.
    - Check **Read-only mode** if you wish to lock controls for guided observation.
    - Inspect the live simulation card preview at the bottom of the modal.
@@ -254,17 +270,17 @@ The simulations go from simpler to more demanding. The first five cover the foun
 ---
 
 ### 3.3. Importing the Ready-to-Use Question Bank (Moodle XML)
-The `moodle-qtype_aisim` repository contains 33 ready-made tasks – three for each of the 11 simulations (basic, intermediate and advanced level):
+The `moodle-qtype_aisim` repository contains 36 ready-made tasks – three for each of the 12 simulations (basic, intermediate and advanced level):
 1. Download [`questions_aiforvet.xml`](https://github.com/blagojevicboban/moodle-qtype_aisim/raw/master/demo/questions_aiforvet.xml).
 2. In your course, navigate to **Question bank > Import**.
 3. Select **Moodle XML format**.
 4. Upload `questions_aiforvet.xml` and click **Import**.
-5. The category *"AI za VET - Baza simulacionih zadataka (33 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
+5. The category *"AI za VET - Baza simulacionih zadataka (36 pitanja)"* is created with all questions ready to add to any quiz. (The question texts are in Serbian; edit them as needed.)
 
 ---
 
 ### 3.4. AISim Lab: the Simulations without Moodle
-At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 11 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
+At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 12 simulations run on their own – no account, no data collected – in English, Serbian, Slovak and Portuguese. Each simulation has a short explanation and three challenges.
 - **Homework and phones:** Students can practise outside Moodle; challenge progress is kept only in their own browser.
 - **"Copy link to this setup":** Creates a link to exactly this state of the simulation – handy for the projector or for a message to students.
 - **"Embed in Moodle":** Gives ready-made HTML for that setup to paste into any Moodle text (needs `filter_aisim`).
@@ -303,6 +319,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 11 simulations run on their o
 | Lesson / topic | Simulations | Key idea |
 | :--- | :--- | :--- |
 | 1. How a model learns | Gradient Descent | Learning = reducing the error in small steps |
+| 1a. Data comes first | Data Preparation (EDA) | Look at the data; missing values, outliers and scaling decide before any model does |
 | 1b. From a score to a decision | Logistic Regression | A probability, a straight boundary and a threshold chosen by the cost of each error |
 | 2. How we measure a model | Confusion Matrix, Data Split & Bias | Accuracy is not enough; the test must be fair and representative |
 | 3. Model complexity | Polynomial Regression, k-NN & Decision Tree | Too simple vs. overfitted |
@@ -328,6 +345,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 11 simulations run on their o
 | **Data Split & Bias** | sample size, share of group B, test %, k | worst-group accuracy = min(accuracy A, accuracy B) | Both factories ≥ 88% with ≤ 120 samples |
 | **Logistic Regression** | w₁, w₂, b, θ, α | σ(z) = 1 / (1 + e^(−z)), z = w₁·x₁ + w₂·x₂ + b; class 1 if σ(z) ≥ θ | Accuracy ≥ 95% (machine); recall 100% with precision ≥ 85% |
 | **Cross-Validation** | d (degree), k (folds) | CV error = (1/k) · Σ MSE of fold i, each fold held out once | CV MSE ≤ 0.11 with k ≥ 5 (sine) |
+| **Data Preparation** | missing values, outliers, scaling, k | min-max: x′ = (x − min) / (max − min); z-score: x′ = (x − mean) / σ | Accuracy ≥ 85% (machine); accuracy ≥ 90% and recall ≥ 85% (patients) |
 
 #### Meaning of the "Target Metric" fields in questions (`qtype_aisim`)
 | Simulation | Target Metric 1 | Target Metric 2 | Half marks |
@@ -343,6 +361,7 @@ At [sim.aiforvet.eu](https://sim.aiforvet.eu/) all 11 simulations run on their o
 | Data Split & Bias | minimum accuracy of the weakest factory | maximum sample size (0 = no limit) | accuracy met, but with too many samples |
 | Logistic Regression | minimum accuracy | minimum recall (0 = no limit); the Tolerance field sets the minimum precision | accuracy met, but recall or precision missed |
 | Cross-Validation | highest cross-validation MSE of the chosen degree | minimum number of folds k (0 = no limit) | MSE met, but with too few folds |
+| Data Preparation | minimum accuracy on the test data | minimum recall (0 = no limit) | accuracy met, but recall missed |
 
 ---
 

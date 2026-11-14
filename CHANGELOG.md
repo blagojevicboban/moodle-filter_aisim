@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-11-14
+
+### Added
+- Data Preparation (EDA) simulation (`data-aisim="data-prep"`, also `data_prep` and `eda`): raw training data with
+  missing values, a unit mistake (outliers) and two variables on very different scales. Statistics (minimum,
+  maximum, mean, median, missing values), histograms by class, a pipeline of missing values (0, drop, mean,
+  median), outliers (keep, remove) and scaling (none, min-max, z-score), and the space the k-NN model sees with the
+  same scale on both axes. Accuracy and recall on clean test data. Datasets machines and patients. Book 2.6–2.8.
+- Teacher guide 1.4 (`docs/`): Data Preparation module in all four editions.
+
 ## [0.12.0] - 2026-11-14
 
 ### Added

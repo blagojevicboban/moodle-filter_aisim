@@ -1,0 +1,177 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template filter_aisim/data_prep
+
+    Layout of the Data Preparation simulation (statistics, histograms, a preparation pipeline and the space the k-NN
+    model sees). It is rendered from JavaScript by the filter_aisim/sims/data_prep module, which then
+    binds the events and draws on the canvases.
+
+    Context variables required for this template:
+    * t - the simulation's UI strings (from the filter_aisim language file)
+    * x1, x2, cls0, cls1 - names of the two variables and the two classes of the dataset
+    * datasets, missing, outliers, scaling - select options as {value, label, selected}
+    * kslider - the slider of k (see filter_aisim/slider)
+
+    Example context (json):
+    {
+        "t": {
+            "title": "Data Preparation (EDA)",
+            "badge": "Chapters 2.6–2.8",
+            "edaTitle": "Exploring the training data",
+            "stat": "Statistic",
+            "statMin": "Minimum",
+            "statMax": "Maximum",
+            "statMean": "Mean",
+            "statMedian": "Median",
+            "statMissing": "Missing",
+            "histTitle": "Distribution",
+            "spaceTitle": "What the k-NN model sees",
+            "spaceHint": "Both axes have the same scale.",
+            "pipeline": "Preparation pipeline",
+            "missingLabel": "1. Missing values",
+            "outliersLabel": "2. Outliers",
+            "scalingLabel": "3. Scaling",
+            "metrics": "Result on the test data",
+            "rows": "Training rows used:",
+            "accuracy": "Accuracy:",
+            "recall": "Recall:",
+            "testPts": "Test data",
+            "wrongPts": "Wrong",
+            "adviceStart": "Build the pipeline."
+        },
+        "x1": "speed (rpm)",
+        "x2": "vibration (mm/s)",
+        "cls0": "Normal",
+        "cls1": "Failure",
+        "datasets": [{"value": "machine", "label": "⚙️ Machines", "selected": true}],
+        "missing": [{"value": "zero", "label": "Replace with 0", "selected": true}],
+        "outliers": [{"value": "keep", "label": "Keep", "selected": true}],
+        "scaling": [{"value": "none", "label": "None (raw units)", "selected": true}],
+        "kslider": {"id": "aisim-dp-k", "label": "k", "value": 5, "text": "5", "min": 1, "max": 15, "step": 2}
+    }
+}}
+<div class="aisim-container aisim-dp">
+    <div class="aisim-header">
+        <div class="aisim-title">
+            <span>{{t.title}}</span>
+            <span class="aisim-badge">{{t.badge}}</span>
+        </div>
+        <select class="aisim-select" id="aisim-dp-dataset">
+            {{#datasets}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+            {{/datasets}}
+        </select>
+    </div>
+
+    <div class="aisim-body">
+        <div class="aisim-grid">
+            <div class="aisim-col-left">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.edaTitle}}</div>
+                    <div class="aisim-dp-table-wrap">
+                        <table class="aisim-dp-table">
+                            <thead>
+                                <tr><th>{{t.stat}}</th><th>{{x1}}</th><th>{{x2}}</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>{{t.statMin}}</td><td id="aisim-dp-x1-min"></td><td id="aisim-dp-x2-min"></td></tr>
+                                <tr><td>{{t.statMax}}</td><td id="aisim-dp-x1-max"></td><td id="aisim-dp-x2-max"></td></tr>
+                                <tr><td>{{t.statMean}}</td><td id="aisim-dp-x1-mean"></td><td id="aisim-dp-x2-mean"></td></tr>
+                                <tr><td>{{t.statMedian}}</td><td id="aisim-dp-x1-median"></td><td id="aisim-dp-x2-median"></td></tr>
+                                <tr><td>{{t.statMissing}}</td><td id="aisim-dp-x1-missing"></td><td id="aisim-dp-x2-missing"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="aisim-dp-hists">
+                        <div>
+                            <div class="aisim-dp-hist-title">{{t.histTitle}}: {{x1}}</div>
+                            <canvas class="aisim-canvas" id="aisim-dp-h1" style="height:110px;"></canvas>
+                        </div>
+                        <div>
+                            <div class="aisim-dp-hist-title">{{t.histTitle}}: {{x2}}</div>
+                            <canvas class="aisim-canvas" id="aisim-dp-h2" style="height:110px;"></canvas>
+                        </div>
+                    </div>
+                    <div class="aisim-legend">
+                        <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-neg"></span> {{cls0}}</span>
+                        <span class="aisim-legend-item"><span class="aisim-dot aisim-dot-pos"></span> {{cls1}}</span>
+                        <span class="aisim-legend-item"><span class="aisim-dp-filled"></span> {{t.statMissing}}</span>
+                    </div>
+                </div>
+                <div class="aisim-card aisim-advice-card">
+                    <div class="aisim-advice-icon">💡</div>
+                    <div class="aisim-advice-text" id="aisim-dp-advice">{{t.adviceStart}}</div>
+                </div>
+                <div class="aisim-canvas-box">
+                    <div class="aisim-canvas-header">
+                        <span>{{t.spaceTitle}}</span>
+                        <div class="aisim-legend">
+                            <span class="aisim-legend-item"><span class="aisim-cv-square"></span> {{t.testPts}}</span>
+                            <span class="aisim-legend-item"><span class="aisim-dp-wrong"></span> {{t.wrongPts}}</span>
+                        </div>
+                    </div>
+                    <canvas class="aisim-canvas" id="aisim-dp-space" style="height:300px;"></canvas>
+                    <div class="aisim-cv-hint">{{t.spaceHint}}</div>
+                </div>
+            </div>
+
+            <div class="aisim-col-right">
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.pipeline}}</div>
+                    <div class="aisim-slider-group">
+                        <label for="aisim-dp-missing">{{t.missingLabel}}</label>
+                        <select class="aisim-select" id="aisim-dp-missing" style="width:100%;">
+                            {{#missing}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/missing}}
+                        </select>
+                    </div>
+                    <div class="aisim-slider-group">
+                        <label for="aisim-dp-outliers">{{t.outliersLabel}}</label>
+                        <select class="aisim-select" id="aisim-dp-outliers" style="width:100%;">
+                            {{#outliers}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/outliers}}
+                        </select>
+                    </div>
+                    <div class="aisim-slider-group">
+                        <label for="aisim-dp-scaling">{{t.scalingLabel}}</label>
+                        <select class="aisim-select" id="aisim-dp-scaling" style="width:100%;">
+                            {{#scaling}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/scaling}}
+                        </select>
+                    </div>
+                    {{#kslider}}
+                    {{> filter_aisim/slider }}
+                    {{/kslider}}
+                </div>
+
+                <div class="aisim-card">
+                    <div class="aisim-card-title">{{t.metrics}}</div>
+                    <div class="aisim-stat-row"><span>{{t.rows}}</span>
+                        <span class="aisim-stat-val" id="aisim-dp-rows">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.accuracy}}</span>
+                        <span class="aisim-stat-val" id="aisim-dp-acc">–</span></div>
+                    <div class="aisim-stat-row"><span>{{t.recall}}</span>
+                        <span class="aisim-stat-val" id="aisim-dp-rec">–</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

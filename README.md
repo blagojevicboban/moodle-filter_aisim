@@ -96,6 +96,12 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
   error by degree (U-curve, best degree ★).
 - 🎲 draws a new split (`data-seed`), 🔒 unlocks a separate test set once (`data-tested="1"`).
 
+### 12. Data Preparation & EDA (`data-aisim="data-prep"`)
+- Raw training data with missing values, a unit mistake and two variables on very different scales.
+- Statistics and histograms, then a pipeline: missing values (0, drop, mean, median), outliers (keep, remove),
+  scaling (none, min-max, z-score); the space the k-NN model sees, with the same scale on both axes.
+- Accuracy and recall on clean test data; datasets machines and patients.
+
 ---
 
 ## 💻 Usage in Moodle
@@ -134,6 +140,9 @@ Designed specifically for vocational education (VET) and aligned with the **[AI 
 
 <!-- Cross-Validation -->
 <div data-aisim="cross-validation" data-dataset="sine" data-k="5" data-degree="1" data-seed="1"></div>
+
+<!-- Data Preparation & EDA -->
+<div data-aisim="data-prep" data-dataset="machine" data-missing="zero" data-outliers="keep" data-scaling="none" data-k="5"></div>
 ```
 
 ---

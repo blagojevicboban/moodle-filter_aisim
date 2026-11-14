@@ -525,6 +525,54 @@
     font-size: 0.75rem;
 }
 
+/* Data preparation */
+.aisim-dp-table-wrap {
+    overflow-x: auto;
+}
+.aisim-dp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.aisim-dp-table th,
+.aisim-dp-table td {
+    padding: 3px 6px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: right;
+}
+.aisim-dp-table th:first-child,
+.aisim-dp-table td:first-child {
+    text-align: left;
+    color: #475569;
+}
+.aisim-dp-hists {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0 6px;
+}
+.aisim-dp-hist-title {
+    font-size: 0.75rem;
+    color: #475569;
+}
+.aisim-dp-filled {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #f59e0b;
+}
+.aisim-dp-wrong {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border: 2.5px solid #0f172a;
+}
+@media (max-width: 480px) {
+    .aisim-dp-hists {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Logistic regression */
 .aisim-log-formula {
     margin: -4px 0 8px;
